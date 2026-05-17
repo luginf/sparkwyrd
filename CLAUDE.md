@@ -2,159 +2,178 @@
 
 ## Présentation du projet
 
-**Sparkwyrd** est un outil de génération de texte aléatoire basé sur des tables pondérées, programmé en **Tcl/Tk**. Il est compatible avec le format de fichier `.ipt` d'Inspiration Pad Pro (NBOS). C'est un programme autonome avec interface graphique Tk.
+**Sparkwyrd** est un outil de génération de texte aléatoire basé sur des tables pondérées, programmé en **Tcl/Tk**. Compatible avec le format `.ipt` d'Inspiration Pad Pro (NBOS).
 
-> Le nom du dossier est `sparkwyrd` (pas `sparkpad`).
+> Dossier : `sparkwyrd/` (pas `sparkpad`). Ne jamais commiter — l'utilisateur le fait lui-même.
 
-## Fichiers du projet
+## Structure des fichiers
 
-| Fichier | Rôle |
-|---|---|
-| `engine.tcl` | Moteur pur Tcl — parser + générateur, sans dépendance Tk |
-| `sparkpad.tcl` | Interface graphique Tk — sources `engine.tcl` |
-| `cli.tcl` | Interface ligne de commande (en cours d'écriture) |
-| `demo.ipt` | Fichier de démonstration : 560 lignes, 53 tables, couvre toutes les syntaxes (fantasy/steampunk/pirate) |
-| `CLAUDE.md` | Ce fichier |
-| `SKILLS.md` | Référence technique Tcl/Tk pour ce projet |
+```
+sparkwyrd/
+├── Makefile          → construit sparkwyrd.tcl depuis src/
+├── sparkwyrd.tcl     → fichier unique généré (make), ne pas éditer
+├── demo.ipt          → démo : 560 lignes, 53 tables, toutes les syntaxes
+├── README.md
+├── manual.md
+├── CLAUDE.md         → ce fichier
+├── SKILLS.md
+└── src/
+    ├── header.sh     → polyglot sh/Tcl (3 lignes, shebang + bootstrap)
+    ├── engine.tcl    → moteur pur Tcl (parser + générateur, sans Tk)
+    ├── cli.tcl       → interface CLI (proc cli_main)
+    ├── gui.tcl       → interface Tk (proc gui_main)
+    └── main.tcl      → dispatcher --gui / --cli (entry point du build)
+```
 
-Les fichiers de référence (prototype Lua, exemple `.ipt`, spec) se trouvent dans le dossier parent `sparkpad/` s'ils ont été conservés.
+**Lancement :**
+- GUI : `wish src/gui.tcl` ou `./sparkwyrd.tcl --gui`
+- CLI : `tclsh src/cli.tcl --cli file.ipt` ou `./sparkwyrd.tcl --cli [opts] file.ipt`
+- Build : `make` → génère `sparkwyrd.tcl`
 
 ## Ce qui est implémenté (engine.tcl)
 
 ### Parser (`parse_ipt`, `parse_ipt_lines`)
 - Lecture UTF-8 ligne par ligne
 - `Table: NomTable` → dict Tcl
-- Items pondérés `N:texte` (weight=-1 pour directives `Set:` dans une table, weight=-2 pour `Shuffle:`)
+- Items pondérés `N:texte`
+- Sentinelles internes : weight=-1 (`Set:` directive), weight=-2 (`Shuffle:`)
 - Continuation de ligne `&`
 - Commentaires `#`, `;`, `//` (ligne entière et inline)
-- En-têtes : `Header:`, `Footer:`, `MaxReps:`, `Formatting:`, `Title:`, `Use:`, `Prompt:`
+- En-têtes : `Header:`, `Footer:`, `MaxReps:`, `Formatting:`, `Title:`, `Prompt:`
 - Directives de table : `Type:`, `Roll:`, `Default:`, `Shuffle:`, `EndTable:`
-- **`Set:` globaux** (avant tout `Table:`) : parsés dans une clé `global_sets` du dict racine
+- **`Set:` globaux** (avant tout `Table:`) → clé `global_sets` du dict racine
+- **`Use: chemin.ipt`** → clé `use_files` du dict racine, traités par `parse_ipt`
+
+### `Use:` — import de fichiers externes
+- `parse_ipt` collecte la liste `use_files`, puis pour chaque entrée :
+  - résout le chemin : d'abord relatif au répertoire du fichier courant, puis CWD
+  - parse récursivement (avec protection anti-circulaire via `_loaded`)
+  - appelle `ipt_merge` pour fusionner les tables importées
+- **Règle de priorité** : le fichier principal a toujours la priorité — une table importée n'est ajoutée que si son nom n'existe pas déjà dans le principal
+- `ipt_empty_parsed` retourne un dict vide (utilisé quand un import circulaire est détecté)
+- Warning non-fatal si le fichier `Use:` est introuvable
 
 ### Moteur d'expansion (`ipt_expand`, `ipt_roll`)
 - Boucle fixpoint : expansion répétée jusqu'à stabilité
-- **`expand_braces`** : expansion de `{expr}` avec accolades imbriquées
-- **`expand_inline_choices`** : `[|opt1|opt2|opt3]` avec imbrication
-- **`expand_bracket_calls`** : parse `[@...]`, `[#...]`, `[!...]`, `[texte >> filtre]`
-- **`expand_conditionals`** : `[when]...[do]...[end]` et format legacy Lua `[if {$x}==val]...[else]...]`
-- Appels `[@N table]` avec répétitions
-- Paramètres `with` → variables `{$1}`, `{$2}`...
-- Affectation inline `[@var=table]` et silencieuse `[@var==table]`
+- `expand_braces` : `{expr}` avec accolades imbriquées
+- `expand_inline_choices` : `[|opt1|opt2|opt3]` avec imbrication
+- `expand_bracket_calls` : parse `[@...]`, `[#...]`, `[!...]`, `[texte >> filtre]`
+- `expand_conditionals` : `[when]...[do]...[end]` et format legacy Lua
+- `[@N table]` avec répétitions ; `[@var=table]` / `[@var==table]` affectation inline
+- Paramètres `with` → variables `{$1}`, `{$2}`…
 - Filtres chaînés `>> filtre1 >> filtre2`
-- **`[!N table]`** : tirage sans remise (deck pick) via `::deck_<tname>`
-- **`[#N table]`** : tirage par index (1-based, items réels uniquement) ; le préfixe numérique est d'abord expansé via `ipt_expand`
+- **`[!N table]`** : deck pick via `::deck_<tname>` global
+- **`[#N table]`** : pick par index (1-based, items réels uniquement, préfixe expansé d'abord)
 
 ### Évaluateur d'expressions (`eval_brace_expr`)
 - Variables `{$var}` et `{var}`
 - Affectation `{var=expr}` (affiche) et `{var==expr}` (silencieux)
-- Dés `{NdN}`, `{NdN+M}`, `{NdN-M}`
-- Expressions mathématiques via `expr` (après substitution des dés et vars)
-- Fonctions : `max`, `min`, `sqrt`, `abs`, `round`, `floor`, `ceil` → mappées vers `tcl::mathfunc::*`
+- Dés `{NdN}`, `{NdN+M}`, `{NdN-M}`, `{NdN*M}`
+- Expressions mathématiques via `expr` (après substitution)
+- Fonctions : `max`, `min`, `sqrt`, `abs`, `round`, `floor`, `ceil` → `tcl::mathfunc::*`
 
-### Directives `Set:` dans les tables
-- Les lignes `Set:var=val` dans le corps d'une table sont marquées `weight=-1`
-- `ipt_roll` les exécute **systématiquement** avant le tirage (comportement SparkPad réel, pas Lua)
-- La valeur peut contenir des sous-tables `[@...]`
-
-### `Set:` globaux (avant toute table)
-- Parsés dans la clé `global_sets` du dict racine (liste de paires `{varname value}`)
-- Exécutés par `ipt_generate` avant le premier tirage de table, dans les variables partagées
-- Permettent de définir des variables mondiales (ex. `Set: world = [@world_name]`) disponibles partout
+### Directives de table
+- `Set:` dans le corps → weight=-1, exécuté systématiquement avant pick_weighted
+- `Shuffle:` dans le corps → weight=-2, efface le deck `::deck_<nom>` au moment du tirage
+- `Set:` globaux (avant `Table:`) → exécutés dans `ipt_generate` avant le premier tirage
 
 ### Deck picks `[!N table]`
-- Pool stocké dans la variable globale Tcl `::deck_<tname>` (liste des items du pool courant)
-- Si le pool est vide ou inexistant, il est reconstruit à partir des items réels (weight > 0) de la table
-- Chaque tirage supprime l'item sélectionné du pool (tirage sans remise)
-- `ipt_generate` réinitialise tous les decks (`unset -nocomplain ::deck_*`) au début de chaque appel
-
-### Directive `Shuffle:` dans une table
-- Stockée comme item `weight=-2` dans la liste d'items de la table
-- Quand `ipt_roll` traite la table et rencontre un tel item à la position tirée, il fait `unset -nocomplain ::deck_<tablename>` — le deck est vidé et sera reconstruit au prochain tirage `[!]`
+- Pool : variable globale Tcl `::deck_<tname>` (liste des textes disponibles)
+- Pool vide ou absent → reconstruit depuis les items weight > 0
+- Tirage : `lreplace $pool $idx $idx` supprime l'item sélectionné
+- `ipt_generate` réinitialise tous les decks (`unset -nocomplain ::deck_*`) au début
 
 ### Filtres (`apply_filter`)
-`lower`, `upper`, `proper`, `bold`, `italic`, `underline`, `trim`, `ltrim`, `rtrim`, `length`, `reverse`, `left [N]`, `right [N]`, `substr start [len]`, `at substring`, `replace /find/repl/`, `+- / plusminus`, `sort`, `implode [glue]`, `each table`, `eachchar table`
+`lower` `upper` `proper` `bold` `italic` `underline` `trim` `ltrim` `rtrim` `length` `reverse` `left [N]` `right [N]` `substr start [len]` `at sub` `replace /f/r/` `+- / plusminus` `sort` `implode [glue]` `each table` `eachchar table`
 
 ### Nettoyage final (`ipt_generate`)
-- `\n` → vrai saut de ligne, `\t` → tabulation, `\z` → vide, `\_` → espace
-- `\a` → "a" ou "an" selon voyelle suivante (heuristique anglaise)
-- Réduction des espaces multiples ligne par ligne (sans toucher les `\n`)
-- Suppression des espaces avant ponctuation `, . : ; ! ?`
+- `\n` → saut de ligne, `\t` → tabulation, `\z` → vide, `\_` → espace
+- `\a` → "a" ou "an" (heuristique anglaise)
+- Réduction espaces multiples ligne par ligne
+- Suppression espace avant ponctuation
 
 ### Variables prédéfinies
-`{app}` (= "Sparkwyrd") `{version}` `{os}` `{date}` `{time}` `{rep}` `{formatting}` `{cli}`
+`{app}` (="Sparkwyrd") `{version}` `{os}` `{date}` `{time}` `{rep}` `{formatting}` `{cli}`
 
-## Ce qui est implémenté (sparkpad.tcl)
+## Ce qui est implémenté (gui.tcl)
 
-### Interface graphique
 - `panedwindow` horizontal : panneau info gauche + zone de sortie droite
-- Barre d'outils : Ouvrir, Répétitions (spinbox), Go, Effacer, sélecteur de Thème
-- Liste des tables du fichier chargé (widget `text` en lecture seule)
-- Affichage Header:/Footer: dans le panneau gauche
-- Barre de statut en bas
-- Raccourcis : F5 = Générer, Ctrl+O = Ouvrir
+- Barre d'outils : Open, Reps (spinbox), Go, Clear, sélecteur Theme
+- Liste des tables du fichier chargé
+- Barre de statut
+- Raccourcis : F5 = Generate, Ctrl+O = Open
+- Rendu HTML dans le widget `text` : `<b>` `<i>` `<u>` `<h1>`–`<h3>` `<code>` `<br>` `<p>` `<hr>` + entités
+- Thèmes : `light`, `dark`, `sepia` — via `apply_theme` + `option add` + reconfiguration de tous les widgets
 
-### Système de thèmes
-Voir section dédiée ci-dessous.
+## Ce qui est implémenté (cli.tcl)
 
-### Rendu HTML (`html_insert`, `html_current_tag`)
-Parseur de balises HTML inline dans le widget `text` de Tk :
-- `<b>`, `<strong>` → tag `tbold`
-- `<i>`, `<em>` → tag `titalic`
-- `<u>` → tag `tunderline`
-- `<b><i>` combinés → tag `tbold_italic`
-- `<h1>`, `<h2>`, `<h3>` → tags `th1`, `th2`, `th3`
-- `<code>`, `<tt>` → tag `tcode` (police fixe, fond coloré)
-- `<br>`, `<br/>` → saut de ligne
-- `<p>`, `</p>` → saut de ligne
-- `<hr>` → ligne de séparation
-- Entités : `&amp;`, `&lt;`, `&gt;`, `&quot;`, `&apos;`, `&nbsp;`
+- Options : `-n <count>`, `-t <table>`, `--html` (garde les balises, défaut = strip), `--sep <str>`, `--list`, `--version`, `--help`
+- HTML strippé par défaut ; `--html` pour conserver les balises
+- Entités HTML décodées dans les deux modes
+- Usage affiche le vrai nom du script via `[file tail [info script]]`
+- Entry-point dans `proc cli_main {}` (guard `::sparkwyrd_combined`)
 
-## Système de thèmes
+## Architecture du build (Makefile + src/main.tcl)
 
-### Architecture
+### Polyglot header (`src/header.sh`)
+```sh
+#!/bin/sh
+# commentaire Tcl — le \ continue la ligne suivante en Tcl \
+_w=$(stty -g 2>/dev/null); trap '...' EXIT INT TERM; tclsh "$0" "$@"; exit $?
 ```
-array ::themes(nom) = dict de couleurs
-proc T {key}        → lit la couleur courante
-proc apply_theme {}  → reconfigure tous les widgets + tags
+- Shell : lit `#!/bin/sh`, exécute le bootstrap shell, lance `tclsh`, quitte
+- Tcl : lit `#` (commentaire), `\` final → la ligne suivante est suite du commentaire → tout ignoré
+- `stty` sauvegarde/restaure l'état du terminal → résout le blocage tab-completion
+
+### Dispatcher (`src/main.tcl`)
+```
+(no args)              → aide une ligne + exit 0   (safe pour la complétion bash)
+--gui [file.ipt]       → gui_main
+--cli [options] file   → cli_main
+-n / -t / --html / … → cli_main (auto-détect par flag CLI)
+file.ipt seul          → gui_main (pas de flag CLI reconnu)
 ```
 
-`apply_theme` est appelé au démarrage ET à chaque changement via le menu.
-Elle reconfigure : `option add` (widgets futurs) + tous les widgets existants + tous les tags du widget `text`.
+### Makefile
+```
+make        → header.sh + engine + cli + gui + main → sparkwyrd.tcl
+make clean  → supprime sparkwyrd.tcl
+```
+- STRIP filtre : `^#!/`, `^source.*engine\.tcl`, `^set script_dir`
+- `set ::sparkwyrd_combined 1` injecté en tête → les guards individuels (`if {![info exists ::sparkwyrd_combined]}`) ne s'exécutent pas
+- `src/main.tcl` inclus avec `cat` (sans STRIP) en dernier
 
-### Thèmes disponibles
-| Nom | Description |
-|---|---|
-| `clair` | Fond blanc, texte noir, vert pour Go |
-| `sombre` | Fond #1e1e1e style éditeur, titres dorés |
-| `sepia` | Fond parchemin brun, ambiance jeu de rôle |
-
-### Clés de palette (par thème)
-`bg` `bg2` `bg_tb` `fg` `fg2` `fg_link` `sep` `out_bg` `out_fg` `out_title` `out_sep` `out_h1` `out_h2` `out_h3` `out_code_bg` `btn_bg` `btn_fg` `btn_go_bg` `btn_go_fg` `sel_bg` `sel_fg`
-
-Pour ajouter un thème : ajouter une entrée dans `array set ::themes` et une ligne dans le menu `.tb.theme_mb.m`.
+### Guard dans cli.tcl et gui.tcl
+```tcl
+proc cli_main {} { ... }
+if {![info exists ::sparkwyrd_combined]} { cli_main }
+```
+Permet l'exécution directe (`tclsh src/cli.tcl`) ET l'inclusion dans le build sans double exécution.
 
 ## Ce qui reste à implémenter
 
 - `Type: Lookup` (tables à intervalles `1-5:texte` avec `Roll:` et `Default:`)
 - `Type: Dictionary` (clés textuelles, appel via `[#clé table]`)
-- `Use: fichier.ipt` (chargement de fichiers externes)
-- `Prompt:` interactif (widgets dans l'UI)
+- `Prompt:` interactif (widgets dans la GUI)
 - `Define:` (constante réévaluée à chaque usage)
 - Variables `{fullpath}`, `{docpath}`, `{self}`
-- Arbre de fichiers par catégories (actuellement : un seul fichier à la fois)
+- Arbre de fichiers par catégories (actuellement un seul fichier à la fois)
 - Onglet débogage / trace d'expansion
-- `cli.tcl` : interface ligne de commande (en cours)
 
 ## Pièges découverts (Tcl/Tk)
 
-1. `[+\-]` dans un character class regex Tcl → invalide. Utiliser `[-+]` (tiret en premier).
-2. `[^\S\n]` invalide (shorthand `\S` interdit dans bracket expression Tcl). Traiter ligne par ligne avec `split`/`join`.
-3. `"(pattern)$var(pattern)"` en double-quoted → Tcl interprète `$var(...)` comme accès tableau. Utiliser `string map` avec liste ou `${var}`.
-4. `package require ttk` → erreur. En Tk 8.5+, `ttk` est inclus dans `package require Tk`. Ne pas le requérir séparément.
-5. `expr {$n>1?"s":""}` avec guillemets échappés → invalide dans certains contextes. Extraire dans une variable : `set s [expr {$n>1?"s":""}]`.
-6. Proc imbriquée dans une proc (`proc` dans `proc`) → la proc interne devient globale et se redéfinit à chaque appel. Toujours définir au niveau global.
-7. `Set:` dans le corps d'une table = directive (SparkPad réel), pas item aléatoire (comportement Lua). Marquer weight=-1 et exécuter avant pick_weighted.
-8. `ipt_generate` doit déléguer à `ipt_roll` pour le tirage racine (pas appeler `pick_weighted` directement), sinon les directives `Set:` ne s'exécutent pas.
-9. `Shuffle:` dans une table = weight=-2 (distinct de -1 pour `Set:`). Ne pas les mélanger dans la même valeur sentinelle.
-10. `unset -nocomplain` est indispensable pour vider un deck : `unset ::deck_foo` plante si la variable n'existe pas.
-11. Les `[#N table]` s'appuient sur les items réels uniquement (weight > 0) — les items weight=-1 (`Set:`) et weight=-2 (`Shuffle:`) ne comptent pas dans l'index 1-based.
+1. `[+\-]` dans un character class regex → invalide. Utiliser `[-+]`.
+2. `[^\S\n]` invalide (`\S` interdit dans bracket expression). Traiter ligne par ligne.
+3. `"$var(pattern)"` en double-quoted → Tcl lit comme accès tableau. Utiliser `string map` avec liste.
+4. `package require ttk` → erreur sur certains systèmes. Inclus dans `package require Tk` (Tk 8.5+).
+5. `expr` avec guillemets échappés dans interpolation → extraire dans une variable d'abord.
+6. `proc` imbriquée dans une `proc` → devient globale. Toujours définir au niveau global.
+7. `Set:` dans un corps de table = directive, pas item aléatoire. Marquer weight=-1.
+8. `ipt_generate` doit passer par `ipt_roll` pour le tirage racine (sinon les directives `Set:` ne s'exécutent pas).
+9. `Shuffle:` = weight=-2 (distinct de -1). Ne pas mélanger les sentinelles.
+10. `unset $v` sur variable inexistante → erreur. Toujours `unset -nocomplain`.
+11. `[#N table]` : filtrer les items weight ≤ 0 avant de calculer l'index.
+12. `package require Tk` au niveau global dans le fichier mergé → bloque `tclsh`. Le déplacer dans `gui_main`.
+13. Tab-completion bash → exécute le script sans args → lancer `gui_main` bloque sur X display. Fix : sans args, afficher aide + `exit 0`.
+14. Shebang `#!/usr/bin/env wish` → bash tente de sourcer le fichier pour la complétion → blocage. Fix : polyglot `#!/bin/sh` + bootstrap shell.
+15. `Use:` merge : le fichier principal a priorité. Ne jamais écraser une table existante avec une table importée.

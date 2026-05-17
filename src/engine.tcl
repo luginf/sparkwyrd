@@ -23,15 +23,81 @@ proc rand_int {n} {
 #   defaults : dict  nom -> valeur par défaut
 #   prompts  : liste de spécs Prompt
 
-proc parse_ipt {filename} {
+proc parse_ipt {filename {_loaded {}}} {
+    set norm [file normalize $filename]
+
+    # Circular import guard
+    if {$norm in $_loaded} { return [ipt_empty_parsed] }
+    lappend _loaded $norm
+
     set fd [open $filename r]
     fconfigure $fd -encoding utf-8
     set lines {}
-    while {[gets $fd line] >= 0} {
-        lappend lines $line
-    }
+    while {[gets $fd line] >= 0} { lappend lines $line }
     close $fd
-    return [parse_ipt_lines $lines]
+
+    set parsed  [parse_ipt_lines $lines]
+    set basedir [file dirname $norm]
+
+    # Resolve and merge Use: files — used tables are added only if not
+    # already defined in the main file (main file always takes priority).
+    foreach rel [dict get $parsed use_files] {
+        # Search: relative to the current file's directory first, then CWD
+        set candidates [list \
+            [file join $basedir $rel] \
+            [file normalize $rel]]
+        set found ""
+        foreach c $candidates {
+            if {[file exists $c]} { set found $c; break }
+        }
+        if {$found eq ""} {
+            puts stderr "Warning: Use: file not found: $rel"
+            continue
+        }
+        if {[catch {set used [parse_ipt $found $_loaded]} err]} {
+            puts stderr "Warning: cannot load Use: $found — $err"
+            continue
+        }
+        set parsed [ipt_merge $parsed $used]
+    }
+
+    return $parsed
+}
+
+# Returns a minimal empty parsed structure (used for circular import guard)
+proc ipt_empty_parsed {} {
+    return [dict create \
+        header      {Header {} Footer {} MaxReps 0 Formatting html Title {}} \
+        tables      {}  order   {}  types   {}  rolls {} \
+        defaults    {}  prompts {}  global_sets {}  use_files {}]
+}
+
+# Merges `used` into `main`: tables/types/rolls/defaults from `used`
+# are added only when the name does not already exist in `main`.
+proc ipt_merge {main used} {
+    set m_tables   [dict get $main tables]
+    set m_types    [dict get $main types]
+    set m_rolls    [dict get $main rolls]
+    set m_defaults [dict get $main defaults]
+
+    set u_tables   [dict get $used tables]
+    set u_types    [dict get $used types]
+    set u_rolls    [dict get $used rolls]
+    set u_defaults [dict get $used defaults]
+
+    foreach tname [dict get $used order] {
+        if {[dict exists $m_tables $tname]} continue
+        dict set m_tables $tname [dict get $u_tables $tname]
+        if {[dict exists $u_types    $tname]} { dict set m_types    $tname [dict get $u_types    $tname] }
+        if {[dict exists $u_rolls    $tname]} { dict set m_rolls    $tname [dict get $u_rolls    $tname] }
+        if {[dict exists $u_defaults $tname]} { dict set m_defaults $tname [dict get $u_defaults $tname] }
+    }
+
+    dict set main tables   $m_tables
+    dict set main types    $m_types
+    dict set main rolls    $m_rolls
+    dict set main defaults $m_defaults
+    return $main
 }
 
 proc parse_ipt_lines {lines} {
@@ -43,6 +109,7 @@ proc parse_ipt_lines {lines} {
     set header      {Header {} Footer {} MaxReps 0 Formatting html Title {}}
     set prompts     {}
     set global_sets {}    ;# liste de {varname expression} globaux
+    set use_files   {}    ;# liste de chemins Use:
 
     set current_name  ""
     set current_items {}
@@ -116,7 +183,7 @@ proc parse_ipt_lines {lines} {
             if {[regexp -nocase {^MaxReps:\s*(\d+)$}  $line -> v]} { dict set header MaxReps   $v;               continue }
             if {[regexp -nocase {^Formatting:\s*(.+)$} $line -> v]} { dict set header Formatting [string trim $v]; continue }
             if {[regexp -nocase {^Title:\s*(.*)$}     $line -> v]} { dict set header Title     [string trim $v]; continue }
-            if {[regexp -nocase {^Use:\s*}            $line]}      { continue }
+            if {[regexp -nocase {^Use:\s*(.+)$}         $line -> v]} { lappend use_files [string trim $v]; continue }
             if {[regexp -nocase {^Prompt:\s*(.+)$}    $line -> v]} { lappend prompts [string trim $v]; continue }
             if {[regexp -nocase {^Set:\s*(\w+)\s*=\s*(.*)$} $line -> var val]} {
                 lappend global_sets [list $var [string trim $val]]
@@ -161,7 +228,8 @@ proc parse_ipt_lines {lines} {
         rolls       $rolls \
         defaults    $defaults \
         prompts     $prompts \
-        global_sets $global_sets]
+        global_sets $global_sets \
+        use_files   $use_files]
 }
 
 proc ipt_flush_buffer {buf items} {

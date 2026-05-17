@@ -350,6 +350,138 @@ proc deck_pick {ipt tname} {
 - `unset -nocomplain $vname` est préférable à `unset $vname` pour éviter une erreur si la variable n'existe pas.
 - La directive `Shuffle:` (weight=-2 dans la table) déclenche `unset -nocomplain ::deck_<tname>` — le pool sera reconstruit au prochain tirage `[!]`.
 
+### Polyglot sh/Tcl — shebang sans blocage de complétion
+
+Le problème : `#!/usr/bin/env wish` amène bash à exécuter le script pendant la complétion → tentative d'ouvrir un display X → blocage.
+
+La solution : un header polyglot qui est à la fois un script shell valide et un commentaire Tcl valide.
+
+```sh
+#!/bin/sh
+# Sparkwyrd — sh/Tcl polyglot bootstrap
+# Le backslash en fin de ligne continue le commentaire Tcl à la ligne suivante \
+_w=$(stty -g 2>/dev/null); trap '[ -n "$_w" ] && stty "$_w" 2>/dev/null' EXIT INT TERM; tclsh "$0" "$@"; exit $?
+```
+
+**Comment ça marche :**
+
+| Interpréteur | Lecture |
+|---|---|
+| Shell (`/bin/sh`) | Ligne 1 = shebang. Lignes 2-3 = commentaires shell. Ligne 4 = commandes : sauvegarde stty, trap restauration, relance avec `tclsh`, quitte. |
+| Tcl | Ligne 1 = `#` (commentaire). Ligne 2-3 = commentaire avec `\` final → continuation → lignes 2+3+4 forment **un seul** commentaire Tcl. |
+
+Le `stty -g` / `trap` préserve l'état du terminal (important pour la complétion bash/zsh).
+
+**Règle absolue** : ne jamais ajouter un quatrième niveau d'indirection. Le `\` en fin de ligne 3 doit être le **dernier caractère** de cette ligne (pas d'espace après).
+
+### Dispatcher GUI/CLI dans un fichier unique
+
+Quand engine + cli + gui sont mergés, les deux entry-points coexistent. Solution : guard + dispatcher.
+
+```tcl
+# Dans chaque fichier source (cli.tcl, gui.tcl) :
+proc cli_main {} { ... }  ;# ou gui_main
+if {![info exists ::sparkwyrd_combined]} { cli_main }
+
+# Dans le Makefile, injecté en tête du fichier mergé :
+set ::sparkwyrd_combined 1
+
+# Dans src/main.tcl (inclus en dernier) :
+proc sparkwyrd_dispatch {} {
+    global argv
+    set cli_flags {-n -t --html --sep --list --version --help}
+    set mode ""; set rest {}
+    foreach arg $argv {
+        switch -- $arg {
+            --gui { set mode gui }
+            --cli { set mode cli }
+            default { lappend rest $arg }
+        }
+    }
+    set argv $rest
+    # Sans aucun argument → aide + exit 0 (safe pour bash completion)
+    if {$mode eq "" && [llength $rest] == 0} {
+        puts "Usage: [file tail [info script]] --gui [file] | --cli [opts] file"
+        exit 0
+    }
+    # Auto-détect
+    if {$mode eq ""} {
+        set mode gui
+        foreach a $rest {
+            if {$a in $cli_flags || [string match "-*" $a]} { set mode cli; break }
+        }
+    }
+    if {$mode eq "gui"} {
+        if {[catch {gui_main} err]} {
+            puts stderr "Cannot start GUI: $err\nUse --cli for command-line mode."
+            exit 1
+        }
+    } else { cli_main }
+}
+sparkwyrd_dispatch
+```
+
+**Points clés :**
+- `::sparkwyrd_combined` distingue exécution directe d'un source vs inclusion dans le build.
+- `package require Tk` doit être dans `gui_main {}`, jamais au niveau global — sinon il s'exécute même avec `tclsh`.
+- Le détecteur `[info commands wm]` n'est pas fiable : sur certains systèmes, `package require Tk` réussit même avec `tclsh` si le display est disponible.
+
+### `Use:` — import et merge de fichiers externes
+
+```tcl
+# parse_ipt avec protection circulaire
+proc parse_ipt {filename {_loaded {}}} {
+    set norm [file normalize $filename]
+    if {$norm in $_loaded} { return [ipt_empty_parsed] }  ;# import circulaire
+    lappend _loaded $norm
+
+    # ... lire et parser le fichier ...
+    set parsed [parse_ipt_lines $lines]
+
+    # Résoudre et fusionner chaque Use:
+    foreach rel [dict get $parsed use_files] {
+        # Chercher : relatif au fichier courant, puis CWD
+        set abs [file join [file dirname $norm] $rel]
+        if {![file exists $abs]} { set abs $rel }
+        if {![file exists $abs]} { puts stderr "Warning: not found: $rel"; continue }
+
+        if {[catch {set used [parse_ipt $abs $_loaded]} err]} { continue }
+        set parsed [ipt_merge $parsed $used]   ;# main a priorité
+    }
+    return $parsed
+}
+
+# ipt_merge : used ne peut qu'AJOUTER des tables (jamais écraser)
+proc ipt_merge {main used} {
+    set m_tables [dict get $main tables]
+    foreach tname [dict get $used order] {
+        if {[dict exists $m_tables $tname]} continue   ;# main gagne
+        dict set m_tables $tname [dict get [dict get $used tables] $tname]
+        # Copier aussi types/rolls/defaults si présents dans used
+        foreach key {types rolls defaults} {
+            if {[dict exists [dict get $used $key] $tname]} {
+                dict set [dict get $main $key] $tname \
+                    [dict get [dict get $used $key] $tname]
+            }
+        }
+    }
+    dict set main tables $m_tables
+    return $main
+}
+
+# Retourné quand un import circulaire est détecté
+proc ipt_empty_parsed {} {
+    return [dict create header {Header {} Footer {} MaxReps 0 Formatting html Title {}} \
+        tables {} order {} types {} rolls {} defaults {} prompts {} global_sets {} use_files {}]
+}
+```
+
+**Points clés :**
+- `file normalize` est indispensable pour la détection circulaire : `./foo.ipt` et `foo.ipt` donneraient sinon deux clés différentes.
+- La recherche est d'abord relative au fichier courant (pas au CWD), puis CWD. Cela permet les bibliothèques co-localisées.
+- Un warning non-fatal est émis si le fichier est introuvable (pas d'`exit`).
+- Le merge `types`/`rolls`/`defaults` est nécessaire pour que les Lookup et Dictionary tables importées fonctionnent correctement.
+
 ### `global_sets` — Set: avant toute table
 
 Les directives `Set:` placées avant le premier `Table:` sont stockées dans la clé `global_sets` du dict racine (liste de dicts `{varname name value val}`). `ipt_generate` les exécute avant tout tirage :
@@ -421,3 +553,8 @@ if {[info exists pick_index]} {
 | `weight=-1` et `weight=-2` mélangés | Garder les sentinelles distinctes : -1 = `Set:`, -2 = `Shuffle:` |
 | `[#{var} table]` — préfixe non expansé | Toujours expanser le corps via `ipt_expand` avant d'en extraire l'index entier |
 | `info vars ::deck_*` en début de `ipt_generate` | Permet de vider tous les pools en une passe sans connaître les noms de tables |
+| `package require Tk` au niveau global dans le build | Bloque `tclsh` même en mode CLI. Déplacer dans `gui_main {}` |
+| Shebang `#!/usr/bin/env wish` | bash tente de l'exécuter pendant la complétion → blocage X. Utiliser le polyglot `#!/bin/sh` |
+| Script sans args → `gui_main` par défaut | bash complétion exécute le script sans args → blocage X. Fix : sans args, aide + `exit 0` |
+| `Use:` merge — ordre de priorité | Le fichier principal prime. N'ajouter une table importée que si son nom est absent du principal |
+| Import circulaire via `Use:` | Passer une liste `_loaded` de chemins normalisés en paramètre de `parse_ipt`; retourner `ipt_empty_parsed` si déjà chargé |
