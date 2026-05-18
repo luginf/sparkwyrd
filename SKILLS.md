@@ -994,6 +994,8 @@ prouver à {luimeme} → "à elle-même" / "à lui-même"
 | `Use:` merge — ordre de priorité | Le fichier principal prime. N'ajouter une table importée que si son nom est absent du principal |
 | Import circulaire via `Use:` | Passer une liste `_loaded` de chemins normalisés en paramètre de `parse_ipt`; retourner `ipt_empty_parsed` si déjà chargé |
 | Chemins Windows dans `Use:` | `nbos\names\Human.ipt` → convertir `\` en `/` et chercher case-insensitive. Fonction `normalize_use_path` |
+| `[when]` dans un item long | Ne fonctionne pas si `[when]...[end]` est noyé dans un item multi-lignes (`\n&`). Isoler dans une sous-table dont il est l'unique item, appeler avec `[@sous_table]` |
+| `[@table]` imbriqué dans `[when]...[do]` | Le tag `[end]` peut être consommé avant que le conditionnel soit évalué. Pré-calculer via `Set:` et utiliser `{var}` dans le bloc |
 | `{e}` vide au masculin | Mettre `\z` dans la table masculine : `fatigué{e}` → `fatigué\z` → `fatigué` après post-processing |
 | Variables de genre cascadées | `Set: sexe` en premier, puis `Set: il = [@v_il_{sexe}]` etc. L'ordre des `Set:` garantit que `{sexe}` est résolu avant les dérivées |
 | Deux tables `emploi_f` / `emploi_m` | Les formes françaises genrées ne suivent pas de règle simple → toujours écrire les deux tables explicitement |

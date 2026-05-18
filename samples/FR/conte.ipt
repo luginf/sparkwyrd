@@ -1,0 +1,264 @@
+Header: <b>Générateur de contes et de fables</b>
+Footer: <hr><i>Et ils vécurent… ou pas.</i>
+
+// Ce générateur utilise :
+// — [!1 table] (deck picks) pour les trois épreuves : garantit qu'elles sont toutes différentes
+// — [when]...[do]...[else]...[end] pour le prix de l'objet magique et le type de résolution
+// — Set: cascadés pour construire une cohérence narrative sur toute la fiche
+
+Table: conte
+Set: heros_nom = [@prenom_heros]
+Set: heros_desc = [@heros]
+Set: opposant_desc = [@opposant]
+Set: objet_desc = [@objet_magique]
+Set: adjuvant_desc = [@adjuvant]
+Set: epreuve1 = [!1 epreuve]
+Set: epreuve2 = [!1 epreuve]
+Set: epreuve3 = [!1 epreuve]
+Set: moral = [@morale]
+Set: prix_texte = [@prix_magique]
+Set: texte_triomphe = [@resolution_triomphe]
+Set: texte_sacrifice = [@resolution_sacrifice]
+Set: cout = {1d6}
+Set: issue = {1d6}
+<b>IL ÉTAIT UNE FOIS…</b>\n&
+[@incipit_conte]\n&
+\n&
+<b>LE MONDE</b>\n&
+[@monde]\n&
+\n&
+<b>LA RÈGLE</b>\n&
+[@regle_monde]\n&
+\n&
+<b>LE HÉROS / L'HÉROÏNE</b>\n&
+{heros_nom}, {heros_desc}\n&
+\n&
+<b>L'ADJUVANT</b>\n&
+{adjuvant_desc}\n&
+\n&
+<b>L'OPPOSANT</b>\n&
+{opposant_desc}\n&
+\n&
+<b>L'OBJET MAGIQUE</b>\n&
+{objet_desc}\n&
+[@item_prix]\n&
+\n&
+<b>LES TROIS ÉPREUVES</b>\n&
+I.   {epreuve1}\n&
+II.  {epreuve2}\n&
+III. {epreuve3}\n&
+\n&
+<b>LA RÉSOLUTION</b>\n&
+[@item_resolution]\n&
+\n&
+<b>LA MORALE</b>\n&
+{moral}
+
+// ----------------------------------------------------------------
+// Incipit
+// ----------------------------------------------------------------
+
+Table: incipit_conte
+Il était une fois, dans un royaume [|si lointain qu'on en a oublié le nom|que les cartes n'ont jamais représenté|à la frontière entre ce qui est et ce qui pourrait être], [@situation_initiale].
+Dans le temps où les animaux parlaient encore et où les arbres se souvenaient, [@situation_initiale].
+Au bout du monde connu, là où la forêt commence à douter d'elle-même, [@situation_initiale].
+Jadis, quand les étoiles avaient encore des noms et qu'on s'en souvenait, [@situation_initiale].
+Il y avait autrefois [@situation_initiale] — et cela aurait pu rester ainsi si [@evenement_perturbateur].
+
+Table: situation_initiale
+un [|roi|seigneur|meunier|charbonnier|pêcheur] [|veuf avec trois enfants|si avare qu'il avait oublié comment rire|juste mais épuisé par une malédiction ancienne|sans héritier et de plus en plus désespéré]
+une jeune [|princesse|bergère|tisserande|fille de forgeron] [|née sous une mauvaise étoile|gardant un secret depuis l'enfance|dont la beauté attirait autant l'admiration que le malheur|qui avait juré de ne jamais se marier]
+trois [|frères|sœurs|enfants d'un même père et de mères différentes] dont [|les deux aînés étaient brillants et l'un cadet était tenu pour idiot|la cadette voyait ce que les autres refusaient de regarder|chacun avait reçu une qualité unique à la naissance]
+un vieux [|roi|sage|forgeron|meunier] [|à l'agonie sans héritier|portant une culpabilité vieille de quarante ans|dont les trois vœux avaient été gaspillés|qui avait fait une promesse imprudente dans sa jeunesse]
+
+Table: evenement_perturbateur
+une [|malédiction|prophétie|mort subite|disparition|trahison] vint tout changer
+{heros_nom} commença à poser la seule question qu'on lui avait interdit de poser
+une [|voix|lumière|oiseau|enfant sans nom] vint frapper à la porte cette nuit-là
+le prince ou la princesse arriva — et avec lui ou elle, tous les problèmes
+
+// ----------------------------------------------------------------
+// Le monde
+// ----------------------------------------------------------------
+
+Table: monde
+Un royaume ordinaire en surface — labours, saisons, impôts — mais les bords sont flous : la forêt finit là où la carte s'arrête, et personne ne sait ce qu'il y a après.
+Un pays enchanté depuis si longtemps que personne ne se souvient de l'état d'avant. La magie est banale, sauf quand elle ne l'est pas.
+Un royaume maudit depuis [|une génération|cent ans|des temps immémoriaux] — les roses ne poussent plus, les rivières coulent à reculons certains soirs, et les enfants naissent les yeux ouverts.
+Un monde à l'envers : les pauvres ont de la sagesse et les rois sont idiots, les animaux parlent et les humains écoutent rarement, la nuit est plus sûre que le jour.
+Un pays de transition — entre l'été et l'hiver, entre l'enfance et l'âge adulte, entre le monde des vivants et celui des morts. Les frontières y sont perméables.
+Un village, une forêt, un château. Rien de plus. Mais chacun de ces lieux cache une porte vers quelque chose d'autre.
+Un empire jadis puissant, aujourd'hui réduit à un roi, un château et une décision à prendre avant la prochaine pleine lune.
+
+// ----------------------------------------------------------------
+// La règle du monde
+// ----------------------------------------------------------------
+
+Table: regle_monde
+Tout don a un prix exact, ni plus ni moins. Personne n'a jamais réussi à négocier.
+Les promesses faites au bord de l'eau sont absolues. Celles faites sous un toit peuvent être brisées — mais pas oubliées.
+On ne peut pas mentir à un animal. Les animaux ne mentent jamais, mais ils se taisent souvent.
+Un nom prononcé trois fois dans l'obscurité appelle ce qu'il désigne. Les sages ont renoncé à nommer certaines choses.
+La magie obéit au premier enfant né [|un jour de solstice|un jour de pleine lune|un jour d'éclipse|un jour de tempête] qui la demande avec les mots exacts.
+Personne ne peut quitter la forêt par le même chemin qu'il y est entré. C'est pour ça que tant de gens s'y perdent.
+Le temps s'écoule différemment selon les endroits. Une nuit dans certaines demeures dure une année dehors — ou l'inverse.
+Ce qu'on donne librement revient multiplié. Ce qu'on prend revient également — mais sous une forme qu'on n'attendait pas.
+Les morts peuvent parler, mais seulement si on leur pose la bonne question. La plupart des gens posent la mauvaise.
+La magie ne peut pas créer ce qui n'a jamais existé. Elle peut seulement transformer ce qui est déjà là.
+
+// ----------------------------------------------------------------
+// Le héros / l'héroïne
+// ----------------------------------------------------------------
+
+Table: prenom_heros
+Aalis
+Brice
+Céleste
+Damien
+Elzire
+Fanch
+Galaad
+Héloïse
+Iseut
+Josse
+Kilian
+Lilas
+Mahaut
+Ninian
+Ondine
+Pierrot
+Quintine
+Renaud
+Soline
+Tirel
+Ursule
+Vivien
+Wandrille
+Ysolde
+Zéphyrin
+
+Table: heros
+[|le cadet|la cadette|le troisième enfant] d'une famille [|pauvre mais honnête|riche et malheureuse|de condition moyenne qui s'est crue ordinaire trop longtemps], tenu(e) pour [|simplet(te)|rêveur/rêveuse|trop doux/douce pour ce monde] — ce qui s'avérera être sa plus grande force.
+un(e) [|orphelin(e) élevé(e) par [|une vieille femme dans la forêt|des charbonniers|des moines|les bêtes elles-mêmes]|enfant trouvé(e) sans nom ni origine connue|fils/fille bâtard(e) dont l'identité réelle est le cœur de l'histoire].
+un(e) [|berger/bergère|tisserand(e)|meunier/meunière|enfant de forgeron] qui n'a jamais rien demandé — sauf la réponse à [|une seule question|un seul souvenir|un seul rêve qui revient].
+l'aîné(e) d'une fratrie que [|la mort|la malédiction|la folie|la pauvreté] a dispersée, parti(e) retrouver [|ses frères|ses sœurs|sa famille|ce qui reste d'elle].
+quelqu'un qui a commis une erreur [|dans l'enfance|par amour|par peur] et qui n'a jamais cessé d'y penser depuis — le conte est la façon dont il/elle finit par régler ça.
+le seul ou la seule à avoir vu quelque chose que tous les autres ont refusé de regarder — et à en avoir tiré les conséquences.
+
+// ----------------------------------------------------------------
+// L'adjuvant
+// ----------------------------------------------------------------
+
+Table: adjuvant
+Une vieille femme rencontrée [|au bord d'un puits|à un carrefour|sous la pluie|dans une maison que tout le monde croyait abandonnée] — elle offre [|de la nourriture|un conseil|trois objets inutiles qui ne le seront pas|la vérité sans politesse] en échange de [|la politesse|la franchise|rien, ce qui est la plus grande leçon].
+Un animal [|blessé que le héros soigne|qui parle la nuit seulement|marqué d'une tache qui ressemble à une étoile|que tout le monde chasse et que le héros épargne] — en retour, il guidera, préviendra, ou sacrifiera quelque chose d'essentiel au moment décisif.
+Un [|nain|esprit|lutin|génie] lié à [|un puits|un arbre|un carrefour|une caverne|un pont] par un pacte ancien — il aide, mais ne donne jamais plus que ce qui a été demandé, et les mots comptent.
+Un [|frère|sœur|cousin(e)] mort(e) dont l'esprit revient [|en rêve|au bord de la rivière|dans le miroir|sous forme d'un oiseau blanc] — il/elle sait ce que les vivants ne peuvent pas savoir, mais ne peut pas agir à leur place.
+Un [|roi|seigneur|sage|ermite] déchu qui a déjà traversé exactement la même épreuve — il/elle a échoué, et c'est précisément pour ça que ses conseils sont précieux.
+Trois [|fées|sœurs|lavandières] rencontrées [|à la fontaine|au bord du chemin|la nuit de pleine lune] — chacune donne un don différent, mais le troisième don est celui qu'on n'avait pas demandé.
+Personne — le héros ou l'héroïne devra trouver seul(e). Ce qui compte, c'est ce qu'il/elle choisit de faire de cette solitude.
+
+// ----------------------------------------------------------------
+// L'opposant
+// ----------------------------------------------------------------
+
+Table: opposant
+Une [|sorcière|enchanteresse|vieille reine] dont la puissance est réelle mais la motivation plus complexe qu'elle n'y paraît : [|elle protège quelque chose qu'on lui a pris|elle a été trahie autrefois exactement comme le héros l'est maintenant|elle croit sincèrement avoir raison].
+Un [|roi|seigneur|père|beau-père] qui [|a fait une promesse imprudente et refuse de l'assumer|croit agir pour le bien de tous en écrasant ceux qui questionnent|a peur de ce que le héros représente].
+Un [|dragon|géant|ogre|bête sans nom] qui [|garde quelque chose sans en comprendre la valeur|souffre d'une malédiction qui le rend ce qu'il est|peut être vaincu sans être tué — si on comprend ce qu'il est vraiment].
+Une [|belle-mère|marâtre|belle-sœur] dont la cruauté vient d'une [|jalousie impossible à rassasier|peur de la pauvreté qui lui a tout pris une fois déjà|blessure ancienne qu'elle n'a jamais su guérir autrement].
+Le [|prince|chevalier|champion] qui semblait être l'allié — brillant, séduisant, convaincant — mais dont les intérêts ont toujours été les siens propres et rien d'autre.
+Le destin lui-même : une prophétie, une malédiction, un ordre cosmique que le héros devra [|accepter|défier|ruser avec|transformer en quelque chose d'autre].
+Rien d'extérieur — l'opposant, c'est [|la peur|le doute|l'orgueil|le désir de vengeance|la tentation d'abandonner] du héros lui-même. Ce conte-là est le plus difficile à raconter.
+
+// ----------------------------------------------------------------
+// L'objet magique
+// ----------------------------------------------------------------
+
+Table: objet_magique
+une [|épée|lance|flèche] qui ne manque jamais sa cible — mais ne peut frapper qu'une fois le porteur a dit la vérité à voix haute
+[|un miroir|l'eau d'un puits|la surface d'un étang immobile] qui montre [|la vérité derrière les apparences|ce qui s'est passé, pas ce qu'on croit|ce que quelqu'un cache, y compris le porteur lui-même]
+une [|cape|anneau|fleur séchée] qui rend [|invisible aux regards mauvais|insensible à la peur pendant une heure exactement|capable de comprendre toutes les langues, y compris celles des animaux et des arbres]
+trois [|graines|cailloux blancs|plumes|larmes de cristal] qui, plantés ou semés, font pousser [|un arbre-escalier|un pont|un mur de ronces|un chemin que seul le porteur peut voir]
+un [|nom|mot|chanson|formule] — une seule phrase qui, prononcée correctement, [|ouvre toute porte|apaise toute créature|dissout toute malédiction|dit la vérité à celui ou celle qui ment]
+une paire de [|souliers|bottes|sandales] qui [|font courir plus vite que le vent|guident vers ce qu'on cherche vraiment, pas ce qu'on croit chercher|ne s'arrêtent jamais d'elles-mêmes — ce qui peut devenir un problème]
+un [|livre|parchemin|carte] dont [|les pages sont vierges jusqu'à ce qu'on pose la bonne question|l'encre révèle les mensonges à proximité|le dernier chapitre est toujours à écrire — et c'est le lecteur qui l'écrit]
+une [|clé|boîte|coffret] qui [|ouvre la seule chose qu'on ne devrait peut-être pas ouvrir|contient ce qu'on a le plus perdu|ne peut être donnée : elle doit être méritée ou trouvée]
+
+// ----------------------------------------------------------------
+// Prix de l'objet magique (affiché seulement si cout > 3)
+// ----------------------------------------------------------------
+
+Table: prix_magique
+pour chaque usage, le porteur [|oublie un souvenir heureux|vieillit d'un jour|perd quelque chose qu'il ne remarquera qu'après|entend les pensées des autres pendant une heure — sans pouvoir les éteindre].
+il ne peut être utilisé qu'[|une seule fois|une fois par lune|tant que le porteur n'a rien dit de faux ce jour-là|par quelqu'un qui n'en a pas besoin pour lui-même].
+le porteur ne peut plus [|mentir|oublier|dormir sans rêver|partir sans se retourner] aussi longtemps qu'il le tient.
+quelqu'un d'autre — [|un proche|l'adjuvant|un inconnu tiré au sort par le destin] — paie une part du prix à la place du porteur, sans le savoir.
+il sera réclamé au moment le plus inopportun, par celui ou celle qui l'a donné — ou par quelque chose de plus ancien.
+
+// ----------------------------------------------------------------
+// Les trois épreuves (deck pick — toujours différentes)
+// ----------------------------------------------------------------
+
+Table: epreuve
+Une énigme posée par [|un sphinx|un vieillard aveugle|un enfant qui ne rit pas|la porte elle-même] — la réponse n'est pas celle qu'on cherche, mais celle qu'on est.
+Un pont gardé par [|un troll|un chevalier sans visage|l'ombre de quelqu'un que le héros a blessé|personne — mais qui s'effondre si on n'y croit pas].
+Un choix entre [|deux chemins dont l'un est beau et l'autre effrayant|aider un inconnu au risque de manquer l'objectif|la vérité cruelle et le mensonge confortable].
+Un labyrinthe [|de haies taillées|de miroirs|de portes qui se déplacent|de souvenirs du héros lui-même] dont la seule sortie est de [|cesser de courir|admettre qu'on s'est trompé|appeler à l'aide].
+Une épreuve de [|force impossible|patience absolue : attendre trois jours sans parler|générosité : donner ce qu'on a de plus cher avant de demander quoi que ce soit].
+Un adversaire que le héros [|ne peut pas vaincre en combat|ne veut pas vaincre une fois qu'il/elle comprend ce qu'il est|doit vaincre sans armes et sans magie].
+Un désert, une forêt, une mer — un chemin sans fin apparent, et la tentation de faire demi-tour. L'épreuve, c'est de continuer malgré l'absence de signe encourageant.
+Une trahison — par [|l'allié le plus sûr|quelqu'un qu'on aimait|un reflet de soi-même] — que le héros devra traverser sans [|se laisser détruire|détruire l'autre en retour|perdre ce qui faisait sa valeur].
+Un retour en arrière — le héros doit revenir [|là d'où il vient|auprès de quelqu'un qu'il a quitté|à la version de lui-même qu'il croyait avoir dépassée] et faire quelque chose qu'il aurait dû faire depuis le début.
+Une fausse victoire : l'opposant est vaincu, l'objet est trouvé, la porte est ouverte — mais quelque chose ne va pas. L'épreuve, c'est de s'en apercevoir avant qu'il soit trop tard.
+La mort [|symbolique|d'un proche|d'une part de soi] — et la décision de ce qu'on fait avec ce deuil.
+Le choix de [|rentrer|continuer|rester] quand toutes les raisons rationnelles disent le contraire.
+
+// ----------------------------------------------------------------
+// Résolution — triomphe (issue >= 4)
+// ----------------------------------------------------------------
+
+Table: resolution_triomphe
+Le héros ou l'héroïne [|triomphe et revient changé(e) — la victoire ressemble moins à ce qu'on imaginait, mais elle est réelle|obtient ce qu'il/elle cherchait, découvre que ça ne suffisait pas, et trouve quelque chose de mieux en cherchant la sortie|brise la malédiction, non par la force, mais par [|un mot juste|un geste inattendu|la simple décision de ne plus avoir peur]].
+La résolution est [|heureuse mais méritée — il a fallu abandonner quelque chose pour y arriver|belle mais fragile — le monde enchanté ne l'est plus tout à fait, et c'est peut-être le prix de la maturité].
+L'opposant est [|vaincu|transformé|rendu à ce qu'il était avant que la peur ou la colère en fasse un monstre]. Personne n'avait prévu que la solution serait [|aussi simple|aussi douloureuse|aussi différente de ce que les récits précédents promettaient].
+
+// ----------------------------------------------------------------
+// Résolution — sacrifice (issue < 4)
+// ----------------------------------------------------------------
+
+Table: resolution_sacrifice
+Le héros ou l'héroïne [|réussit, mais au prix de [|quelque chose d'irremplaçable|la mémoire de ce qui a eu lieu|l'impossibilité de revenir exactement tel(le) qu'il/elle était]|échoue à sauver [|la personne qu'il/elle aimait|l'objet qui aurait tout changé|l'enfance qu'il/elle défendait] — et doit vivre avec ça].
+La victoire est [|incomplète — quelque chose reste cassé, même si le reste est réparé|partagée avec quelqu'un qu'on n'avait pas prévu d'aimer|arrachée de justesse, et ça se voit sur le visage du héros jusqu'à la fin].
+Le conte se termine [|sur une question sans réponse que le lecteur doit porter|sur un geste qui n'est ni tout à fait un adieu ni tout à fait un début|sur le retour chez soi — et le fait que chez soi a changé, ou que c'est le héros qui a changé, et que c'est la même chose].
+
+// ----------------------------------------------------------------
+// Sous-tables conditionnelles
+// Chaque [when] est isolé dans sa propre table (item unique) :
+// le conditionnel doit être l'intégralité de l'item pour être
+// évalué correctement par le moteur.
+// ----------------------------------------------------------------
+
+Table: item_prix
+[when]{cout} > 3[do]— Mais il exige un prix : {prix_texte}[end]
+
+Table: item_resolution
+[when]{issue} > 3[do]{texte_triomphe}[else]{texte_sacrifice}[end]
+
+// ----------------------------------------------------------------
+// Morales
+// ----------------------------------------------------------------
+
+Table: morale
+La gentillesse donnée sans calcul revient sous des formes qu'aucun calcul n'aurait trouvées.
+Ce qu'on tient pour une faiblesse est souvent la seule chose qui peut traverser là où la force échoue.
+On ne possède vraiment que ce qu'on est prêt à perdre.
+Le courage n'est pas l'absence de peur — c'est ce qu'on fait pendant qu'on a peur.
+Méfie-toi de ce que tu désires : tu pourrais l'obtenir exactement tel que tu l'as demandé.
+La vérité fait moins mal que le mensonge — mais elle fait mal quand même, et il faut s'y préparer.
+Personne ne peut porter seul ce qui a été cassé à plusieurs. Le partage du fardeau est le premier pas vers sa disparition.
+Ce que le monde appelle sagesse, c'est souvent juste de la peur déguisée. Et ce qu'il appelle folie, c'est parfois de l'amour qui n'a pas encore trouvé son nom.
+Le chemin le plus court n'est pas toujours le plus juste. Et le plus juste n'est pas toujours celui qu'on aurait choisi.
+On ne revient jamais vraiment de certains voyages. Ce n'est pas une catastrophe — c'est le but.
+Il y a des dettes qu'on paie toute sa vie, non parce qu'on le doit, mais parce qu'on a choisi d'être quelqu'un qui paie ses dettes.
+Ce qu'on donne librement n'est jamais vraiment perdu. Ce qu'on garde par peur finit toujours par coûter plus que ce qu'on croyait garder.

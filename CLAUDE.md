@@ -254,3 +254,5 @@ Set: luimeme = [@v_luimeme_{sexe}]  // "elle-même" ou "lui-même"
 19. **Dialog toplevel** : toujours ajouter `wm transient $w .` pour lier la fenêtre au parent, et `focus` pour donner le focus à un widget spécifique.
 20. **Text widget tags** : appliquer via `$w tag add nom début fin`. Pour chercher une position : utiliser `[$w search]` avec le flag `-nocase` si insensible à la casse.
 21. **Syntax highlighting ligne par ligne** : lire avec `[$w get $line_num.0 $line_num.end]` (indices Tcl text widget). Ne pas chercher de patterns sur le texte entier → trop lent sur gros fichiers.
+22. **`[when]` dans un item multi-lignes** : si `[when]...[end]` est noyé dans un long item `\n&`, les tags peuvent être consommés avant l'évaluation du conditionnel. Solution : isoler chaque `[when]` dans une sous-table dont il est l'**unique item** non-`Set:`, puis appeler avec `[@sous_table]`.
+23. **`[@table]` imbriqué dans `[when]...[do]`** : peut provoquer que `[end]` reste dans la sortie. Pré-calculer le contenu via `Set: var = [@table]` et utiliser `{var}` dans le bloc conditionnel.

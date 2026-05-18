@@ -1,0 +1,366 @@
+Header: <b>Générateur de villes et villages</b>
+Footer: <hr><i>Que l'aventure commence.</i>
+
+Table: ville
+Set: taille = [@taille_val]
+Set: nom = [@nom_ville]
+<b>LOCALITÉ : {nom}</b>\n&
+\n&
+Taille :     {taille}\n&
+Région :     [@region]\n&
+Fondée :     il y a [@fondation]\n&
+Ambiance :   [@ambiance]\n&
+\n&
+<b>LIEUX NOTABLES</b>\n&
+[!1 lieu_notable]\n&
+[!1 lieu_notable]\n&
+[!1 lieu_notable]\n&
+\n&
+<b>PERSONNAGES CLÉS</b>\n&
+[@pnj]\n&
+[@pnj]\n&
+[@pnj]\n&
+\n&
+<b>ÉCONOMIE</b>\n&
+[@economie]\n&
+\n&
+<b>PROBLÈME ACTUEL</b>\n&
+[@probleme]\n&
+\n&
+<b>SECRET ENFOUI</b>\n&
+[@secret]\n&
+\n&
+<b>RUMEURS</b>\n&
+— [@rumeur]\n&
+— [@rumeur]\n&
+— [@rumeur]
+
+// ----------------------------------------------------------------
+// Nom de la localité
+// ----------------------------------------------------------------
+
+Table: nom_ville
+[@prefixe_ville][@racine_ville]
+[@prefixe_ville][@racine_ville]-[@suffixe_ville]
+[@racine_ville][@terminaison_ville]
+[@racine_ville][@terminaison_ville]-[@suffixe_ville]
+Saint-[@saint_ville]
+Sainte-[@sainte_ville]
+[@determinant_ville] [@racine_libre]
+
+Table: prefixe_ville
+Beau
+Bel
+Belles
+Mont
+Val
+Vieux
+Grand
+Noir
+Blanc
+Haut
+Bas
+Châte
+Mal
+Fri
+Clai
+
+Table: racine_ville
+pierre
+roc
+fond
+bois
+croix
+forge
+moulin
+port
+lande
+marais
+pré
+champ
+fontaine
+roche
+vier
+mour
+ferrat
+gard
+gne
+
+Table: terminaison_ville
+-sur-[|Saône|Loir|Orne|Sèvre|Cher|Scarpe|Yser|Risle|Huveaune|Vilaine]
+-en-[|Provence|Brie|Beauce|Limousin|Quercy|Artois|Gâtinais|Velay]
+-lès-[|Rouen|Tours|Dijon|Reims|Metz|Poitiers|Clermont|Albi]
+\z
+
+Table: suffixe_ville
+[|le-Vieux|le-Haut|le-Bas|le-Grand|le-Petit|la-Forêt|l'Église|les-Bois|les-Moulins]
+
+Table: saint_ville
+Pierre
+Jean
+Martin
+Gilles
+Loup
+Rémy
+Éloi
+Aubin
+Benoît
+Hilaire
+Étienne
+Nicolas
+Sauveur
+Flour
+Genès
+
+Table: sainte_ville
+Marie
+Anne
+Geneviève
+Hélène
+Claire
+Foy
+Radegonde
+Colombe
+Croix
+Victoire
+Cécile
+Eulalie
+Ménehould
+Odile
+
+Table: determinant_ville
+La
+Le
+Les
+L'
+
+Table: racine_libre
+[|Abîme|Bruyère|Carrière|Dune|Épine|Falaise|Garenne|Hétraie|Île|Jonchère|Luzerne|Marne|Noue|Oseraie|Palud|Quarante|Ravine|Sablière|Touffe|Usine|Verger|Watten]
+
+// ----------------------------------------------------------------
+// Taille
+// ----------------------------------------------------------------
+
+Table: taille_val
+2:hameau ([|une poignée de fermes|vingt à cinquante âmes|à peine un croisement de routes])
+4:village ([|cent à cinq cents habitants|une église, une place, quelques rues])
+3:bourg ([|cinq cents à deux mille habitants|un marché hebdomadaire, des artisans])
+2:petite ville ([|deux à dix mille habitants|plusieurs quartiers, une garnison])
+ville ([|dix à cinquante mille habitants|murailles, guildes, quartiers distincts])
+
+// ----------------------------------------------------------------
+// Région et fondation
+// ----------------------------------------------------------------
+
+Table: region
+une plaine agricole fertile, loin de tout relief notable
+le pied d'un massif montagneux que peu de routes traversent
+une vallée encaissée entre deux collines boisées
+le bord d'un fleuve qui a toujours dicté le commerce
+une lande venteuse à l'écart des grands axes
+une forêt ancienne dont la lisière recule d'année en année
+un plateau calcaire creusé de grottes et de sources
+une côte battue par les vents où les naufrages sont fréquents
+un carrefour entre deux provinces aux lois différentes
+un vallon marécageux que personne n'habiterait si la terre n'était si riche
+
+Table: fondation
+[|deux|trois|quatre|cinq|six|sept|huit] générations
+[|un|deux|trois] siècles
+des temps immémoriaux — la date exacte a été perdue
+la mémoire d'un événement fondateur : [@fondation_evenement]
+
+Table: fondation_evenement
+l'installation de réfugiés fuyant [|une guerre|une inondation|une épidémie|une famine|un tyran]
+la construction d'un [|monastère|château|pont|moulin|hospice] qui a attiré les colons
+la découverte d'une [|source guérisseuse|veine de minerai|route commerciale|forêt giboyeuse]
+un miracle ou une apparition rapportée par [|un berger|une enfant|un voyageur mourant]
+
+// ----------------------------------------------------------------
+// Ambiance
+// ----------------------------------------------------------------
+
+Table: ambiance
+industrieuse et fière — les habitants travaillent dur et savent qu'ils vivent bien
+méfiante envers les étrangers, soudée entre elle — il faut du temps pour s'y faire accepter
+marquée par une catastrophe récente qu'on n'évoque qu'à demi-mot
+prospère en surface, mais quelque chose ronge discrètement la cohésion sociale
+paisible et oubliée du reste du monde — ce qui convient parfaitement à ses habitants
+tendue : deux familles, deux clans ou deux croyances se regardent en chiens de faïence
+animée et cosmopolite — beaucoup de passages, peu de racines profondes
+en déclin lent mais visible — les jeunes partent, les maisons se vident
+éprise de traditions qu'elle observe avec une rigueur qui force l'admiration ou l'agacement
+sous l'emprise d'une peur diffuse que personne ne nomme clairement
+
+// ----------------------------------------------------------------
+// Lieux notables
+// ----------------------------------------------------------------
+
+Table: lieu_notable
+L'auberge [|du Cheval Blanc|de la Croix Verte|du Cerf Couronné|des Trois Tonneaux|du Vieux Moulin|du Sanglier Heureux] — [|bonne table, lits douteux|tenancier curieux de tout|lieu de rendez-vous des marchands|réputation sulfureuse que les habitués démentent avec un sourire]
+Le marché [|hebdomadaire le [|lundi|mardi|jeudi|vendredi|samedi]|couvert aux colonnes de pierre|en plein air sur la place centrale] — [|spécialité de [|fromages affinés|bétail|tissus|épices venues de loin|herbes médicinales]|fréquenté par des colporteurs venus de [|trois|cinq|sept] lieues à la ronde]
+L'église [|romane|gothique|baroque|à demi effondrée|trop grande pour la paroisse actuelle] dédiée à [|[@saint_ville]|[@sainte_ville]|un saint local dont le culte n'est pas reconnu partout] — [|le curé est [|austère|jovial|absent plus souvent qu'à son tour|réputé pour ses sermons courts]|les vitraux racontent une histoire que les anciens comprennent mieux que les jeunes]
+La forge [|Duval|Ferrat|du père [@prenom_artisan]|des frères [@nom_artisan]] — [|réputée pour [|ses fers à cheval|ses lames|ses outils|la discrétion du forgeron]|ouverte à des heures imprévisibles|le meilleur endroit pour apprendre ce qui se passe vraiment dans la région]
+Le moulin [|à eau sur le ruisseau|à vent sur la butte|appartenant à [|la famille [@nom_artisan]|la commune|l'église]] — [|dispute ancienne sur les droits d'eau jamais résolue|meunier réputé pour tricher sur le grain|on y entend des bruits la nuit]
+La maison du guérisseur [|et de sa fille|maintenant tenue par son apprentie|dont la porte est toujours entrouverte] — [|herbes séchées aux fenêtres, odeur de résine et de vinaigre|les villageois y viennent autant pour parler que pour guérir|quelques livres sur l'étagère que personne d'autre ici ne pourrait lire]
+Les ruines [|de l'ancien château|du prieuré incendié il y a deux générations|d'une maison maudite que personne ne rachète|d'une tour dont on ne sait plus à quoi elle servait] — [|les enfants y jouent le jour|personne n'y va la nuit|fouillées régulièrement par des chercheurs de trésor qui repartent bredouilles]
+Le puits [|central de la place|de la vieille rue qui porte son nom|dit « du diable » sans que personne ne sache pourquoi] — [|eau réputée pour [|sa fraîcheur|ses vertus médicinales|son goût particulier]|lieu de rendez-vous informel le soir|selon la légende, il ne s'est jamais tari]
+La salle commune [|de la guilde des [|marchands|tisserands|carriers|bateliers]|du conseil municipal|des anciens combattants] — [|portes fermées aux non-membres|décisions importantes prises ici en toute discrétion|les réunions durent plus longtemps depuis que [|les taxes ont augmenté|le maire est mort|un étranger s'est installé]]
+La bibliothèque [|paroissiale, accessible sur demande|de l'ancien seigneur, à l'abandon depuis sa mort|privée du notaire, qui en garde jalousement la clé] — [|quelques dizaines de livres dont certains en latin|une carte ancienne de la région qui diffère des cartes actuelles|un registre des naissances et des morts remontant à plus loin qu'on ne le croit]
+Le cimetière [|à l'ombre du clocher|hors les murs, selon l'ancienne coutume|divisé en deux parties dont personne n'explique clairement la frontière] — [|une tombe récente sans nom|des inscriptions illisibles sur les plus vieilles pierres|fleuri avec soin, ce qui dit beaucoup sur la communauté]
+La rivière [|qui borde le village à l'est|qui traverse la place sous une arche de pierre|dont on a dévié le cours il y a cinquante ans pour une raison que les anciens évoquent à voix basse] — [|pêche abondante au printemps|dangereuse en crue|on y a trouvé des choses étranges à certaines saisons]
+
+// ----------------------------------------------------------------
+// Personnages clés (deck pick sur les rôles)
+// ----------------------------------------------------------------
+
+Table: pnj
+[@prenom_pnj] [@nom_pnj], [!1 role_pnj] — [!1 trait_pnj]
+
+Table: prenom_pnj
+Aldric
+Berthe
+Colas
+Denise
+Erwan
+Françoise
+Gautier
+Honorine
+Isidore
+Joëlle
+Kilian
+Louison
+Mathieu
+Nannette
+Odile
+Perrin
+Quentin
+Rosine
+Sébald
+Tiphaine
+Ulysse
+Victoire
+Wandrille
+Yolande
+Zacharie
+Ambroise
+Béatrix
+Célestin
+Damienne
+Eustache
+
+Table: nom_pnj
+Aubert
+Bonhomme
+Caillet
+Deschênes
+Évard
+Favreau
+Gontier
+Herbelin
+Jacquot
+Laborde
+Machard
+Nanteuil
+Obrecht
+Pairin
+Quesnoy
+Renouard
+Souchard
+Tabouret
+Urtebise
+Vigoureux
+
+Table: role_pnj
+le maire ou la mairesse — élu(e) depuis [|deux|cinq|dix|vingt] ans, [|réélu sans adversaire|contesté(e) à chaque scrutin|intouchable grâce à [|ses réseaux|ses secrets sur les autres|une réputation d'honnêteté acquise de haute lutte]]
+l'aubergiste — [|veuf/veuve depuis trois ans, élève ses enfants seul(e)|ancien(ne) soldat(e) reconverti(e)|arrivé(e) de nulle part il y a dix ans sans explication]
+le curé ou la prieure — [|homme de foi sincère mais mal à l'aise dans les zones grises|plus intéressé(e) par la politique que par la théologie|gardien(ne) d'une crypte que peu de paroissiens ont vue]
+le guérisseur ou la guérisseuse — [|herboriste autodidacte respecté(e) et légèrement craint(e)|formé(e) dans une grande ville, revenu(e) sans qu'on sache pourquoi|aveugle depuis un accident, ce qui n'a pas diminué ses capacités]
+le forgeron ou la forgeronne — [|homme/femme de peu de mots, d'une force tranquille|curieux/curieuse de tout, lit beaucoup pour quelqu'un de son métier|répare et fabrique, mais pose trop de questions sur ce qu'on lui apporte]
+le marchand ou la marchande — [|représentant(e) d'une guilde lointaine dont les intérêts ne coïncident pas toujours avec ceux du village|doit de l'argent aux mauvaises personnes|connaît les routes et les rumeurs mieux que quiconque]
+l'ancien ou l'ancienne — [|la mémoire vivante du village, consulté(e) pour tout|détient un savoir sur le passé de la localité qu'il/elle refuse de confier par écrit|lucide et redoutablement observateur/observatrice malgré l'âge]
+le garde ou la milicienne — [|seul(e) représentant(e) de l'ordre dans un rayon de plusieurs lieues|corruptible, ce que tout le monde sait sauf le maire|compétent(e) et dévoué(e), ce qui lui a valu plusieurs ennemis]
+le notaire ou la greffière — [|détenteur/détentrice de secrets que les familles aimeraient voir disparaître|vend discrètement des informations à qui peut se les offrir|scrupuleux/scrupuleuse à l'excès, ce qui ralentit tout mais protège de beaucoup d'abus]
+l'étranger ou l'étrangère installé(e) récemment — [|s'est intégré(e) étonnamment vite, ce qui intrigue autant que ça rassure|refuse de parler de là d'où il/elle vient|apporte des compétences que le village n'avait pas, ce qui crée des jalousies]
+
+Table: trait_pnj
+toujours au courant de tout — à se demander si quelqu'un lui rapporte ou s'il/elle observe simplement mieux que les autres
+une dette ancienne envers [|une famille du village|un seigneur lointain|quelqu'un qui n'est plus là pour la réclamer]
+une peur cachée que [|l'alcool révèle|les orages réveillent|les étrangers font remonter]
+d'une générosité sincère qui lui vaut autant d'amitié que de méfiance
+un humour pince-sans-rire que beaucoup ne remarquent pas
+porte quelque chose — un secret, une culpabilité, un deuil — qu'il/elle n'a jamais mis en mots
+la confiance absolue des siens, méritée ou non
+une compétence inattendue que personne n'a jamais cherché à expliquer
+en froid avec [|la moitié du conseil|la famille [@nom_pnj]|le curé] depuis un incident qu'aucun des deux ne commente
+une loyauté au village qui prime sur tout le reste — y compris le bon sens, parfois
+
+Table: prenom_artisan
+Gautier
+Perrin
+Mathieu
+Eustache
+Colas
+
+Table: nom_artisan
+Ferrat
+Duval
+Lebon
+Caillet
+Gontier
+
+// ----------------------------------------------------------------
+// Économie
+// ----------------------------------------------------------------
+
+Table: economie
+Agriculture céréalière — [|blé, seigle, orge|froment et avoine|trois rotations ancestrales que les jeunes commencent à remettre en question]
+Élevage — [|bovins laitiers|ovins pour la laine et le fromage|porcs et volailles|chevaux de trait réputés dans la région]
+Artisanat — [|tissage et teinture|travail du cuir|poterie et tuilerie|tonnellerie et charpente|coutellerie transmise de père en fils]
+Commerce de transit — [|la localité est sur la route entre deux villes importantes|une foire saisonnière attire les marchands de [|trois|cinq|sept] lieues|le pont ou le gué est le seul passage praticable à [|deux|cinq|dix] lieues à la ronde]
+Extraction — [|ardoise|calcaire|fer|sel gemme|tourbe] — [|une mine active depuis des générations|une carrière à ciel ouvert|un puits exploité par une compagnie extérieure qui redistribue peu]
+Pêche et navigation fluviale — [|anguilles et brochets|transport de marchandises par bateaux à fond plat|un port de halage que le changement du niveau d'eau rend de plus en plus difficile]
+Production spécialisée — [|fromage à appellation locale|eau-de-vie de prune|miel de bruyère|herbes médicinales séchées|chanvre et lin] dont la réputation dépasse la région
+
+// ----------------------------------------------------------------
+// Problèmes actuels
+// ----------------------------------------------------------------
+
+Table: probleme
+Une [|taxe nouvelle|corvée supplémentaire|réquisition de grain] imposée par [|le seigneur|l'intendant royal|l'évêché] a épuisé les réserves et attisé les rancœurs.
+Des [|disparitions|morts suspectes|accidents répétés] touchent [|les hommes jeunes|le bétail|les voyageurs de passage|les enfants] depuis [|quelques semaines|deux mois|cet hiver].
+Une querelle de succession bloque [|la forge|le moulin|l'auberge|la mairie] depuis la mort de [|son propriétaire|son titulaire|l'ancien maire] sans héritier évident.
+La source [|principale|du puits central|qui alimente les champs du bas] [|a tari|a changé de goût|coule maintenant rouge quelques heures par mois|dégage une odeur que personne ne sait identifier].
+Un [|groupe de brigands|bande de déserteurs|culte itinérant|clan en exil] s'est installé à [|la lisière de la forêt|l'ancienne bergerie abandonnée|l'autre rive] et multiplie les incidents.
+Une épidémie de [|fièvre|toux noire|sommeil inexplicable|pustules sans douleur] frappe [|surtout les vieux|les enfants en bas âge|les animaux d'abord, les humains ensuite|indifféremment tout le monde].
+Deux familles [|Aubert et Gontier|Favreau et Laborde|Machard et Vigoureux] se disputent [|un terrain|un héritage|une insulte vieille de trente ans|une dette que l'une nie et l'autre documente] et entraînent le reste du village dans leur conflit.
+Le [|seigneur|évêque|percepteur|commandant de garnison] doit passer dans [|trois jours|une semaine|un mois] pour une inspection que tout le monde redoute pour des raisons différentes.
+Les [|récoltes|pêches|troupeaux] ont été mauvaises [|deux|trois] années de suite, et les réserves ne tiendront pas jusqu'au printemps prochain si rien ne change.
+Un [|érudit|cartographe|représentant d'une guilde lointaine|émissaire dont on ignore l'employeur] est arrivé la semaine dernière et pose des questions que les habitants trouvent [|intrusives|inquiétantes|bizarrement précises].
+
+// ----------------------------------------------------------------
+// Secrets
+// ----------------------------------------------------------------
+
+Table: secret
+La ville a été [|fondée sur les terres d'un village détruit|bâtie sur une nécropole ancienne|le résultat d'une trahison que les fondateurs ont réécrite en acte héroïque] — les archives qui le prouveraient ont [|disparu|été lacérées|été « perdues » dans un incendie commode].
+Une famille [|Aubert|Gontier|Nanteuil|Vigoureux] [|doit sa fortune à un crime commis il y a deux générations|cache un membre sous une autre identité depuis des années|a signé un accord secret avec [|le seigneur|la guilde|une organisation qu'on ne nomme pas]].
+Sous [|la place centrale|l'église|la forge|l'auberge|les caves du notaire] se trouve [|un réseau de tunnels|une chambre scellée depuis cinquante ans|une salle que seuls trois personnes vivantes connaissent|quelque chose qu'on a décidé de ne jamais remonter à la surface].
+Le [|guérisseur|curé|ancien maire|forgeron] ne [|vit pas sous sa véritable identité|est pas originaire d'où il prétend|est pas seul dans sa maison — quelqu'un y est caché depuis des mois].
+La source d'eau [|guérisseuse|réputée pure|qui alimente le village] [|est contaminée depuis toujours, les habitants ont simplement développé une immunité|doit son effet à une substance que personne n'oserait nommer|est la raison réelle pour laquelle ce village existe ici plutôt qu'ailleurs].
+Il y a [|vingt|trente|cinquante] ans, quelqu'un [|a été tué et enterré sans procès|a disparu après avoir découvert quelque chose|a été chassé du village pour une raison inventée] — et [|ses descendants ne le savent pas encore|la personne responsable est toujours là|les preuves ont resurgi].
+Le village [|verse un tribut annuel secret à [|une créature|un culte|un bandit devenu seigneur|une entité que personne ne décrit clairement]|est protégé par un pacte dont personne ne connaît les termes exacts|a survécu à quelque chose d'inexplicable en échange d'un silence collectif].
+Un enfant du village [|est en réalité [|d'origine noble|l'héritier d'une fortune|le fils ou la fille d'un ennemi qu'on croyait mort]|possède un don que ses parents cachent avec soin|a vu quelque chose que les adultes n'auraient pas dû lui laisser voir].
+
+// ----------------------------------------------------------------
+// Rumeurs
+// ----------------------------------------------------------------
+
+Table: rumeur
+On dit que [@prenom_pnj] [@nom_pnj] [|a vu des lumières dans les ruines la nuit passée|n'est pas revenu(e) de sa tournée habituelle|a eu une altercation avec un inconnu devant chez lui/elle|cache quelque chose dans sa cave depuis le mois dernier].
+Paraît-il que [|la source du moulin a tari deux fois déjà cette année|le puits a rendu une odeur de soufre ce matin|les chiens refusent d'approcher le cimetière depuis trois jours|des empreintes étranges ont été trouvées dans la boue de la rivière].
+D'après [|la vieille [@prenom_pnj]|le meunier|les gamins qui jouent près des ruines|un voyageur de passage], [|on entend des voix dans la forêt la nuit|une lumière se promène seule dans le grenier de la maison abandonnée|quelqu'un creuse dans le champ du bas depuis des semaines].
+Il paraît que [|le comte va hausser les taxes encore|une troupe militaire se dirige vers le village|un important marchand a été dévalisé sur la route du nord|une épidémie a frappé le village voisin de [@nom_ville]].
+On murmure que [@prenom_pnj] [|a accepté de l'argent d'un inconnu sans l'expliquer|cherche à vendre sa propriété discrètement|reçoit des lettres qu'il/elle brûle aussitôt lues|a rencontré quelqu'un la nuit dernière au bord de la rivière].
+Le fils [|Aubert|Gontier|Favreau|Vigoureux] prétend avoir [|trouvé quelque chose d'étrange en labourant|vu un étranger noter des mesures autour de l'église|entendu deux hommes parler d'un « plan » dans l'auberge].
+Personne ne sait pourquoi [|[@prenom_pnj] n'est plus reçu(e) chez le maire|la porte de la cave du notaire est scellée depuis lundi|la bergerie du haut a été vidée en une nuit|le cheval du guérisseur est revenu seul].
