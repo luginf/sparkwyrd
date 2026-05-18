@@ -2,49 +2,141 @@ Header: <b>Générateur de personnages de fiction</b>
 Footer: <hr><i>Ce personnage attend que vous lui donniez vie.</i>
 
 Table: personnage
-Set: prenom = [@prenom]
+Set: sexe = [@sexe_val]
+Set: il = [@v_il_{sexe}]
+Set: IL = [@v_IL_{sexe}]
+Set: le = [@v_le_{sexe}]
+Set: e = [@v_e_{sexe}]
+Set: ne = [@v_ne_{sexe}]
+Set: euse = [@v_euse_{sexe}]
+Set: luimeme = [@v_luimeme_{sexe}]
+Set: prenom = [@prenom_{sexe}]
 Set: nom = [@nom]
 Set: age = [@age]
-Set: genre = [@genre_gram]
 <b>FICHE PERSONNAGE</b>\n&
 \n&
-Prénom :         <b>{prenom}</b>\n&
-Nom :            <b>{nom}</b>\n&
-Âge :            {age}\n&
+Prénom :              <b>{prenom}</b>\n&
+Nom :                 <b>{nom}</b>\n&
+Âge :                 {age}\n&
+Sexe :                [@v_sexelabel_{sexe}]\n&
 \n&
-Description :    [@description]\n&
+Description :         [@description]\n&
 \n&
-Signes particuliers : [@signes_particuliers]\n&
+Signes particuliers : [!1 signes_particuliers]\n&
 \n&
-Emploi :         [@emploi]\n&
+Emploi :              [@emploi_{sexe}]\n&
 \n&
-Cheveux :        [@cheveux]\n&
-Yeux :           [@yeux]\n&
-Taille :         [@taille] cm\n&
-Poids :          [@poids] kg\n&
+Cheveux :             [@cheveux]\n&
+Yeux :                [@yeux]\n&
+Taille :              [@taille] cm\n&
+Poids :               [@poids] kg\n&
 \n&
-Adresse :        [@adresse]\n&
+Adresse :             [@adresse]\n&
 \n&
-Buts :           [@but]\n&
-                 [@but]
+<b>PERSONNALITÉ</b>\n&
+Trait 1 : [!1 trait_perso]\n&
+Trait 2 : [!1 trait_perso]\n&
+\n&
+<b>RELATION IMPORTANTE</b>\n&
+[@relation]\n&
+\n&
+<b>SECRET</b>\n&
+[@secret_perso]\n&
+\n&
+<b>CRAINTE PROFONDE</b>\n&
+[@crainte]\n&
+\n&
+<b>MANIÈRE DE PARLER</b>\n&
+[@maniere_parler]\n&
+\n&
+<b>FRAGMENT DE PASSÉ</b>\n&
+[@fragment_passe]\n&
+\n&
+<b>BUTS</b>\n&
+— [!1 but]\n&
+— [!1 but]
 
-// ----------------------------------------------------------------
+// ================================================================
+// Variables de genre
+// ================================================================
+
+Table: sexe_val
+f
+m
+
+Table: v_sexelabel_f
+Féminin
+Table: v_sexelabel_m
+Masculin
+
+// Pronom sujet
+Table: v_il_f
+elle
+Table: v_il_m
+il
+
+// Pronom sujet (majuscule, début de phrase)
+Table: v_IL_f
+Elle
+Table: v_IL_m
+Il
+
+// Pronom complément (la / le)
+Table: v_le_f
+la
+Table: v_le_m
+le
+
+// Suffixe adjectif régulier   fatigué{e} → fatiguée / fatigué
+Table: v_e_f
+e
+Table: v_e_m
+\z
+
+// Suffixe -ne   ancien{ne} → ancienne / ancien
+Table: v_ne_f
+ne
+Table: v_ne_m
+\z
+
+// Suffixe -eux/-euse   séri{euse} / silenci{euse} / nerv{euse}
+Table: v_euse_f
+euse
+Table: v_euse_m
+eux
+
+// Pronom réflexif accentué
+Table: v_luimeme_f
+elle-même
+Table: v_luimeme_m
+lui-même
+
+// Irréguliers
+Table: v_doux_f
+douce
+Table: v_doux_m
+doux
+
+Table: v_discret_f
+discrète
+Table: v_discret_m
+discret
+
+Table: v_attentif_f
+Attentive
+Table: v_attentif_m
+Attentif
+
+Table: v_rieur_cap_f
+Rieuse
+Table: v_rieur_cap_m
+Rieur
+
+// ================================================================
 // Identité
-// ----------------------------------------------------------------
+// ================================================================
 
-Table: prenom
-// Prénoms mixtes, fréquents en France
-Camille
-Alex
-Charlie
-Morgan
-Sacha
-Dominique
-Maxime
-Alexis
-Émile
-Stéphane
-// Prénoms féminins
+Table: prenom_f
 Léa
 Nora
 Élise
@@ -55,11 +147,33 @@ Inès
 Amandine
 Lucie
 Chloé
+Delphine
 Marine
 Aurélie
-// Prénoms masculins
+Diane
+Margaux
+Estelle
+Sandrine
+Valérie
+Cécile
+Nathalie
+Hélène
+Sylvie
+Virginie
+Camille
+Sacha
+Claudine
+Alex
+Charlie
+Morgan
+Dominique
+Claude
+Leslie
+
+Table: prenom_m
 Mathis
 Julien
+Alexis
 Simon
 Antoine
 Thomas
@@ -70,6 +184,25 @@ Baptiste
 Nicolas
 Théo
 Florian
+Romain
+Adrien
+Guillaume
+Laurent
+Sébastien
+Sylvain
+Olivier
+Michel
+Kevin
+Yannick
+Maxime
+Stéphane
+Émile
+Renaud
+Camille
+Éric
+Sacha
+Alex
+Dominique
 
 Table: nom
 Vernet
@@ -97,6 +230,16 @@ Thomas
 Robert
 Petit
 Richard
+Blanc
+Fontaine
+Garnier
+Henry
+Durand
+Legrand
+Mercier
+Morel
+Roux
+Vincent
 
 // ----------------------------------------------------------------
 // Âge
@@ -109,90 +252,143 @@ Table: age
 {1d6 + 36} ans
 {1d6 + 45} ans
 {1d6 + 55} ans
+{1d6 + 62} ans
 
-// ----------------------------------------------------------------
-// Genre grammatical (pour les accords)
-// ----------------------------------------------------------------
-
-Table: genre_gram
-féminin
-masculin
-
-// ----------------------------------------------------------------
-// Description physique générale
-// ----------------------------------------------------------------
+// ================================================================
+// Apparence
+// ================================================================
 
 Table: description
 [@morphologie_generale] ; [@allure_generale]
 
 Table: morphologie_generale
-De taille [|petite|moyenne|grande], [|mince|svelte|athlétique|enrobé(e)|robuste|corpulent(e)]
-Corpulence [|fine|moyenne|athlétique|forte], traits [|fins|marqués|anguleux|ronds|réguliers|irréguliers]
-Silhouette [|élancée|trapue|large d'épaules|gracieuse|massive|ordinaire], peau [|claire|mate|foncée|hâlée|pâle|olivâtre]
+De taille [|petite|moyenne|grande], [|mince|svelte|athlétique|enrobé{e}|robuste|corpulent{e}]
+Corpulence [|fine|moyenne|athlétique|forte], traits [|fins|marqués|anguleux|ronds|réguliers|irréguliers|fatigués]
+Silhouette [|élancée|trapue|large d'épaules|gracieuse|massive|ordinaire], peau [|claire|mate|foncée|hâlée|pâle|olivâtre|travelée]
+[|Petit{e} et nerv{euse}|Grand{e} et [@v_discret_{sexe}]|Tout en angles|Tout en rondeurs|D'une beauté ordinaire qui s'impose avec le temps]
 
 Table: allure_generale
-l'air [|fatigué(e)|méfiant(e)|jovial(e)|distant(e)|sérieux/sérieuse|doux/douce|dur(e)|intrigant(e)] au premier abord
-une présence [|discrète qu'on finit par remarquer|immédiate qui impose le respect|effacée, presque transparente|chaleureuse qui met à l'aise]
-quelque chose dans la façon dont [|il/elle se tient|il/elle regarde|il/elle parle|il/elle écoute] qui ne s'explique pas facilement
+l'air [|fatigué{e}|méfiant{e}|jovial{e}|distant{e}|séri{euse}|[@v_doux_{sexe}]|dur{e}|intrigant{e}|ailleurs|concentré{e}] au premier abord
+une présence [|discrète qu'on finit par remarquer|immédiate qui impose le respect|effacée, presque transparente|chaleureuse qui met à l'aise|inquiétante sans raison précise]
+quelque chose dans la façon dont [{il} se tient|{il} regarde|{il} parle|{il} écoute|{il} entre dans une pièce] qui ne s'explique pas facilement
+le genre de visage qu'on oublie juste après — et qu'on reconnaît dans un rêve
 
-// ----------------------------------------------------------------
+// ================================================================
 // Signes particuliers
-// ----------------------------------------------------------------
+// ================================================================
 
 Table: signes_particuliers
-une cicatrice [|sur la joue gauche|au menton|sur le front|au-dessus du sourcil droit|sur la nuque|le long de l'avant-bras]
-[|une légère claudication|un tremblement imperceptible des mains|une façon particulière de pencher la tête en écoutant]
-un [|tatouage|piercing discret|grain de beauté proéminent] [|sur le cou|sous l'oreille gauche|à la base du poignet|sur l'épaule]
-des mains [|abîmées|toujours propres avec soin|trop soigneusement manucurées|couvertes d'encre]
-une [|voix particulièrement grave|voix douce en décalage avec la stature|façon de rire en silence|habitude de relire chaque phrase une fois écrite]
-[|aucun signe distinctif apparent — ce qui est en soi remarquable|une discrétion absolue, comme une absence volontaire de toute marque]
-[|une légère dyslexie visible à l'écrit|un tic discret : touche son oreille quand il/elle ment|ne cligne presque jamais des yeux]
-une [|prothèse de main gauche|déficience auditive appareillée|photosensibilité qui lui impose des lunettes teintées en intérieur]
+une cicatrice [|sur la joue gauche|au menton|sur le front|au-dessus du sourcil droit|sur la nuque|le long de l'avant-bras|sur la paume de la main droite]
+[|une légère claudication|un tremblement imperceptible des mains|une façon particulière de pencher la tête en écoutant|des pauses trop longues avant de répondre]
+un [|tatouage|piercing discret|grain de beauté proéminent] [|sur le cou|sous l'oreille gauche|à la base du poignet|sur l'épaule|dans le creux du coude]
+des mains [|abîmées|toujours propres avec soin|trop soigneusement manucurées|couvertes d'encre|qui ne tiennent jamais rien en vain]
+une [|voix particulièrement grave|voix douce en décalage avec la stature|façon de rire en silence|habitude de relire chaque phrase une fois écrite|manière de fixer les sorties en entrant dans une pièce]
+[|aucun signe distinctif apparent — ce qui est en soi remarquable|une discrétion absolue, comme une absence volontaire de toute marque visible]
+[|une légère dyslexie visible à l'écrit|un tic discret : touche son oreille gauche quand {il} ment|ne cligne presque jamais des yeux en situation de stress]
+une [|prothèse de main gauche|déficience auditive appareillée|photosensibilité qui lui impose des lunettes teintées en intérieur|allergie sévère qui oblige à toujours vérifier]
+une façon de [|vérifier trois fois que la porte est fermée|compter ses respirations dans les espaces bondés|éviter les miroirs sans en avoir conscience|ne jamais s'asseoir dos à la porte]
+des vêtements toujours [|impeccables, sans exception|pratiques au point de sembler militaires|en léger décalage avec la situation — trop formels ou trop décontractés|portant les marques de quelque chose qu'{il} ne nomme pas]
 
-// ----------------------------------------------------------------
-// Emploi
-// ----------------------------------------------------------------
+// ================================================================
+// Emploi (accordé)
+// ================================================================
 
-Table: emploi
-[|journaliste|rédactrice en chef] pour [|un grand quotidien|un magazine indépendant|un média en ligne|une agence de presse]
-[|médecin généraliste|urgentiste|médecin légiste|psychiatre] [|en cabinet libéral|dans un hôpital public|dans une clinique privée]
-[|enseignant(e)|maître(sse) de conférences|professeur(e) agrégé(e)] en [|histoire|philosophie|sciences économiques|lettres|droit]
-[|architecte|urbaniste] indépendant(e), spécialisé(e) dans [|la réhabilitation|les bâtiments publics|le logement social|le patrimoine]
-[|ingénieur(e)|chef(fe) de projet] dans [|l'informatique|l'industrie pharmaceutique|l'énergie|le conseil en stratégie]
-[|avocat(e)|notaire|huissier(ère)] [|au barreau de Paris|dans un cabinet régional|spécialisé(e) en droit des affaires|en droit pénal]
-[|libraire|éditeur/éditrice|traducteur/traductrice] — [|passionné(e) mais précaire|reconnu(e) dans son domaine|en reconversion forcée]
-[|cuisinier(ère)|chef de cuisine] dans [|un restaurant gastronomique|une cantine scolaire|un food-truck|un hôtel de luxe]
-[|infirmier(ère)|aide-soignant(e)|kinésithérapeute] [|en hôpital|en EHPAD|à domicile]
-[|gendarme|policier(ère)|inspecteur/inspectrice] [|en brigade criminelle|en zone rurale|dans un service spécialisé|proche de la retraite]
-[|entrepreneur(e)|fondateur/fondatrice] d'une [|start-up technologique|association culturelle|entreprise artisanale|coopérative agricole]
-[|sans emploi déclaré|travailleur/travailleuse indépendant(e) aux revenus irréguliers|à la retraite anticipée pour raisons de santé]
+Table: emploi_f
+journaliste pour [|un grand quotidien|un magazine indépendant|un média en ligne|une agence de presse|une chaîne d'info en continu]
+rédactrice en chef pour [|un grand quotidien|un magazine indépendant|un média en ligne]
+correspondante pour [|une agence de presse internationale|une chaîne d'information|un journal régional]
+médecin généraliste [|en cabinet libéral|dans un hôpital public|dans une clinique privée|en zone sous-dotée]
+urgentiste dans [|un hôpital public|un CHU|une clinique privée]
+médecin légiste attachée à [|un service de police judiciaire|un CHU|un cabinet médico-légal]
+psychiatre [|en cabinet libéral|dans un hôpital public|dans une clinique privée]
+addictologue [|en cabinet|en centre de soins|dans un service hospitalier]
+enseignante en [|histoire|philosophie|sciences économiques|lettres|droit|sociologie|psychologie]
+maîtresse de conférences en [|histoire|philosophie|lettres|droit|sociologie]
+professeure agrégée de [|français|histoire|philosophie|sciences économiques|droit]
+architecte indépendante, spécialisée dans [|la réhabilitation|les bâtiments publics|le logement social|le patrimoine|les friches industrielles]
+urbaniste spécialisée dans [|les zones périurbaines|le renouvellement urbain|les espaces publics]
+ingénieure dans [|l'informatique|l'industrie pharmaceutique|l'énergie|le conseil en stratégie|la cybersécurité]
+cheffe de projet dans [|une ESN|une grande entreprise industrielle|le secteur public|une agence conseil]
+avocate [|au barreau de Paris|dans un cabinet régional|spécialisée en droit des affaires|en droit pénal|en droit de la famille]
+notaire dans [|une étude parisienne|un cabinet régional|une petite ville de province]
+libraire — [|passionnée mais précaire|reconnue dans son domaine|en reconversion forcée]
+éditrice — [|spécialisée en littérature étrangère|dans le secteur scolaire|dans une maison indépendante|en prise de poste après un long congé]
+traductrice — [|littéraire|judiciaire|technique|pour l'édition]
+correctrice — [|en presse|pour une maison d'édition|en freelance]
+cuisinière dans [|un restaurant gastronomique|une cantine scolaire|un hôtel de luxe]
+cheffe de cuisine dans [|un restaurant étoilé|un restaurant de collectivité|un établissement de luxe]
+pâtissière dans [|une pâtisserie artisanale|un palace|un salon de thé renommé]
+infirmière [|en hôpital|en EHPAD|à domicile|dans un centre de soins palliatifs]
+aide-soignante [|en hôpital|en EHPAD|à domicile]
+kinésithérapeute [|en cabinet libéral|en hôpital|à domicile]
+policière [|en brigade criminelle|en zone urbaine|dans un service spécialisé|proche de la retraite]
+inspectrice [|de la police judiciaire|dans un service spécialisé|d'une brigade criminelle]
+gendarme dans [|une brigade rurale|un groupement départemental|une section de recherches]
+entrepreneuse, fondatrice d'une [|start-up technologique|association culturelle|entreprise artisanale|coopérative]
+conservatrice [|de musée|d'archives|d'un fonds photographique|d'un musée d'art]
+restauratrice [|de tableaux|d'objets d'art|de documents anciens]
+auditrice dans [|une grande administration|un cabinet comptable international|un organisme de contrôle indépendant]
+contrôleuse dans [|une administration fiscale|un organisme de régulation|un service d'inspection]
+chercheuse en [|neurologie|génétique|histoire contemporaine|sciences politiques|sociologie] dont les travaux ont attiré une attention [|indésirable|inattendue|dangereuse]
+cryptographe ou analyste en [|renseignement|cybersécurité|conformité réglementaire] pour une organisation dont elle connaît mal les véritables activités
+sans emploi déclaré — [|entre deux projets|après une rupture professionnelle|en retrait volontaire]
+à la retraite anticipée pour [|raisons de santé|convenance personnelle|suite à une restructuration]
 
-// ----------------------------------------------------------------
-// Cheveux
-// ----------------------------------------------------------------
+Table: emploi_m
+journaliste pour [|un grand quotidien|un magazine indépendant|un média en ligne|une agence de presse|une chaîne d'info en continu]
+rédacteur en chef pour [|un grand quotidien|un magazine indépendant|un média en ligne]
+correspondant pour [|une agence de presse internationale|une chaîne d'information|un journal régional]
+médecin généraliste [|en cabinet libéral|dans un hôpital public|dans une clinique privée|en zone sous-dotée]
+urgentiste dans [|un hôpital public|un CHU|une clinique privée]
+médecin légiste attaché à [|un service de police judiciaire|un CHU|un cabinet médico-légal]
+psychiatre [|en cabinet libéral|dans un hôpital public|dans une clinique privée]
+addictologue [|en cabinet|en centre de soins|dans un service hospitalier]
+enseignant en [|histoire|philosophie|sciences économiques|lettres|droit|sociologie|psychologie]
+maître de conférences en [|histoire|philosophie|lettres|droit|sociologie]
+professeur agrégé de [|français|histoire|philosophie|sciences économiques|droit]
+architecte indépendant, spécialisé dans [|la réhabilitation|les bâtiments publics|le logement social|le patrimoine|les friches industrielles]
+urbaniste spécialisé dans [|les zones périurbaines|le renouvellement urbain|les espaces publics]
+ingénieur dans [|l'informatique|l'industrie pharmaceutique|l'énergie|le conseil en stratégie|la cybersécurité]
+chef de projet dans [|une ESN|une grande entreprise industrielle|le secteur public|une agence conseil]
+avocat [|au barreau de Paris|dans un cabinet régional|spécialisé en droit des affaires|en droit pénal|en droit de la famille]
+notaire dans [|une étude parisienne|un cabinet régional|une petite ville de province]
+libraire — [|passionné mais précaire|reconnu dans son domaine|en reconversion forcée]
+éditeur — [|spécialisé en littérature étrangère|dans le secteur scolaire|dans une maison indépendante|en prise de poste après un long congé]
+traducteur — [|littéraire|judiciaire|technique|pour l'édition]
+correcteur — [|en presse|pour une maison d'édition|en freelance]
+cuisinier dans [|un restaurant gastronomique|une cantine scolaire|un hôtel de luxe]
+chef de cuisine dans [|un restaurant étoilé|un restaurant de collectivité|un établissement de luxe]
+pâtissier dans [|une pâtisserie artisanale|un palace|un salon de thé renommé]
+infirmier [|en hôpital|en EHPAD|à domicile|dans un centre de soins palliatifs]
+aide-soignant [|en hôpital|en EHPAD|à domicile]
+kinésithérapeute [|en cabinet libéral|en hôpital|à domicile]
+policier [|en brigade criminelle|en zone urbaine|dans un service spécialisé|proche de la retraite]
+inspecteur [|de la police judiciaire|dans un service spécialisé|d'une brigade criminelle]
+gendarme dans [|une brigade rurale|un groupement départemental|une section de recherches]
+entrepreneur, fondateur d'une [|start-up technologique|association culturelle|entreprise artisanale|coopérative]
+conservateur [|de musée|d'archives|d'un fonds photographique|d'un musée d'art]
+restaurateur [|de tableaux|d'objets d'art|de documents anciens]
+auditeur dans [|une grande administration|un cabinet comptable international|un organisme de contrôle indépendant]
+contrôleur dans [|une administration fiscale|un organisme de régulation|un service d'inspection]
+chercheur en [|neurologie|génétique|histoire contemporaine|sciences politiques|sociologie] dont les travaux ont attiré une attention [|indésirable|inattendue|dangereuse]
+cryptographe ou analyste en [|renseignement|cybersécurité|conformité réglementaire] pour une organisation dont il connaît mal les véritables activités
+sans emploi déclaré — [|entre deux projets|après une rupture professionnelle|en retrait volontaire]
+à la retraite anticipée pour [|raisons de santé|convenance personnelle|suite à une restructuration]
+
+// ================================================================
+// Attributs physiques
+// ================================================================
 
 Table: cheveux
-[|Noirs|Châtains|Bruns|Blonds|Roux|Gris|Blancs|Poivre et sel] et [|courts|mi-longs|longs|rasés|tressés|en chignon|bouclés|raides|ondulés|frisés|épais|fins|clairsemés]
-
-// ----------------------------------------------------------------
-// Yeux
-// ----------------------------------------------------------------
+[|Noirs|Châtains|Bruns|Blonds|Roux|Gris|Blancs|Poivre et sel|Décolorés|Teints — couleur passée] et [|courts|mi-longs|longs|rasés|tressés|en chignon|bouclés|raides|ondulés|frisés|épais|fins|clairsemés|toujours légèrement en désordre|impeccablement entretenus]
 
 Table: yeux
-[|Marron foncé|Marron clair|Noisette|Verts|Bleu-gris|Bleus|Gris|Noirs|Ambrés|Gris-verts] ; [|regard vif et perçant|regard fatigué|regard doux|regard méfiant|regard lointain|regard attentif qui ne laisse rien passer]
-
-// ----------------------------------------------------------------
-// Taille (en cm)
-// ----------------------------------------------------------------
+[|Marron foncé|Marron clair|Noisette|Verts|Bleu-gris|Bleus|Gris|Noirs|Ambrés|Gris-verts|Très clairs, presque translucides] ; [|regard vif et perçant|regard fatigué|regard doux|regard méfiant|regard lointain|regard attentif qui ne laisse rien passer|regard qui cherche toujours la sortie|regard qui sourit avant le visage|regard qui ne sourit jamais vraiment]
 
 Table: taille
 {1d14 + 154}
 {1d14 + 162}
 {1d14 + 170}
-
-// ----------------------------------------------------------------
-// Poids (en kg)
-// ----------------------------------------------------------------
 
 Table: poids
 {1d16 + 48}
@@ -200,9 +396,9 @@ Table: poids
 {1d16 + 68}
 {1d16 + 78}
 
-// ----------------------------------------------------------------
+// ================================================================
 // Adresse
-// ----------------------------------------------------------------
+// ================================================================
 
 Table: adresse
 [@numero] [@type_voie] [@nom_voie], [@ville_code] — [@type_logement]
@@ -215,6 +411,7 @@ Table: numero
 {1d10 + 30}
 {1d10 + 50}
 {1d10 + 75}
+{1d6 + 100}
 
 Table: type_voie
 rue
@@ -226,13 +423,20 @@ place
 chemin
 passage
 square
+voie
+ruelle
+cité
+hameau
 
 Table: nom_voie
-[|des Acacias|de la République|du Général-de-Gaulle|des Lilas|Victor-Hugo|Gambetta|Jean-Jaurès|des Martyrs|de la Paix|du Moulin|des Cerisiers|Saint-Exupéry|Pasteur|Voltaire|Émile-Zola|du Vieux-Port|de la Fontaine|des Roses|du Château|de la Liberté]
+[|des Acacias|de la République|du Général-de-Gaulle|des Lilas|Victor-Hugo|Gambetta|Jean-Jaurès|des Martyrs|de la Paix|du Moulin|des Cerisiers|Saint-Exupéry|Pasteur|Voltaire|Émile-Zola|du Vieux-Port|de la Fontaine|des Roses|du Château|de la Liberté|de l'Église|des Écoles|du Commerce|des Artisans|Nationale|des Quatre-Vents|du Faubourg|de la Forêt|des Chênes|du Lac|de la Gare|des Mimosas|de la Paroisse]
 
 Table: ville_code
 75013 Paris
+75018 Paris
+75020 Paris
 69007 Lyon
+69009 Lyon
 13006 Marseille
 33000 Bordeaux
 59000 Lille
@@ -246,23 +450,175 @@ Table: ville_code
 51100 Reims
 21000 Dijon
 72000 Le Mans
+57000 Metz
+25000 Besançon
+45000 Orléans
+63000 Clermont-Ferrand
+29200 Brest
+35000 Rennes
+13100 Aix-en-Provence
 
 Table: type_logement
-[|appartement T2|appartement T3|studio en rez-de-chaussée|appartement sous les toits|appartement en rez-de-jardin] [|en location|en propriété|partagé|sous-loué]
-[|pavillon de banlieue|maison mitoyenne|maison individuelle] avec [|jardin|garage|terrasse|cave]
+[|appartement T2|appartement T3|studio en rez-de-chaussée|appartement sous les toits|appartement en rez-de-jardin|appartement avec vue sur cour] [|en location|en propriété|en sous-location|prêté par quelqu'un qui ne sait pas encore qu'il ne reviendra pas]
+[|pavillon de banlieue|maison mitoyenne|maison individuelle] avec [|jardin mal entretenu|garage converti en bureau|terrasse inutilisée|cave remplie de cartons jamais ouverts]
+[|chambre de bonne convertie|studio au dernier étage d'un immeuble sans ascenseur] — provisoire depuis [|deux ans|cinq ans]
 
-// ----------------------------------------------------------------
+// ================================================================
+// Personnalité (traits accordés)
+// ================================================================
+
+Table: trait_perso
+[@v_attentif_{sexe}] aux détails que les autres ignorent — ce qui est une qualité professionnelle et un fardeau personnel.
+Capable de rester calme dans une crise ; incapable de l'être après.
+D'une loyauté absolue envers les rares personnes qui l'ont mérité — et d'une froideur totale envers les autres.
+Drôle, mais seulement dans les moments où c'est inapproprié.
+En apparence ouvert{e} et accessible ; en réalité, personne ne {le} connaît vraiment.
+Économe de ses mots — quand {il} parle, ça compte.
+Honnête jusqu'à la maladresse — ne sait pas mentir par omission.
+Impatient{e} avec la médiocrité, indulgent{e} avec l'échec sincère.
+Incapable de demander de l'aide, même en situation d'urgence.
+Lit les gens rapidement et rarement faux — ce qui lui donne une longueur d'avance et lui interdit certaines illusions.
+Met du temps à faire confiance, mais une fois qu'{il} l'a accordée, ne revient presque jamais dessus.
+N'oublie rien et ne pardonne pas facilement — pas par rancoeur, mais parce que les faits restent les faits.
+Perfectionniste dans son domaine ; indifférent{e} à tout le reste.
+Pragmatique au point de sembler froid{e} — ce n'est pas de l'indifférence, c'est de l'efficacité.
+Quelqu'un qui doute de tout sauf de ses propres doutes.
+[@v_rieur_cap_{sexe}] en surface ; rigor{euse} dans les profondeurs.
+S'adapte vite — trop vite parfois, au point d'oublier ce qu'{il} voulait réellement.
+Silenci{euse} dans les groupes, éloquent{e} en tête à tête.
+Toujours en train de préparer la sortie, même quand tout va bien.
+Une tendresse profonde et mal exprimée — les gens la ressentent sans jamais en avoir la preuve directe.
+Un sens de l'humour trop sec pour la plupart des situations sociales — décalé, mais jamais cruel.
+Voit les systèmes et les structures là où les autres voient des individus.
+
+// ================================================================
+// Relation importante
+// — Les adjectifs concernant l'autre personne restent en forme (e)
+//   car le genre de cette personne est indéterminé.
+// ================================================================
+
+Table: relation
+[@prenom_rel] [@nom_rel], [@lien_rel] — [@etat_rel]
+
+Table: prenom_rel
+Sylvain
+Diane
+Laurent
+Carine
+Olivier
+Véronique
+Michel
+Adrien
+Margaux
+Rémi
+Estelle
+Guillaume
+Nadia
+Pascal
+Élise
+Bertrand
+Sophie
+Arnaud
+Isabelle
+David
+
+Table: nom_rel
+Fontaine
+Blanc
+Dupuis
+Garnier
+Henry
+Morel
+Marchand
+Colbert
+Faure
+Deschamps
+
+Table: lien_rel
+[|ami(e) d'enfance|meilleur(e) ami(e) depuis vingt ans|seule amitié qui ait survécu]
+[|ex-conjoint(e)|premier/première amour|partenaire de [|cinq|huit|douze] ans dont la rupture n'est pas entièrement réglée]
+[|frère/sœur|demi-frère/demi-sœur|cousin(e) avec qui {il} a grandi] avec qui les liens sont [|solides mais non dits|distants depuis [|l'héritage|un malentendu|une vérité dite de trop]]
+[|collègue de confiance|ancien(ne) supérieur(e) devenu(e) ami(e)|mentor|protégé(e)]
+[|parent encore vivant|parent décédé dont la présence se fait encore sentir]
+
+Table: etat_rel
+Toujours présent(e) — la seule personne à qui {il} téléphonerait à 3 h du matin.
+En froid depuis [|six mois|deux ans|une conversation qu'aucun des deux ne sait comment reprendre].
+Disparu(e) — pas mort(e), juste [|injoignable|parti(e) sans explication|quelque part où on ne lui pose pas de questions].
+Trop proche — au point que la relation est devenue une dépendance mutuelle dont aucun des deux ne sait comment sortir.
+La seule personne qui connaît le vrai secret — et qui a promis de ne jamais en parler.
+
+// ================================================================
+// Secret
+// ================================================================
+
+Table: secret_perso
+{IL} a fait quelque chose il y a [|dix|quinze|vingt] ans dont {il} n'a jamais parlé — pas par honte, mais parce qu'il n'y a pas de mot juste pour le nommer.
+{IL} maintient une identité parallèle : [|un nom différent dans une autre ville|un compte qu'aucun de ses proches ne connaît|une relation que personne dans son entourage n'a rencontrée].
+Quelque chose dans son passé professionnel n'est pas ce qu'{il} prétend — [|le diplôme|la référence|l'expérience clé|la raison du licenciement].
+{IL} sait quelque chose sur quelqu'un de proche qui changerait tout si {il} le disait — et choisit de ne pas le dire.
+{IL} a survécu à quelque chose dont {il} n'a jamais fait le deuil — [|un accident|une agression|une perte|une trahison] — et a appris à fonctionner autour du vide.
+{IL} est en contact avec une personne que ses proches croient [|morte|hors de sa vie|dangereuse|à éviter].
+{IL} a commencé quelque chose qu'{il} ne peut pas arrêter — [|une enquête informelle|une relation interdite|une dette envers quelqu'un d'influent|une habitude qui reviendra un jour {le} rattraper].
+
+// ================================================================
+// Crainte profonde
+// ================================================================
+
+Table: crainte
+Devenir [|son père|sa mère|la personne qu'{il} a le plus critiquée] — et ne pas s'en apercevoir avant qu'il soit trop tard.
+Que les gens proches découvrent [|à quel point {il} doute|le secret|ce qu'{il} a réellement ressenti lors de l'événement fondateur|qu'{il} a simulé une certitude qu'{il} n'a jamais eue].
+Mourir [|seul(e)|sans avoir réglé quelque chose d'essentiel|en étant encore mal compris{e}].
+Perdre le contrôle — de [|la situation|ses émotions|sa lucidité|sa mémoire|sa réputation].
+Que tout ce qu'{il} a construit repose sur [|une erreur de jugement fondamentale|la gentillesse non méritée d'autrui|un mensonge dont {il} a fini par oublier l'origine].
+[|L'abandon|L'indifférence] — pas la haine, juste [|l'absence de réaction|le fait de ne plus compter|être remplacé{e} sans que personne ne le remarque vraiment].
+Retourner à [|l'endroit|la période|l'état] d'où {il} vient.
+Que la bonne décision soit celle qu'{il} ne prendra pas.
+
+// ================================================================
+// Manière de parler
+// ================================================================
+
+Table: maniere_parler
+Parle peu, mais de façon précise — chaque mot est choisi. Silence fréquent avant de répondre.
+Utilise l'humour pour désamorcer ce qui est difficile — drôle au mauvais moment, séri{euse} au bon.
+Pose des questions en retour plutôt que de répondre directement — rarement conscient{e} de le faire.
+Voix posée, débit lent — donne l'impression d'avoir toujours plus à dire qu'{il} ne le fait.
+Parle beaucoup en société, dit peu de choses personnelles — la loquacité comme couverture.
+Tendance à finir les phrases des autres — par impatience, pas par manque d'empathie.
+N'utilise jamais les formules de politesse automatiques — ce qui passe parfois pour de la froideur.
+Rit avant la chute de l'histoire — anticipe tout, ce qui énerve autant que ça rassure.
+Une légère hésitation sur certains mots — un accent effacé, une langue d'origine qu'{il} ne parle plus.
+Parle à voix basse, même quand ce n'est pas nécessaire — comme quelqu'un qui a appris à ne pas être entendu{e}.
+Répète ce que l'autre vient de dire avant de répondre — pour être sûr{e} d'avoir bien compris, ou pour gagner du temps.
+
+// ================================================================
+// Fragment de passé
+// ================================================================
+
+Table: fragment_passe
+À [|seize|dix-huit|vingt] ans, {il} a [|quitté|fui|choisi de ne pas retourner dans] la ville où {il} avait grandi — et n'est jamais revenu{e} voir ce qu'il en reste.
+{IL} a failli [|faire un autre choix|ne pas être là ce jour-là|dire quelque chose qui aurait tout changé]. {IL} ne sait pas si c'est une chance ou une erreur.
+Pendant [|deux ans|trois ans|une période dont {il} préfère ne pas préciser la durée], {il} a vécu d'une manière dont {il} n'a jamais vraiment parlé depuis.
+Quelqu'un l'a aidé{e} à un moment crucial — [|sans lui demander pourquoi|en prenant un risque réel|de façon anonyme] — et {il} n'a jamais su qui.
+{IL} a occupé [|ce poste|cette fonction|cette place dans la vie de quelqu'un] pendant [|assez longtemps pour que ça laisse une marque|trop longtemps|pas assez longtemps pour en tirer quelque chose].
+La dernière fois qu'{il} a vraiment fait confiance à quelqu'un, [|ça a bien tourné et c'est plus difficile à porter qu'une trahison|ça s'est mal terminé d'une façon qu'{il} ne sait toujours pas expliquer].
+{IL} a renoncé à quelque chose — [|une vocation|une relation|un idéal|une ville|une version de {luimeme}] — et la question de savoir si c'était juste ne lui a jamais vraiment quitté l'esprit.
+
+// ================================================================
 // Buts
-// ----------------------------------------------------------------
+// ================================================================
 
 Table: but
-Reconstruire une relation [|familiale|amoureuse|amicale] brisée par une erreur passée.
-Trouver enfin [|un endroit où être pleinement soi-même|la stabilité qui lui a toujours manqué|un sens à tout ce qui est arrivé].
-Percer à jour [|un mensonge qu'il/elle pressent depuis longtemps|un secret que les autres lui cachent|la vérité sur un événement fondateur de sa vie].
-[|Achever|Reprendre|Abandonner officiellement] un projet qui l'obsède depuis [|des années|l'adolescence|la mort d'un proche].
-Accumuler [|assez d'argent pour partir|les preuves nécessaires|la confiance des bonnes personnes] avant qu'il soit trop tard.
-Réparer une injustice [|ancienne|récente|que personne d'autre ne semble prêt à affronter].
-[|Fuir|Construire|Accepter] quelque chose que [|la société|sa famille|son passé|ses propres choix] lui impose.
-Préserver [|ce qui lui reste|l'unique personne en qui il/elle a encore confiance|une vérité que personne ne voudrait entendre].
-Prouver à [|lui-même/elle-même|son entourage|un rival|un parent disparu] qu'il/elle est capable de [|réussir|changer|survivre|partir].
-Comprendre pourquoi [|ça s'est terminé ainsi|il/elle est comme ça|les choses ont déraillé] — et décider quoi faire de cette compréhension.
+Reconstruire une relation [|familiale|amoureuse|amicale] brisée par une erreur dont {il} est responsable.
+Trouver enfin [|un endroit où être pleinement soi-même|la stabilité qui lui a toujours manqué|un sens à tout ce qui est arrivé|quelqu'un qui comprenne sans qu'il faille tout expliquer].
+Percer à jour [|un mensonge qu'{il} pressent depuis longtemps|un secret que les autres lui cachent|la vérité sur un événement fondateur de sa vie|la raison derrière quelque chose que personne n'a jamais expliqué].
+[|Achever|Reprendre|Abandonner officiellement] un projet qui l'obsède depuis [|des années|l'adolescence|la mort d'un proche|le moment où tout a déraillé].
+Accumuler [|assez d'argent pour partir|les preuves nécessaires|la confiance des bonnes personnes|le recul suffisant] avant qu'il soit trop tard.
+Réparer une injustice [|ancienne|récente|que personne d'autre ne semble prêt à affronter|dont {il} est partiellement responsable].
+[|Fuir|Construire|Accepter] quelque chose que [|la société|sa famille|son passé|ses propres choix|le hasard] lui impose.
+Préserver [|ce qui lui reste|l'unique personne en qui {il} a encore confiance|une vérité que personne ne voudrait entendre|une relation qu'{il} sait fragile].
+Prouver à [|{luimeme}|son entourage|un rival|un parent disparu|personne en particulier] qu'{il} est capable de [|réussir|changer|survivre|partir|recommencer].
+Comprendre pourquoi [|ça s'est terminé ainsi|{il} est comme ça|les choses ont déraillé|cette personne a fait ça] — et décider quoi faire de cette compréhension.
+Trouver le courage de [|dire quelque chose qu'{il} n'a jamais dit|partir avant qu'on le parte à sa place|rester alors que tout invite à partir|faire confiance une nouvelle fois].
+Vivre [|enfin pour {luimeme}|sans se retourner|sans s'excuser d'exister|à la hauteur de ce qu'{il} aurait pu être].

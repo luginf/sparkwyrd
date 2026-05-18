@@ -4,26 +4,41 @@ Footer: <hr><i>May the dice be ever in your favour.</i>
 Table: character
 Set: race = [@race]
 Set: class = [@class]
+Set: bg = [@background]
 Set: name = [@firstname_[@race]] [@surname]
 <b>CHARACTER SHEET</b>\n&
 Name:       <b>{name}</b>\n&
 Race:       {race}\n&
 Class:      {class}\n&
 Level:      {1d6 + 1}\n&
-Background: [@background]\n&
+Background: {bg}\n&
+\n&
+<b>APPEARANCE</b>\n&
+[@appearance_{race}]\n&
 \n&
 <b>ABILITY SCORES</b>\n&
 STR [{3d6} >> +-]  DEX [{3d6} >> +-]  CON [{3d6} >> +-]\n&
 INT [{3d6} >> +-]  WIS [{3d6} >> +-]  CHA [{3d6} >> +-]\n&
 \n&
+<b>PROFICIENCIES</b>\n&
+Skills:    [@skills_{bg}]\n&
+Languages: [@languages_{race}]\n&
+\n&
+<b>RACIAL ABILITY</b>\n&
+[@racial_{race}]\n&
+\n&
 <b>TRAITS</b>\n&
-Personality: [@personality]\n&
-Ideal:       [@ideal]\n&
-Bond:        [@bond]\n&
-Flaw:        [@flaw]\n&
+Personality: [!1 personality]\n&
+Ideal:       [!1 ideal]\n&
+Bond:        [!1 bond]\n&
+Flaw:        [!1 flaw]\n&
 \n&
 <b>EQUIPMENT</b>\n&
-[@equipment_[@class]]
+[@equipment_{class}]\n&
+Starting gold: {2d6 * 5} gp\n&
+\n&
+<b>BACKSTORY HOOK</b>\n&
+[@backstory]
 
 // ----------------------------------------------------------------
 // Races
@@ -38,6 +53,8 @@ Halfling
 Gnome
 Tiefling
 Dragonborn
+Half-Elf
+Aasimar
 
 // ----------------------------------------------------------------
 // Classes
@@ -56,13 +73,175 @@ Monk
 Sorcerer
 Warlock
 Barbarian
+Artificer
+Blood Hunter
+
+// ----------------------------------------------------------------
+// Appearance by race
+// ----------------------------------------------------------------
+
+Table: appearance_Human
+Hair: [@hair_human], Eyes: [@eyes], Build: [@build], Height: {1d10 + 163} cm
+Skin: [@skin_human]. Distinguishing feature: [@feature]
+
+Table: appearance_Elf
+Hair: [@hair_elf], Eyes: [@eyes_elf], Build: [|slender|willowy|graceful], Height: {1d8 + 168} cm
+Ears: [|slightly|noticeably|dramatically] pointed. Skin: [@skin_elf]. Feature: [@feature]
+
+Table: appearance_Dwarf
+Hair: [@hair_dwarf], Eyes: [@eyes], Build: [|stocky|barrel-chested|broad-shouldered|compact], Height: {1d6 + 134} cm
+Beard: [@beard_dwarf]. Skin: [@skin_human]. Feature: [@feature]
+
+Table: appearance_Half-Orc
+Hair: [@hair_human], Eyes: [|grey|pale yellow|deep brown|reddish|amber], Build: [|muscular|imposing|powerfully built|bulky], Height: {1d10 + 172} cm
+Tusks: [|small|prominent|filed down|cracked|decorated with rings]. Skin: [|grey-green|olive|dark grey|pale green]. Feature: [@feature]
+
+Table: appearance_Halfling
+Hair: [@hair_human], Eyes: [@eyes], Build: [|small and nimble|compact|round-faced|cheerful-looking], Height: {1d4 + 83} cm
+Feet: [|large and hairy|unusually tidy|callused from travel]. Skin: [@skin_human]. Feature: [@feature]
+
+Table: appearance_Gnome
+Hair: [@hair_gnome], Eyes: [|bright blue|vivid green|amber|violet|deep brown], Build: [|small|wiry|bouncy], Height: {1d4 + 92} cm
+Skin: [@skin_gnome]. Feature: [@feature]
+
+Table: appearance_Tiefling
+Hair: [@hair_tiefling], Eyes: [|solid black|solid white|glowing red|deep violet|amber without pupil], Build: [@build], Height: {1d8 + 163} cm
+Horns: [|small curved|long swept-back|spiralling|stubbed|asymmetrical]. Tail: [|thin whip-like|thick leonine|absent]. Skin: [|deep red|dark purple|dusky blue|pale grey]. Feature: [@feature]
+
+Table: appearance_Dragonborn
+Hair: none — [|smooth scales cover the scalp|small crest of scales|vestigial frills], Eyes: [@eyes_elf], Build: [|tall and muscular|broad|imposing|lean], Height: {1d10 + 178} cm
+Scale colour: [|red|gold|silver|black|blue|green|bronze|copper|white|brass]. Feature: [@feature]
+
+Table: appearance_Half-Elf
+Hair: [@hair_human], Eyes: [|bright green|light grey|violet|hazel|one brown one blue], Build: [@build], Height: {1d8 + 163} cm
+Ears: slightly tapered. Skin: [@skin_elf]. Feature: [@feature]
+
+Table: appearance_Aasimar
+Hair: [@hair_aasimar], Eyes: [|solid silver|solid gold|pale blue|glowing white], Build: [@build], Height: {1d8 + 165} cm
+Skin: [@skin_aasimar]. Halo: [|faint and invisible in daylight|visible in darkness|a warm golden shimmer when emotions run high|absent unless using divine power]. Feature: [@feature]
+
+// Hair tables
+
+Table: hair_human
+[|Black|Brown|Chestnut|Auburn|Blonde|Sandy|Grey|White|Salt-and-pepper] and [|short|cropped|medium-length|long|braided|tied back|tousled|shaved on one side]
+
+Table: hair_elf
+[|Silver|Platinum|Deep black|Golden|Pale blonde|Ash brown] and [|long and straight|swept back|braided with small flowers|pinned elaborately|loose to the waist]
+
+Table: hair_dwarf
+[|Black|Brown|Auburn|Red|Grey|White] and [|braided|tightly plaited|wild and unkempt|tied with a cord|adorned with small beads]
+
+Table: hair_gnome
+[|Bright red|Electric blue|Vivid green|Wild white|Shocking orange|Purple-tinged black] and [|sticking up in all directions|carefully styled into spirals|kept under a hat|braided with wire]
+
+Table: hair_tiefling
+[|Black|Deep red|Dark purple|White|Silver] and [|straight|curly|tied back tight|artfully dishevelled]
+
+Table: hair_aasimar
+[|Pure white|Golden|Silver|Pale blonde|Lustrous black] and [|long and flowing|carefully maintained|braided with light thread]
+
+// Eye tables
+
+Table: eyes
+[|Brown|Dark brown|Hazel|Green|Blue|Grey|Blue-grey|Pale blue|Amber]
+
+Table: eyes_elf
+[|Silver|Gold|Deep violet|Bright blue|Forest green|Pale grey|Amber]
+
+// Build
+
+Table: build
+[|lean and wiry|athletic|average|broad-shouldered|slight|stocky]
+
+// Skin tones
+
+Table: skin_human
+[|fair|light|olive|tan|brown|dark brown|ebony]
+
+Table: skin_elf
+[|alabaster|pale silver|warm golden|deep brown|moonlit pale|faintly luminescent]
+
+Table: skin_gnome
+[|ruddy|tanned|light brown|earthy|freckled all over]
+
+Table: skin_aasimar
+[|radiant pale|deep brown with faint golden undertones|warm bronze|silver-grey]
+
+// Beards
+
+Table: beard_dwarf
+[|long braided|neatly trimmed|forked and oiled|enormous and tangled|plaited with iron rings|freshly shaved — unusual for a dwarf]
+
+// Distinguishing features
+
+Table: feature
+a [|long|thin|curved|faded] scar across [|the cheek|the chin|the brow|the throat|the back of the hand]
+[|one clouded eye|a missing earlobe|a brand on the wrist|two fingers missing on the left hand|a nose broken and poorly set]
+[|elaborate tattoos on both forearms|a single tattoo on the neck|a tattoo partially hidden by the collar]
+[|a persistent slight limp|unusually calloused hands|nails kept slightly too long|a habit of clicking the knuckles]
+nothing remarkable — deliberately forgettable-looking
+[|a beauty spot|unusually sharp teeth|heterochromia — two different eye colours|a birthmark on the jaw]
+
+// ----------------------------------------------------------------
+// Racial abilities
+// ----------------------------------------------------------------
+
+Table: racial_Human
+Versatile: Gains one additional skill proficiency and one additional tool proficiency of choice.
+Determined: Once per short rest, can re-roll one ability check and take the higher result.
+Resourceful: Once per long rest, gains Inspiration without a die roll.
+
+Table: racial_Elf
+Darkvision 60 ft. Fey Ancestry: advantage on saving throws against being charmed; magic cannot put them to sleep.
+Trance: Instead of sleeping, meditates for 4 hours (equivalent of 8 hours rest). Immune to magical sleep.
+Keen Senses: Proficiency in Perception. Darkvision 60 ft. Fey Ancestry.
+
+Table: racial_Dwarf
+Darkvision 60 ft. Dwarven Resilience: advantage on saving throws against poison; resistance to poison damage.
+Stonecunning: Double proficiency bonus on History checks related to stonework.
+Dwarven Toughness: HP maximum increases by 1 per level. Darkvision 60 ft.
+
+Table: racial_Half-Orc
+Darkvision 60 ft. Relentless Endurance: Once per long rest, drop to 1 HP instead of 0.
+Savage Attacks: On a critical melee hit, roll one damage die extra.
+Menacing: Proficiency in Intimidation. Darkvision 60 ft.
+
+Table: racial_Halfling
+Lucky: When rolling a 1 on a d20, re-roll and use the new result.
+Brave: Advantage on saving throws against being frightened.
+Nimbleness: Can move through the space of any creature at least one size larger.
+
+Table: racial_Gnome
+Darkvision 60 ft. Gnome Cunning: advantage on all INT, WIS, CHA saving throws against magic.
+Artificer's Lore: Double proficiency on History checks related to magical, alchemical, or technological items.
+Natural Illusionist: Knows the Minor Illusion cantrip (INT).
+
+Table: racial_Tiefling
+Darkvision 60 ft. Hellish Resistance: Resistance to fire damage.
+Infernal Legacy: Knows Thaumaturgy cantrip; at 3rd level gains Hellish Rebuke; at 5th level gains Darkness.
+Legacy of Dis: Knows the Disguise Self spell (1/day) in addition to standard infernal spells.
+
+Table: racial_Dragonborn
+Draconic Ancestry: resistance to the damage type associated with scale colour.
+Breath Weapon: Exhales a {1d6 + 3}-ft [|cone|line] of elemental energy (DC 8 + CON mod + proficiency; {2d6} damage, scaling with level).
+Damage Resistance tied to ancestry type.
+
+Table: racial_Half-Elf
+Darkvision 60 ft. Fey Ancestry: advantage vs charm; magic cannot sleep them.
+Skill Versatility: Gains proficiency in any 2 skills of choice.
+Otherworldly: Advantage on Perception. Darkvision 60 ft.
+
+Table: racial_Aasimar
+Darkvision 60 ft. Celestial Resistance: Resistance to necrotic and radiant damage.
+Healing Hands: Touch to restore {1d4 + level} HP (1/long rest). Languages: Common, Celestial.
+Divine Magic: Knows the Light cantrip. Once per long rest, can cast Cure Wounds at 1st level.
 
 // ----------------------------------------------------------------
 // Names by race
 // ----------------------------------------------------------------
 
 Table: firstname_Human
-3:Aldric
+Aldric
 Brynn
 Caelum
 Dorothea
@@ -72,9 +251,25 @@ Greta
 Harlan
 Isolde
 Jasper
+Kira
+Leofric
+Maren
+Niamh
+Oswin
+Petra
+Quintus
+Rosamund
+Siegfried
+Thea
+Ulric
+Vivienne
+Wulfgar
+Xandria
+Ysolde
+Zephyrine
 
 Table: firstname_Elf
-3:Sylvara
+Sylvara
 Aelindra
 Caladwen
 Eryndor
@@ -84,9 +279,23 @@ Ithilwen
 Lúthmir
 Silvael
 Taurendir
+Vaerindra
+Wirael
+Xanthiel
+Yrindë
+Zaelivra
+Arannis
+Berrian
+Cerys
+Daratrine
+Enna
+Fenmaer
+Galadhon
+Hadarai
+Immeral
 
 Table: firstname_Dwarf
-3:Torinn
+Torinn
 Baela
 Dolgrin
 Ebba
@@ -96,9 +305,23 @@ Korbus
 Magna
 Sindri
 Thorvi
+Ulfgard
+Vigdis
+Wulfrun
+Ymir
+Zorda
+Adrik
+Bardryn
+Cattira
+Dagnal
+Einkil
+Falkrunn
+Gurdis
+Harbek
+Ilde
 
 Table: firstname_Half-Orc
-3:Drath
+Drath
 Bruthar
 Grosha
 Karash
@@ -108,9 +331,17 @@ Sharog
 Ulkrak
 Vorga
 Zasha
+Arngrim
+Borkul
+Cragga
+Dolkara
+Ensada
+Farrul
+Gothka
+Holgar
 
 Table: firstname_Halfling
-3:Mira
+Mira
 Beau
 Calla
 Finn
@@ -120,9 +351,19 @@ Perla
 Rosco
 Tobias
 Wren
+Andry
+Bree
+Corwin
+Danika
+Eldath
+Garret
+Halia
+Ilmeth
+Jinx
+Kellin
 
 Table: firstname_Gnome
-3:Fizzwick
+Fizzwick
 Alston
 Bimpnottin
 Dabbledob
@@ -132,9 +373,19 @@ Namfoodle
 Orryn
 Quibble
 Sindri
+Tockle
+Warryn
+Wiggan
+Zook
+Alvyn
+Brocc
+Coghammer
+Dumplin
+Eksem
+Fonkin
 
 Table: firstname_Tiefling
-3:Seraphine
+Seraphine
 Akmenos
 Beltran
 Crux
@@ -144,9 +395,19 @@ Leucis
 Morthos
 Pelaios
 Skamos
+Anakis
+Bryseis
+Carrion
+Damakos
+Eligos
+Feena
+Hagala
+Iados
+Kairon
+Lerissa
 
 Table: firstname_Dragonborn
-3:Arjhan
+Arjhan
 Balasar
 Bharash
 Donaar
@@ -156,6 +417,60 @@ Kriv
 Medrash
 Nadarr
 Patrin
+Rhogar
+Shedinn
+Tarhun
+Uadjit
+Verthisathurgiesh
+Akra
+Biri
+Dort
+Farideh
+Harann
+
+Table: firstname_Half-Elf
+Aiden
+Caelith
+Dara
+Eryn
+Faelan
+Gilris
+Hareth
+Ilara
+Jarath
+Kira
+Lyra
+Mireth
+Nael
+Oryn
+Petra
+Quen
+Riven
+Sari
+Tiran
+Vela
+
+Table: firstname_Aasimar
+Aelia
+Borak
+Cerris
+Dara
+Elara
+Farath
+Gideon
+Halissa
+Idris
+Julara
+Kira
+Lyris
+Mira
+Nadir
+Ophira
+Pelias
+Qara
+Reth
+Serath
+Thea
 
 Table: surname
 Stonehammer
@@ -178,6 +493,26 @@ Riverstone
 Swiftarrow
 Thornwood
 Winterbourne
+Ambervane
+Bloodwyn
+Copperfield
+Duskmere
+Evensong
+Fireforge
+Greymantle
+Highwatch
+Icedawn
+Jadeholt
+Kindlewick
+Lostmoor
+Misthollow
+Netherfield
+Ossdark
+Peakward
+Ravenmark
+Silverchain
+Tideborn
+Umbrafen
 
 // ----------------------------------------------------------------
 // Backgrounds
@@ -191,12 +526,89 @@ Entertainer
 Folk Hero
 Guild Artisan
 Hermit
+Knight
 Noble
 Outlander
+Pirate
 Sage
 Sailor
 Soldier
+Spy
 Urchin
+City Watch
+Clan Crafter
+Far Traveller
+Haunted One
+
+// ----------------------------------------------------------------
+// Skills by background
+// ----------------------------------------------------------------
+
+Table: skills_Acolyte
+Insight, Religion
+Table: skills_Charlatan
+Deception, Sleight of Hand
+Table: skills_Criminal
+Deception, Stealth
+Table: skills_Entertainer
+Acrobatics, Performance
+Table: skills_Folk Hero
+Animal Handling, Survival
+Table: skills_Guild Artisan
+Insight, Persuasion
+Table: skills_Hermit
+Medicine, Religion
+Table: skills_Knight
+History, Persuasion
+Table: skills_Noble
+History, Persuasion
+Table: skills_Outlander
+Athletics, Survival
+Table: skills_Pirate
+Athletics, Perception
+Table: skills_Sage
+Arcana, History
+Table: skills_Sailor
+Athletics, Perception
+Table: skills_Soldier
+Athletics, Intimidation
+Table: skills_Spy
+Deception, Stealth
+Table: skills_Urchin
+Sleight of Hand, Stealth
+Table: skills_City Watch
+Athletics, Insight
+Table: skills_Clan Crafter
+History, Insight
+Table: skills_Far Traveller
+Insight, Perception
+Table: skills_Haunted One
+Arcana, [|Investigation|Religion|Survival]
+
+// ----------------------------------------------------------------
+// Languages by race
+// ----------------------------------------------------------------
+
+Table: languages_Human
+Common + [|Elvish|Dwarvish|Halfling|Gnomish|Orcish|Draconic|Infernal|Celestial|Sylvan|Undercommon]
+Table: languages_Elf
+Common, Elvish + [|Sylvan|Celestial|Undercommon|Draconic]
+Table: languages_Dwarf
+Common, Dwarvish + [|Gnomish|Terran|Orcish|Undercommon]
+Table: languages_Half-Orc
+Common, Orcish + [|Dwarvish|Elvish|Abyssal]
+Table: languages_Halfling
+Common, Halfling + [|Elvish|Gnomish|Dwarvish]
+Table: languages_Gnome
+Common, Gnomish + [|Elvish|Terran|Sylvan|Dwarvish]
+Table: languages_Tiefling
+Common, Infernal + [|Abyssal|Elvish|Draconic|Undercommon]
+Table: languages_Dragonborn
+Common, Draconic + [|Elvish|Dwarvish|Draconic dialect]
+Table: languages_Half-Elf
+Common, Elvish + [|any one language|Sylvan|Draconic|Halfling]
+Table: languages_Aasimar
+Common, Celestial + [|Elvish|Draconic|Sylvan]
 
 // ----------------------------------------------------------------
 // Personality traits
@@ -213,6 +625,20 @@ I like to collect odd trinkets wherever I travel.
 I judge people by their actions, not their words.
 I tell stories of my exploits at every opportunity — some of them are even true.
 I'm haunted by memories of war and can be startled by sudden sounds.
+I watch over my friends as if they were a litter of newborn pups.
+I have a weakness for flattery — it is an embarrassingly effective tool against me.
+I never pass up a meal, and I am always starving after a good fight.
+I'm always calm, no matter what the situation. I never raise my voice or let my emotions control me.
+I'm full of witty aphorisms and have a proverb for every occasion.
+I am utterly serene, even in the face of disaster.
+I feel tremendous empathy for all who suffer.
+The best way to get me to do something is to tell me I can't do it.
+I'm confident in my own abilities and do what I can to instil the same confidence in others.
+I bluntly say what other people are hinting at or talking around.
+I am reckless — I act first and worry about consequences later.
+I am suspicious of strangers and expect the worst of them.
+I can stare down a hell hound without flinching.
+I once ran twenty-five miles without stopping to warn my people of an approaching army. I'd do it again.
 
 Table: ideal
 Greater Good: our purpose is to serve the people around us.
@@ -223,6 +649,18 @@ Sincerity: there is no good in pretending to be something you are not.
 Change: we must upend the old ways in favour of something better.
 Aspiration: I seek to prove myself worthy of a great destiny.
 Live and Let Live: meddling in others' affairs only leads to trouble.
+Redemption: there is a spark of good in everyone worth fanning into flame.
+Beauty: when I perform, I make the world better than it was.
+Creativity: the world is in need of new ideas and bold action.
+Greed: I'm only in it for the gold — everything else is secondary.
+Independence: I must earn my way in the world. No one gives me anything for free.
+Might: in life as in war, the stronger force wins.
+Nation: my city, nation, or people are all that matter.
+People: I'm committed to the people I care about, not to ideals.
+Honesty: art should reflect the soul; it should come from within.
+Fairness: no one should get preferential treatment before the law.
+Community: it is the duty of all civilised people to strengthen the bonds of community.
+Self-Knowledge: if you know yourself, there is nothing left to know.
 
 Table: bond
 I would die to recover a family heirloom stolen years ago.
@@ -233,6 +671,14 @@ I owe everything to a mentor who believed in me when no one else did.
 I'm trying to pay off an old debt — one coin at a time.
 I want to find the person who destroyed my home and make them pay.
 A secret society once helped me; now I repay the favour whenever I can.
+I escaped my guilty past by remaking myself — no one from before must ever find me.
+My isolation gave me great insight into a great evil that only I can destroy.
+I enter every room looking for the best escape route — I have never been caught unprepared.
+I would sacrifice everything to prevent the catastrophe that took my family.
+I entered a solemn pact with a powerful entity; I will not fail it.
+I am the last member of my family. I must ensure our name lives on.
+My comrades-in-arms saved my life. I would die for them.
+An injury to the common folk is an injury to me — I will fight it wherever I find it.
 
 Table: flaw
 I have trouble keeping my true feelings hidden.
@@ -243,43 +689,75 @@ Once I set my mind to something, I am dangerously stubborn.
 I have difficulty trusting anyone, even my closest allies.
 I often make promises I am not entirely sure I can keep.
 I am quick to assume the worst of people.
+I have a weakness for the vices of the city — especially the drink.
+I'll do anything to win fame and renown.
+I become confused, frantic, or terrified if I lose access to my ritual tools.
+I follow orders, even if I think they're wrong.
+I'm not great at sharing my feelings; I bottle everything up.
+I turn tail and run when things look bad.
+A secret fear makes me freeze at the worst possible moments.
+I say whatever people want to hear rather than tell the truth.
+I judge others harshly and demand perfect obedience to the letter of the law.
+I am slow to trust and rarely open up, even to friends.
 
 // ----------------------------------------------------------------
 // Starting equipment by class
 // ----------------------------------------------------------------
 
 Table: equipment_Fighter
-[|longsword|battleaxe|warhammer] + shield, chain mail, [|crossbow|javelin x3|handaxe x2], [|Explorer's Pack|Dungeoneer's Pack]
+[|longsword|battleaxe|warhammer|greatsword] [|+ shield|+ handaxe], chain mail, [|light crossbow + 20 bolts|javelin x4|handaxe x2], [|Explorer's Pack|Dungeoneer's Pack]
 
 Table: equipment_Rogue
-[|shortsword|rapier] + dagger x2, leather armour, thieves' tools, [|Burglar's Pack|Dungeoneer's Pack]
+[|shortsword|rapier|hand crossbow] + dagger x2, leather armour, thieves' tools, [|Burglar's Pack|Dungeoneer's Pack]
 
 Table: equipment_Wizard
-[|quarterstaff|dagger], [|spellbook|grimoire], arcane focus, [|Scholar's Pack|Explorer's Pack], component pouch
+[|quarterstaff|dagger], [|spellbook|grimoire], arcane focus, [|Scholar's Pack|Explorer's Pack], component pouch, [|1 cantrip scroll|ink and quill|spell component case]
 
 Table: equipment_Cleric
-[|mace|warhammer], scale mail, holy symbol, [|Priest's Pack|Explorer's Pack], shield
+[|mace|warhammer|light hammer], scale mail, holy symbol, [|Priest's Pack|Explorer's Pack], shield, [|1 healing potion|holy water x2]
 
 Table: equipment_Ranger
-[|longbow|shortbow] + quiver (20 arrows), [|shortsword|longsword], leather armour, [|Explorer's Pack|Dungeoneer's Pack]
+[|longbow|shortbow] + quiver (20 arrows), [|shortsword|longsword|two shortswords], leather armour, [|Explorer's Pack|Dungeoneer's Pack], [|hunting trap|rope 50 ft]
 
 Table: equipment_Paladin
-[|longsword|warhammer] + shield, chain mail, holy symbol, [|Priest's Pack|Explorer's Pack], javelin x5
+[|longsword|warhammer|flail] + shield, chain mail, holy symbol, [|Priest's Pack|Explorer's Pack], javelin x5, [|1 healing potion|holy water]
 
 Table: equipment_Druid
-[|quarterstaff|scimitar], leather armour, wooden shield, druidic focus, [|Explorer's Pack|Wilderness Kit]
+[|quarterstaff|scimitar|club], leather armour, wooden shield, druidic focus, [|Explorer's Pack|Wilderness Kit], [|herbalism kit|pouch of rare seeds]
 
 Table: equipment_Bard
-[|rapier|longsword], lute, leather armour, dagger, [|Entertainer's Pack|Diplomat's Pack]
+[|rapier|longsword|hand crossbow], [|lute|viol|drum|flute], leather armour, dagger, [|Entertainer's Pack|Diplomat's Pack]
 
 Table: equipment_Monk
-[|shortsword|simple weapon x2], [|Dungeoneer's Pack|Explorer's Pack], 10 darts
+[|shortsword|spear|simple weapon x2], [|Dungeoneer's Pack|Explorer's Pack], 10 darts, [|prayer beads|meditation incense]
 
 Table: equipment_Sorcerer
-[|light crossbow|dagger x2], component pouch, arcane focus, [|Explorer's Pack|Dungeoneer's Pack]
+[|light crossbow + 20 bolts|dagger x2|quarterstaff], component pouch, arcane focus, [|Explorer's Pack|Dungeoneer's Pack], [|spell journal|charm from a relative]
 
 Table: equipment_Warlock
-[|light crossbow|simple weapon], [|component pouch|arcane focus], leather armour, [|Scholar's Pack|Dungeoneer's Pack]
+[|light crossbow + 20 bolts|simple weapon], [|component pouch|arcane focus], leather armour, [|Scholar's Pack|Dungeoneer's Pack], [|a gift from your patron|a forbidden tome]
 
 Table: equipment_Barbarian
-[|greataxe|martial weapon], [|handaxe x2|simple weapon x2], [|Explorer's Pack|Dungeoneer's Pack], 4 javelins
+[|greataxe|maul|two handaxes], [|handaxe x4|javelin x4|simple weapon x2], [|Explorer's Pack|Dungeoneer's Pack], [|a trophy from a first kill|a lucky animal tooth]
+
+Table: equipment_Artificer
+[|light crossbow + 20 bolts|hand crossbow x2], leather armour, thieves' tools, [|Scholar's Pack|Dungeoneer's Pack], tinker's tools, component pouch
+
+Table: equipment_Blood Hunter
+[|longsword|shortsword x2|hand crossbow], [|studded leather|scale mail], [|Explorer's Pack|Dungeoneer's Pack], alchemist's supplies, [|a vial of monster blood|a worn journal of monster lore]
+
+// ----------------------------------------------------------------
+// Backstory hooks
+// ----------------------------------------------------------------
+
+Table: backstory
+You grew up in the shadow of [|a burned village|a conquered city|a legendary family name|a monastery since destroyed], which still shapes who you are.
+Someone you trusted [|betrayed you|died protecting you|disappeared without explanation|sold you out to an enemy] — and you have never truly recovered.
+You carry a secret: [|you witnessed a crime that powerful people want buried|your true identity is not what your companions believe|a past deed that would change how your allies see you].
+A [|dying mentor|fallen soldier|captured prisoner|wounded stranger] once told you something that has haunted you ever since.
+You swore an oath — [|to protect a certain bloodline|to find a relic|to avenge a specific name|to never return home until you have achieved something worthy] — and you have not broken it yet.
+You were chosen — by a god, a prophecy, a secret order, or a dying noble — for a purpose you don't fully understand.
+You came close to death [|on a battlefield|in a dungeon|during a ritual gone wrong|at the hands of someone you thought was a friend] and have never been the same since.
+Something follows you — [|an entity you cannot explain|a recurring dream|a stranger who always seems to be one step behind|a mark on your skin that appeared overnight].
+You owe a debt — [|to a thieves' guild|to a divine power|to a family that sheltered you|to a lord who pardoned a crime] — that you cannot yet repay.
+You are looking for [|a person|an artefact|a place|an answer] that most people believe no longer exists.

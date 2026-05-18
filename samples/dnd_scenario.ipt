@@ -6,49 +6,74 @@ Set: hook = [@adventure_hook]
 Set: villain = [@villain]
 Set: location = [@location]
 Set: twist = [@twist]
+Set: region_name = [@region]
 <b>SCENARIO</b>\n&
 \n&
 <b>THE HOOK</b>\n&
 {hook}\n&
 \n&
 <b>SETTING</b>\n&
-Region:   [@region]\n&
+Region:   {region_name}\n&
 Location: {location}\n&
 Mood:     [@mood]\n&
 \n&
 <b>THE VILLAIN</b>\n&
 {villain}\n&
 \n&
+<b>KEY NPC ALLY</b>\n&
+[@npc_ally]\n&
+\n&
 <b>COMPLICATIONS</b>\n&
-1. [@complication]\n&
-2. [@complication]\n&
+1. [!1 complication]\n&
+2. [!1 complication]\n&
+3. [!1 complication]\n&
+\n&
+<b>LOCATION FEATURES</b>\n&
+Notable rooms / areas:\n&
+  — [@location_feature]\n&
+  — [@location_feature]\n&
+  — [@location_feature]\n&
+\n&
+<b>TRAVEL ENCOUNTER</b>\n&
+[@travel_encounter]\n&
 \n&
 <b>THE TWIST</b>\n&
 {twist}\n&
 \n&
 <b>REWARDS</b>\n&
-[@reward]\n&
-[@reward]\n&
+[!1 reward]\n&
+[!1 reward]\n&
 \n&
 <b>SIDE QUESTS</b>\n&
-- [@side_quest]\n&
-- [@side_quest]
+- [!1 side_quest]\n&
+- [!1 side_quest]\n&
+- [!1 side_quest]
 
 // ----------------------------------------------------------------
 // Adventure hooks
 // ----------------------------------------------------------------
 
 Table: adventure_hook
-A merchant offers {2d6 * 50} gold to escort a mysterious locked chest across the [@region] — he refuses to say what is inside.
+A merchant offers {2d6 * 50} gold to escort a mysterious locked chest across {region_name} — he refuses to say what is inside.
 A child in the village of [@village_name] claims to have seen the dead walking in the old graveyard at midnight.
-The local lord has vanished; his last known location was the [@location].
-Three adventurers set out for the [@location] a week ago — only their weapons have returned, dragged by a frightened mule.
-A bounty of {1d4 * 100} gold is posted for the capture — alive — of a fugitive wizard last seen near [@location].
-An ancient map surfaces at auction, apparently showing a vault beneath the [@location] filled with pre-empire treasure.
+The local lord has vanished; his last known location was {location}.
+Three adventurers set out for {location} a week ago — only their weapons have returned, dragged by a frightened mule.
+A bounty of {1d4 * 100} gold is posted for the capture — alive — of a fugitive wizard last seen near {location}.
+An ancient map surfaces at auction, apparently showing a vault beneath {location} filled with pre-empire treasure.
 The river that supplies [@village_name] has run black for three days; something upstream is wrong.
 A dying courier delivers a sealed letter intended for someone who died years ago — and the contents reference something that cannot yet have happened.
-Strange lights have been seen above the [@location] every night for a month; farmers refuse to work their fields.
-A beloved temple healer has gone missing; her notes mention a secret ritual she planned to perform alone at the [@location].
+Strange lights have been seen above {location} every night for a month; farmers refuse to work their fields.
+A beloved temple healer has gone missing; her notes mention a secret ritual she planned to perform alone at {location}.
+The party wakes in an unfamiliar location with no memory of the last {1d6 + 1} hours — and one of them is missing.
+A sealed crypt beneath [@village_name] has opened from the inside for the first time in two centuries.
+A tax collector sent to {region_name} never returned; the second one who went to look for the first also vanished.
+Something has been stealing children from [@village_name] every new moon — and the next one is in three days.
+A war that ended {1d6 + 10} years ago may not be entirely over; old soldiers are being found dead with fresh wounds.
+A scholar auctions a cursed tome found in {location} — the bidding war descends into murderous chaos before the sale closes.
+A fire in [{village_name}'s archive|the city records office|a monastery scriptorium] destroys what may have been the only copy of a crucial document — or does it?
+The party is approached by a dying thief who presses a key into their hands and says only: "{location}. Third door. Don't trust the [|steward|priest|merchant|guard]."
+Every mirror in [@village_name] has been showing the same face for three days. No one knows whose face it is.
+A knight errant arrives bearing a challenge — not to combat, but to prove a disputed truth before it's used to start a war.
 
 // ----------------------------------------------------------------
 // Locations
@@ -58,11 +83,15 @@ Table: location
 the [@adj] [@loc_type] of [@place_name]
 the ruins of the ancient stronghold at [@place_name]
 a flooded dungeon carved beneath the [@loc_type]
-the remote [@adj] keep overlooking the [@region]
+the remote [@adj] keep overlooking {region_name}
 a labyrinthine network of caves in the [@adj] hills
 the abandoned wizard's tower at the edge of the [@adj] forest
 a sunken temple half-buried in the marshes
 the fortified mountain pass known as [@place_name]
+the [|legendary|forgotten|haunted] monastery of [@place_name], perched atop an unclimbable cliff
+a vast underground necropolis whose entrance is disguised as a humble [@loc_type]
+the [|overgrown|crumbling|half-flooded|scorched] ruins of [@place_name] — once the region's greatest city
+a lighthouse at the edge of the world, no longer lit, that sailors still sometimes see from the sea
 
 Table: loc_type
 dungeon
@@ -75,6 +104,11 @@ monastery
 mine
 sewers
 manor house
+lighthouse
+ossuary
+vault
+colosseum
+observatory
 
 Table: adj
 ancient
@@ -87,6 +121,11 @@ blighted
 fog-shrouded
 half-sunken
 petrified
+storm-scarred
+bone-white
+vine-choked
+wind-scoured
+silent
 
 Table: place_name
 Grimspire
@@ -104,6 +143,16 @@ Shadowfen
 Wraithkeep
 Mourncroft
 Dustfall
+Voidscar
+Bleakhallow
+Stormreach
+Cindergate
+Thornwall
+Ashcroft
+Bloodmere
+Dawnwatch
+Emberveil
+Frostwatch
 
 Table: village_name
 Millhaven
@@ -116,6 +165,16 @@ Mudgate
 Ashbridge
 Coldstone
 Fernhollow
+Saltwick
+Heathermoor
+Barrowend
+Dunmore
+Quickfen
+Shepherd's Rest
+Rottengate
+Tallow Cross
+Ironbell
+Witherwick
 
 // ----------------------------------------------------------------
 // Regions
@@ -132,6 +191,11 @@ the rolling Heatherdowns
 the cursed Bloodmarsh
 the ancient Wyrmwood, older than any kingdom
 the Duskveil Wastes, where the sun barely rises
+the Amber Steppe, vast and windswept
+the contested border marches between two rival kingdoms
+the underground expanse known as the Hollow Dark
+the high alpine valleys of the Greymantles
+the fog-locked islands of the Shivering Reach
 
 // ----------------------------------------------------------------
 // Mood
@@ -146,6 +210,10 @@ mysterious and dreamlike — reality feels thin here
 desperate and urgent — every hour counts
 melancholy and haunted — the past refuses to die
 dangerous and chaotic — alliances shift without warning
+claustrophobic and suffocating — there is no safe direction to run
+grimly comedic — even the corpses seem annoyed at the situation
+epic and monumental — every choice carries the weight of history
+cold and clinical — whatever is happening here was planned in detail
 
 // ----------------------------------------------------------------
 // Villains
@@ -156,13 +224,16 @@ Set: vname = [@villain_name]
 Set: vrole = [@villain_role]
 Set: vmotive = [@villain_motive]
 <b>{vname}</b>, {vrole}. Motive: {vmotive}.\n&
-Strength: [@villain_strength]\n&
-Weakness: [@villain_weakness]
+Strength: [!1 villain_strength]\n&
+Weakness: [!1 villain_weakness]\n&
+Current plan: [@villain_plan]
 
 Table: villain_name
 Lord [@villain_title] [@villain_surname]
 [@villain_firstname] the [@villain_epithet]
 [@villain_firstname] [@villain_surname]
+High [|Priest|Inquisitor|Magister|Warden] [@villain_surname]
+Lady [@villain_firstname] [@villain_surname]
 
 Table: villain_title
 Aldric
@@ -170,6 +241,11 @@ Morvaine
 Seldric
 Cethran
 Baldros
+Vorn
+Hareth
+Osric
+Kael
+Draven
 
 Table: villain_firstname
 Seraphine
@@ -180,6 +256,13 @@ Osric
 Lirien
 Vorka
 Thane
+Ravenna
+Solan
+Kira
+Mordecai
+Elara
+Bael
+Ysmir
 
 Table: villain_surname
 Blackthorn
@@ -190,6 +273,13 @@ Coldwater
 Embervast
 Soulharvest
 Dawnkiller
+Voidmere
+Ashcroft
+Emberveil
+Wraithscorn
+Bloodmark
+Hollowborn
+Shadowbane
 
 Table: villain_epithet
 Undying
@@ -200,51 +290,185 @@ Voidborn
 Merciless
 Unseen
 Fleshless
+Unburnt
+Twice-Cursed
+Hollowed
+Pale
 
 Table: villain_role
-a disgraced [|noble|general|high priest|archmage|guild master] seeking revenge
-a [|mad|grieving|corrupted|ambitious] [|wizard|warlord|cleric|rogue|noble]
-the puppet master behind a [|thieves' guild|death cult|mercenary company|secret society]
-an ancient [|vampire|lich|revenant|dragon] posing as a [|merchant|advisor|scholar|noble]
-a demonically [|possessed|bound|created|summoned] [|knight|inquisitor|herald|oracle]
+a disgraced [|noble|general|high priest|archmage|guild master|judge] seeking revenge
+a [|mad|grieving|corrupted|ambitious|desperate] [|wizard|warlord|cleric|rogue|noble|inquisitor]
+the puppet master behind a [|thieves' guild|death cult|mercenary company|secret society|religious order]
+an ancient [|vampire|lich|revenant|dragon|shade] posing as a [|merchant|advisor|scholar|noble|healer]
+a demonically [|possessed|bound|created|summoned] [|knight|inquisitor|herald|oracle|champion]
+a [|brilliant|ruthless|charismatic] [|general|spymaster|prophet] who genuinely believes they are saving the world
 
 Table: villain_motive
-to [|raise the dead|open a portal to the Abyss|destroy the old gods|break the wards on the prison plane]
-to avenge the [|destruction of their homeland|murder of their family|betrayal by a former ally]
-to achieve [|immortality|godhood|absolute power|the annihilation of a hated people]
-to fulfil an ancient [|pact|prophecy|oath|curse] at any cost
-to reclaim [|a stolen throne|lost magical knowledge|an artefact of immense power]
-to bring about a [|new world order|golden age — for their kind only|purge of the weak]
+to [|raise the dead|open a portal to the Abyss|destroy the old gods|break the wards on the prison plane|unmake the current age]
+to avenge the [|destruction of their homeland|murder of their family|betrayal by a former ally|theft of something irreplaceable]
+to achieve [|immortality|godhood|absolute power|the annihilation of a hated people|a peace that requires unthinkable sacrifice]
+to fulfil an ancient [|pact|prophecy|oath|curse|debt] at any cost
+to reclaim [|a stolen throne|lost magical knowledge|an artefact of immense power|a kingdom that no longer exists]
+to bring about a [|new world order|golden age — for their kind only|purge of the weak|return of an era most consider best forgotten]
+to prevent a catastrophe they alone have foreseen, by any means necessary
 
 Table: villain_strength
 Commands the loyalty of {1d4 + 2} powerful lieutenants.
-Possesses an artefact that renders them [|immune to fire|impossible to scry|immune to mind magic|resistant to all weapons].
-Has infiltrated the highest levels of [|the city guard|the temple|the merchant council|the king's court].
-Knows the true name of a [|demon|dragon|elemental|angel] and can summon it once.
+Possesses an artefact that renders them [|immune to fire|impossible to scry|immune to mind magic|resistant to all weapons|impossible to kill permanently].
+Has infiltrated the highest levels of [|the city guard|the temple|the merchant council|the king's court|the adventurers' guild].
+Knows the true name of a [|demon|dragon|elemental|angel|lich] and can summon it once.
 Has already won the first battle — the party starts on the back foot.
-Controls the only [|bridge|port|pass|water supply] into the region.
+Controls the only [|bridge|port|pass|water supply|food supply|cure for a plague] into the region.
+Has blackmail material on every notable figure in the region — no one will openly oppose them.
+Is beloved by the common people, who will actively hinder any attempt to stop them.
+Has prepared for this confrontation for [|decades|centuries|their entire life] — knows every move before it is made.
 
 Table: villain_weakness
-Bound by an ancient oath that prevents [|lying|harming children|entering sacred ground|acting on the new moon].
+Bound by an ancient oath that prevents [|lying|harming children|entering sacred ground|acting on the new moon|crossing running water].
 Obsessively loyal to one ally who could be turned against them.
-Their power source can be disrupted by [|the light of dawn|a specific rune|running water|the sound of bells].
+Their power source can be disrupted by [|the light of dawn|a specific rune|running water|the sound of bells|iron|silver].
 Haunted by genuine guilt; an appeal to conscience may give them pause.
 Their lieutenants fear them but do not respect them — a show of weakness could shatter their army.
 Relies entirely on a single powerful magical item; destroy it and they are mortal.
+Their plan has a precise timetable; delay it long enough and it collapses entirely.
+Cannot act in one specific location (sacred ground, a childhood home, a battlefield) — they have never explained why.
+Has one person left they genuinely love; threatening that person is the only thing that gives them pause.
+
+Table: villain_plan
+assassinating [|the crown prince|the high priest|the archmage|the peace ambassador] before the summit
+corrupting [|the water supply|the food stores|the holy relics|the city's wards] from within
+gathering the [|final pieces of an ancient ritual|last of a destroyed bloodline|shards of a broken artefact]
+turning the party's own allies against them, one by one
+opening a rift to [|the Abyss|the Shadowfell|the Far Realm|a dead god's domain] beneath {location}
+framing the party for a crime that will set two factions at war
+
+// ----------------------------------------------------------------
+// NPC Allies
+// ----------------------------------------------------------------
+
+Table: npc_ally
+Set: ally_name = [@ally_firstname] [@ally_surname]
+<b>{ally_name}</b>, [@ally_role]\n&
+Personality: [@ally_personality]\n&
+Secret: [@ally_secret]\n&
+What they offer: [@ally_offer]
+
+Table: ally_firstname
+Aldus
+Senna
+Torbin
+Mira
+Edric
+Ysolde
+Calder
+Linnea
+Fendal
+Oryn
+Wren
+Corvus
+Sera
+Haleth
+Bryn
+
+Table: ally_surname
+Lightfoot
+Coldforge
+Ashwick
+Greymere
+Dawnwatch
+Ironsong
+Thornwood
+Rivenvale
+Markmoor
+Coldwater
+
+Table: ally_role
+a local [|innkeeper|blacksmith|herbalist|scholar|retired soldier|hedge wizard] who knows more than they let on
+a [|young|grizzled|cynical|idealistic] [|guard|scout|mercenary|priest] who needs the party as much as they need them
+a [|disillusioned|former|captured and freed] member of the villain's organisation
+a [|travelling merchant|wandering scholar|disgraced noble|excommunicated priest] with crucial information
+a [|child|elder|last survivor] who witnessed something no one else will believe
+
+Table: ally_personality
+Forthright and direct — says exactly what they mean, which occasionally causes problems.
+Carefully guarded — reveals information in pieces, never the whole picture at once.
+Warm and earnest — genuinely wants to help, which makes their inevitable complication worse.
+Sardonic and weary — helps because no one else will, not because they believe it will work.
+Anxious and over-prepared — brings too many plans, all of them half-right.
+Fiercely loyal once trust is earned — and almost impossible to win over in the first place.
+Cheerful in the face of danger — which either means courage or denial; hard to tell which.
+
+Table: ally_secret
+They are being blackmailed by the villain and may be forced to betray the party.
+They know more about the party's true purpose than they have revealed.
+They are related to — or were once close to — the villain.
+They have already failed once in a situation almost identical to this one.
+They are terminally ill and operating on borrowed time.
+They have been lying about their identity; their real background complicates everything.
+They are the one who originally set the villain's plan in motion, years ago.
+
+Table: ally_offer
+Detailed knowledge of {location} — [|maps|patrol routes|hidden entrances|structural weaknesses].
+A contact inside the villain's organisation who may be turned.
+A [|magic item|key|pass phrase|seal of safe conduct] that opens a locked door in the plot.
+[|Healing|Smithing|Arcane research|Intelligence gathering] support during the mission.
+A safe house and supply cache [|outside the city|inside the dungeon|near the villain's lair].
+
+// ----------------------------------------------------------------
+// Location features
+// ----------------------------------------------------------------
+
+Table: location_feature
+A [|collapsed|flooded|recently disturbed] [|corridor|chamber|stairwell] that suggests someone has been here recently.
+A [|shrine|altar|throne|vault door] that is clearly significant — [|recently desecrated|still functional|deliberately hidden].
+A [|guard post|patrol route|watch position] that, if neutralised quietly, opens a path the villain doesn't expect.
+Prisoners — {1d4 + 1} [|villagers|soldiers|scholars|adventurers] held in a [|cage|cellar|sealed chamber].
+A [|library|archive|laboratory|scriptorium] where the villain's plans are partially documented.
+Traps: [|pressure plates|tripwires|magical wards|a sealed room filled with gas] protecting the inner sanctum.
+Environmental hazard: [|rising water|a crumbling ceiling|spreading fire|unstable arcane residue|a necrotic aura].
+A [|secret door|hidden passage|underwater tunnel|collapsed section that can be dug through] known only to those who look carefully.
+Evidence of a previous expedition — [|equipment|bones|a journal|a warning scratched into the wall].
+A [|summoning circle|ritual site|magical focus|corrupted ley line node] that powers the villain's operation.
+A guardian creature [|chained|bound by magic|patrolling on a fixed route|sleeping] that need not be fought.
+An NPC in the wrong place: [|a spy|a thief|a lost child|a trapped spirit] who complicates the mission.
+
+// ----------------------------------------------------------------
+// Travel encounters
+// ----------------------------------------------------------------
+
+Table: travel_encounter
+En route: the party encounters [|a patrol of {1d6 + 2} soldiers bearing the villain's colours|a group of refugees fleeing from {location}|a wandering [|merchant|scholar|hermit] with unexpected information].
+A bridge or ford is controlled by [|bandits|a troll|a guardian construct|a customs officer with impossible demands].
+The road passes through [|a village in the grip of fear|an abandoned hamlet|a camp of mercenaries for hire|a burned waystation].
+A fellow adventuring party crosses paths with the group — [|rivals|allies|one of their old enemies in the lead|the only survivors of the last attempt].
+Weather turns: [|a blizzard|a fog so thick visibility drops to 10 ft|torrential rain that floods the road|a heatwave that drains stamina] forces a change of plan.
+A creature — [|injured|frightened|magically bound|carrying a message] — blocks the road and refuses to move.
+A [|merchant caravan|diplomatic envoy|funerary procession] passes; someone in it recognises [|a party member|a party member's name|the party's destination] and reacts.
+The party finds the aftermath of a battle: [|{1d4 + 2} bodies|a single survivor|discarded equipment suggesting something went very wrong].
+A distress call — [|fire|screaming|a signal arrow|a horn blast] — from the road ahead; investigating means a delay.
+Signs of the villain's activity: [|freshly planted spies in the local village|supply wagons bearing their mark|a noticeboard with wanted posters featuring someone the party knows].
 
 // ----------------------------------------------------------------
 // Complications
 // ----------------------------------------------------------------
 
 Table: complication
-The party is being [|followed|framed|watched|manipulated] by a [|rival adventuring group|shadowy organisation|vengeful NPC|unknown third party].
-An NPC the party trusts is [|working for the villain|keeping a dangerous secret|slowly being corrupted|not who they claim to be].
-The villain has [|already struck once|taken a hostage the party cares about|sabotaged their supplies|bribed a key ally].
-The location is [|structurally unstable|warded against magic|partially flooded|under enemy surveillance].
+The party is being [|followed|framed|watched|manipulated|impersonated] by a [|rival adventuring group|shadowy organisation|vengeful NPC|unknown third party|the villain's spy].
+An NPC the party trusts is [|working for the villain|keeping a dangerous secret|slowly being corrupted|not who they claim to be|under a magical compulsion].
+The villain has [|already struck once|taken a hostage the party cares about|sabotaged their supplies|bribed a key ally|one step ahead — every time].
+The location is [|structurally unstable|warded against magic|partially flooded|under enemy surveillance|rigged to collapse].
 Time pressure: the ritual / attack / collapse / deadline happens in {1d6} days.
-A moral dilemma: the most effective solution would cause serious [|harm to innocents|destruction of something irreplaceable|violation of the law].
-Political interference: a [|lord|guild|church|kingdom] with its own agenda is trying to control the outcome.
-Environmental hazard: [|plague|famine|wildfire|blizzard|flood] complicates travel and resources.
+A moral dilemma: the most effective solution would cause serious [|harm to innocents|destruction of something irreplaceable|violation of the law|permanent damage to a faction].
+Political interference: a [|lord|guild|church|kingdom|spy network] with its own agenda is trying to control the outcome.
+Environmental hazard: [|plague|famine|wildfire|blizzard|flood|earthquake] complicates travel and resources.
+The party's goal and the villain's goal are the same — and one of them will have to give way.
+A faction that should be helping is instead making demands of its own before it will act.
+One party member has a personal stake in the outcome that the others don't yet know about.
+The evidence points to the wrong person — following it naively will create a new enemy.
+A prisoner taken by the villain has already been [|turned|killed|replaced with a doppelgänger|freed and is running their own plan].
+The party's reputation precedes them: [|the locals don't trust them|the villain prepared specifically for their abilities|an old ally became an enemy while they were away].
+The most powerful potential ally [|refuses to help unless a personal favour is repaid|is under the villain's thumb|has their own agenda that may betray the party at a critical moment].
+A powerful NPC [|dies unexpectedly|is revealed to be the villain|switches sides at the worst moment|holds information that only becomes relevant too late].
 
 // ----------------------------------------------------------------
 // The twist
@@ -252,15 +476,19 @@ Environmental hazard: [|plague|famine|wildfire|blizzard|flood] complicates trave
 
 Table: twist
 The villain is not the true threat — they are trying to stop something far worse.
-The quest giver has been lying: their real motive is [|personal greed|a family secret|revenge|fear of exposure].
-One of the party's trusted allies is revealed to be [|a spy|the villain's relative|under a compulsion|not human].
+The quest giver has been lying: their real motive is [|personal greed|a family secret|revenge|fear of exposure|a deal with a worse power].
+One of the party's trusted allies is revealed to be [|a spy|the villain's relative|under a compulsion|not human|the original villain in disguise].
 The "artefact" / "prisoner" / "treasure" the party seeks does not exist — it was bait.
-The location itself is [|sentient|cursed to repeat a tragedy|a prison for something that must not be released|slowly dying].
+The location itself is [|sentient|cursed to repeat a tragedy|a prison for something that must not be released|slowly dying|actively hostile to the party's goal].
 Success will cost the party something precious and irreplaceable.
-The villain had a point: the people they were fighting for are [|corrupt|guilty|responsible for the villain's suffering].
+The villain had a point: the people they were fighting for are [|corrupt|guilty|responsible for the villain's suffering|planning something worse themselves].
 The final confrontation reveals a connection between the villain and one party member's past.
 There is a second villain who has been manipulating both sides from the start.
 Destroying the threat would trigger a catastrophe; the solution requires sacrifice, not violence.
+The villain wins — and the scenario is about surviving the aftermath and planning what comes next.
+Everything was a test: the real patron, enemy, or challenge is revealed only after the party has committed.
+The party has been working for the wrong side. The villain, when confronted, reveals the truth and it holds up.
+The location holds something that was never supposed to be found — and now that the party knows it exists, someone will come for them.
 
 // ----------------------------------------------------------------
 // Rewards
@@ -268,24 +496,32 @@ Destroying the threat would trigger a catastrophe; the solution requires sacrifi
 
 Table: reward
 {1d6 * 100} gold pieces found among the villain's possessions.
-\a [|+1|+2|+3] [|sword|axe|bow|shield|staff|dagger|warhammer|rapier] of [|striking|protection|speed|returning|fire|frost|lightning].
-A [|spell scroll|ritual book|map|coded letter] that opens a new adventure thread.
-The gratitude of [@village_name]: they offer free [|lodging|equipment repairs|healing|horses] for life.
-\a rare [|potion of healing|potion of greater healing|potion of flying|potion of invisibility|elixir of health].
-A deed to [|a small plot of land|a disused mine|an abandoned building|a share in a merchant vessel].
-A favour owed by [|a noble|a guild master|a wizard|a temple elder] — to be called in at a future date.
-Knowledge: the villain's documents reveal the location of something [|dangerous|valuable|long-lost].
+\a [|+1|+2|+3] [|sword|axe|bow|shield|staff|dagger|warhammer|rapier|spear|trident] of [|striking|protection|speed|returning|fire|frost|lightning|seeking|warning].
+A [|spell scroll|ritual book|map|coded letter|forbidden tome] that opens a new adventure thread.
+The gratitude of [@village_name]: they offer free [|lodging|equipment repairs|healing|horses|information] for life.
+\a rare [|potion of healing|potion of greater healing|potion of flying|potion of invisibility|elixir of health|oil of etherealness].
+A deed to [|a small plot of land|a disused mine|an abandoned building|a share in a merchant vessel|a safehouse in the nearest city].
+A favour owed by [|a noble|a guild master|a wizard|a temple elder|a retired general|the city watch captain] — to be called in at a future date.
+Knowledge: the villain's documents reveal the location of something [|dangerous|valuable|long-lost|that changes history].
+A [|sending stone|ring of feather falling|bag of holding|cloak of elvenkind|boots of the winterlands] found in the villain's personal effects.
+A title or minor rank: the party is granted [|a letter of marque|a knight's charter|a warden's commission|a guild seat] — useful and politically complicated.
+A contact inside [|a thieves' guild|the royal court|an arcane academy|a temple hierarchy] who owes the party a substantial debt.
+{1d4 * 100} gp worth of [|rare spell components|alchemical reagents|exotic trade goods] that will take [|weeks|a month] to liquidate.
 
 // ----------------------------------------------------------------
 // Side quests
 // ----------------------------------------------------------------
 
 Table: side_quest
-Locate a missing person — [@village_name] farmer's child, last seen near the [@location].
-Recover a [|stolen|cursed|lost|hidden] [|family heirloom|holy relic|magical component|piece of armour] for a grateful NPC.
-Investigate rumours of [|disappearances|undead activity|strange lights|unexplained fires] in [@village_name].
+Locate a missing person — a [@village_name] resident last seen near {location}.
+Recover a [|stolen|cursed|lost|hidden] [|family heirloom|holy relic|magical component|piece of armour|spell focus] for a grateful NPC.
+Investigate rumours of [|disappearances|undead activity|strange lights|unexplained fires|livestock mutations] near [@village_name].
 Deliver a sealed message to a contact in [@village_name] before a [|rival|pursuer|deadline] can intercept it.
-Escort a [|wounded soldier|frightened scholar|disillusioned cultist|refugee family] to safety.
-Clear a [|cave system|ruined building|stretch of road|river crossing] of [|bandits|monsters|undead|traps] blocking passage.
-Obtain a specific [|rare herb|spell component|piece of information|tool] needed to overcome a challenge in the main quest.
+Escort a [|wounded soldier|frightened scholar|disillusioned cultist|refugee family|captured witness] to safety.
+Clear a [|cave system|ruined building|stretch of road|river crossing|mountain pass] of [|bandits|monsters|undead|traps|mercenaries] blocking passage.
+Obtain a [|rare herb|spell component|piece of information|tool|key|identification paper] needed to overcome a challenge in the main quest.
 Defuse a conflict between two factions in [@village_name] before it erupts into open violence.
+Discover what happened to the [|last party that tried this|previous owner of the dungeon|founder of the order protecting {location}].
+Negotiate the release of a prisoner held by [|a rival faction|a local warlord|an overzealous inquisitor] who has information the party needs.
+Find and destroy [|a cache of weapons|a poisoned water source|a blackmail archive|a set of forged documents] before it causes irreversible harm.
+Protect a witness who saw something they shouldn't have — and is being hunted for it.

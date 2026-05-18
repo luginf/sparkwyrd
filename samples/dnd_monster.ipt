@@ -4,19 +4,26 @@ Footer: <hr><i>Roll for initiative!</i>
 Table: monster
 Set: mtype = [@monster_type]
 Set: mname = [@name_{mtype}]
+Set: cr = [@challenge_rating]
 <b>MONSTER STAT BLOCK</b>\n&
 Name:        <b>{mname}</b>\n&
 Type:        {mtype}\n&
 Size:        [@size]\n&
 Alignment:   [@alignment]\n&
-CR:          [@challenge_rating]\n&
+CR:          {cr}\n&
 \n&
 <b>STATISTICS</b>\n&
-AC: {1d4 + 10}   HP: {2d8 + 10}   Speed: {1d4 * 10} ft\n&
+AC: {1d4 + 10}   HP: {2d8 + 10} ({1d4 + 3}d8 + {1d6})   Speed: {1d4 * 10} ft\n&
 STR [{2d6 + 4} >> +-]  DEX [{2d6 + 2} >> +-]  CON [{2d6 + 3} >> +-]\n&
 INT [{2d6} >> +-]  WIS [{2d6 + 1} >> +-]  CHA [{2d6} >> +-]\n&
 \n&
+<b>DEFENCES</b>\n&
+[@defences_{mtype}]\n&
+Senses: [@senses_{mtype}]\n&
+Languages: [@languages_{mtype}]\n&
+\n&
 <b>TRAITS</b>\n&
+[!1 trait_{mtype}]\n&
 [!1 trait_{mtype}]\n&
 [!1 trait_{mtype}]\n&
 \n&
@@ -24,9 +31,15 @@ INT [{2d6} >> +-]  WIS [{2d6 + 1} >> +-]  CHA [{2d6} >> +-]\n&
 [!1 action_{mtype}]\n&
 [!1 action_{mtype}]\n&
 \n&
+<b>BONUS ACTION / REACTION</b>\n&
+[@bonus_{mtype}]\n&
+\n&
 <b>LAIR & BEHAVIOUR</b>\n&
 Lair:      [@lair]\n&
-Behaviour: [@behaviour]
+Behaviour: [!1 behaviour]\n&
+\n&
+<b>TREASURE</b>\n&
+[@treasure_{mtype}]
 
 // ----------------------------------------------------------------
 // Monster types
@@ -43,40 +56,48 @@ Aberration
 Fey
 Giant
 Ooze
+Plant
+Monstrosity
 
 // ----------------------------------------------------------------
 // Names by type
 // ----------------------------------------------------------------
 
 Table: name_Undead
-[|Bone|Shadow|Grave|Death|Ash|Dusk|Crypt|Cursed|Hollow] [|Walker|Stalker|Knight|Wraith|Shade|Horror|Specter|Revenant|Lich|Ghoul]
+[|Bone|Shadow|Grave|Death|Ash|Dusk|Crypt|Cursed|Hollow|Void|Shroud|Plague] [|Walker|Stalker|Knight|Wraith|Shade|Horror|Specter|Revenant|Lich|Ghoul|Banshee|Shade]
 
 Table: name_Beast
-[|Iron|Stone|Dire|Giant|Shadow|Feral|Pack|Storm] [|Wolf|Bear|Serpent|Spider|Boar|Hawk|Cat|Toad|Crab|Mantis]
+[|Iron|Stone|Dire|Giant|Shadow|Feral|Pack|Storm|Ember|Frost|Scaled|Blood] [|Wolf|Bear|Serpent|Spider|Boar|Hawk|Cat|Toad|Crab|Mantis|Lizard|Bat|Hornet|Eel]
 
 Table: name_Humanoid
-[|Bandit|Cultist|Tribal|Corrupted|Savage|Rogue|Mercenary] [|Captain|Warrior|Scout|Shaman|Berserker|Champion|Warlord]
+[|Bandit|Cultist|Tribal|Corrupted|Savage|Rogue|Mercenary|Zealot|Outcast|Exiled] [|Captain|Warrior|Scout|Shaman|Berserker|Champion|Warlord|Assassin|Inquisitor|Ravager]
 
 Table: name_Fiend
-[|Pit|Bone|Shadow|Flame|Abyssal|Infernal|Lesser|Greater] [|Demon|Devil|Imp|Balor|Cambion|Succubus|Hellhound|Rakshasa]
+[|Pit|Bone|Shadow|Flame|Abyssal|Infernal|Lesser|Greater|Blood|Void|Plague|Chain] [|Demon|Devil|Imp|Balor|Cambion|Succubus|Hellhound|Rakshasa|Marilith|Erinyes|Nightmare|Vrock]
 
 Table: name_Dragon
-[|Young|Ancient|Shadow|Storm|Frost|Flame|Poison|Thunder] [|Dragon|Drake|Wyvern|Dracolich|Lindwyrm|Wyrm|Dragonling]
+[|Young|Ancient|Shadow|Storm|Frost|Flame|Poison|Thunder|Void|Plague|Prismatic|Twilight] [|Dragon|Drake|Wyvern|Dracolich|Lindwyrm|Wyrm|Dragonling|Hydra|Amphiptere|Guivre]
 
 Table: name_Construct
-[|Iron|Stone|Brass|Arcane|War|Siege|Clockwork|Animated] [|Golem|Guardian|Sentinel|Automaton|Colossus|Warden|Juggernaut]
+[|Iron|Stone|Brass|Arcane|War|Siege|Clockwork|Animated|Runic|Shattered|Corrupted|Eldritch] [|Golem|Guardian|Sentinel|Automaton|Colossus|Warden|Juggernaut|Effigy|Executor|Bulwark]
 
 Table: name_Aberration
-[|Mind|Eye|Void|Chaos|Eldritch|Star|Deep|Far] [|Flayer|Tyrant|Horror|Spawn|Lurker|Watcher|Crawler|Stalker]
+[|Mind|Eye|Void|Chaos|Eldritch|Star|Deep|Far|Dream|Writhing|Fractured|Gibbering] [|Flayer|Tyrant|Horror|Spawn|Lurker|Watcher|Crawler|Stalker|Mouther|Aboleth|Shard|Nothic]
 
 Table: name_Fey
-[|Dusk|Thorn|Mist|Wild|Dark|Bright|Moon|Silver] [|Sprite|Pixie|Hag|Nymph|Satyr|Dryad|Banshee|Sylph]
+[|Dusk|Thorn|Mist|Wild|Dark|Bright|Moon|Silver|Twilight|Verdant|Frost|Hollow] [|Sprite|Pixie|Hag|Nymph|Satyr|Dryad|Banshee|Sylph|Harpy|Melusine|Boggart|Quickling]
 
 Table: name_Giant
-[|Frost|Stone|Fire|Hill|Cloud|Storm|Sea|Cave] [|Giant|Troll|Ogre|Cyclops|Ettin|Verbeeg|Annis|Fomorian]
+[|Frost|Stone|Fire|Hill|Cloud|Storm|Sea|Cave|Ash|Iron|Salt|Rune] [|Giant|Troll|Ogre|Cyclops|Ettin|Verbeeg|Annis|Fomorian|Oni|Titan|Juggernaut|Colossus]
 
 Table: name_Ooze
-[|Grey|Black|Ochre|Gelatinous|Acid|Slimy|Corroding|Hungry] [|Ooze|Cube|Slime|Pudding|Jelly|Blob|Mass|Horror]
+[|Grey|Black|Ochre|Gelatinous|Acid|Slimy|Corroding|Hungry|Void|Plague|Prismatic|Seeping] [|Ooze|Cube|Slime|Pudding|Jelly|Blob|Mass|Horror|Remnant|Devourer|Abolition|Leech]
+
+Table: name_Plant
+[|Shambling|Ancient|Blighted|Hungry|Writhing|Verdant|Rotting|Thorn|Vine|Fungal|Mossy|Corrupted] [|Mound|Horror|Guardian|Creeper|Blight|Tendril|Watcher|Strider|Walker|Devourer|Myconid|Treant]
+
+Table: name_Monstrosity
+[|Chimeric|Venomous|Armoured|Lurking|Ancient|Corrupted|Two-headed|Scaled|Winged|Subterranean] [|Chimera|Basilisk|Behir|Bulette|Catoblepas|Cockatrice|Displacer|Gorgon|Griffon|Harpy|Manticore|Peryton|Roc|Tarrasque|Wyvern|Yuan-ti]
 
 // ----------------------------------------------------------------
 // Size
@@ -101,6 +122,7 @@ Lawful Evil
 2:Chaotic Neutral
 True Neutral
 Lawful Neutral
+Lawful Good
 Unaligned
 
 // ----------------------------------------------------------------
@@ -108,6 +130,7 @@ Unaligned
 // ----------------------------------------------------------------
 
 Table: challenge_rating
+1/8
 1/4
 1/2
 3:1
@@ -122,7 +145,167 @@ Table: challenge_rating
 2:10
 12
 15
+17
 20
+23
+30
+
+// ----------------------------------------------------------------
+// Defences by type
+// ----------------------------------------------------------------
+
+Table: defences_Undead
+Immunities: poison damage, the poisoned condition. Resistances: necrotic, [|cold|lightning|bludgeoning from non-magical weapons].
+Immunities: poison, exhaustion, the poisoned condition. Resistances: necrotic, cold.
+Immunities: poison damage. Resistances: necrotic damage; bludgeoning, piercing, slashing from non-magical attacks.
+
+Table: defences_Beast
+Resistances: none. Vulnerabilities: [|fire|thunder|lightning]. Immunities: the frightened condition.
+Resistances: [|bludgeoning|piercing|slashing] from non-magical weapons. Immunities: none.
+Resistances: none. Senses reveal this creature detects predators at unusual range.
+
+Table: defences_Humanoid
+Resistances: none. Saving throw proficiencies: [|STR + CON|DEX + INT|WIS + CHA].
+Resistances: [|fire (from armour)|poison (veteran constitution)|bludgeoning (thick hide)]. Immunities: none.
+Resistances: none. Immunities: the frightened condition (battle-hardened).
+
+Table: defences_Fiend
+Immunities: fire, poison damage; the poisoned condition. Resistances: cold, lightning, bludgeoning/piercing/slashing from non-magical non-silver weapons.
+Immunities: fire damage. Resistances: cold, lightning, poison; non-magical weapon damage.
+Immunities: fire, poison. Resistances: cold, lightning; bludgeoning, piercing, slashing from non-magical weapons.
+
+Table: defences_Dragon
+Immunities: [|fire|cold|lightning|poison|acid] damage. Resistances: [|bludgeoning|piercing|slashing] from non-magical weapons.
+Immunities: [|fire and poison|cold and exhaustion|acid and the poisoned condition]. Saving throw proficiencies: DEX, CON, WIS, CHA.
+Immunities: [|fire|cold|lightning|acid|poison] damage. Resistances: none listed separately — scales provide exceptional natural armour.
+
+Table: defences_Construct
+Immunities: poison, psychic; the poisoned, exhausted, frightened, charmed, paralysed conditions.
+Immunities: poison, psychic damage; poison and disease conditions. Resistances: non-magical bludgeoning, piercing, slashing.
+Immunities: poison, psychic; exhaustion, fear, charm, paralysis, disease, poison condition.
+
+Table: defences_Aberration
+Immunities: psychic damage (some). Resistances: [|cold|fire|acid|lightning]. Saving throw proficiencies: INT, WIS.
+Resistances: psychic damage. Immunities: the charmed and frightened conditions.
+Immunities: none common. Resistances: psychic; bludgeoning, piercing, slashing from non-magical weapons.
+
+Table: defences_Fey
+Immunities: the charmed condition. Resistances: [|fire|cold|necrotic|bludgeoning from non-magical weapons].
+Immunities: none. Resistances: [|radiant|fire|poison] damage; charm effects have disadvantage.
+Immunities: poison damage; the poisoned and charmed conditions. Resistances: bludgeoning, piercing, slashing from cold-iron weapons.
+
+Table: defences_Giant
+Resistances: none common. Saving throw proficiencies: STR, CON.
+Resistances: [|cold|fire|lightning] damage. Immunities: the frightened condition.
+Resistances: bludgeoning, piercing, slashing from non-magical weapons (thick hide). No immunities.
+
+Table: defences_Ooze
+Immunities: [|acid|lightning|cold|fire] damage; the blinded, deafened, exhausted, prone conditions.
+Immunities: acid damage; blinded, deafened, prone, exhaustion. Resistances: [|fire|cold].
+Immunities: acid, [|cold|fire]. Conditions immune: blinded, deafened, exhausted, frightened, prone.
+
+Table: defences_Plant
+Immunities: poison, psychic; the blinded, deafened, poisoned conditions. Resistances: [|fire|cold|necrotic].
+Vulnerabilities: fire damage. Resistances: piercing damage. Immunities: psychic; blinded, deafened.
+Immunities: psychic; the blinded and deafened conditions. Resistances: [|cold|bludgeoning|necrotic].
+
+Table: defences_Monstrosity
+Resistances: [|bludgeoning from non-magical weapons|poison|fire]. Immunities: [|the petrified condition|the charmed condition].
+Immunities: [|fire|acid|poison] damage. Resistances: [|cold|lightning|bludgeoning from non-magical weapons].
+Saving throw proficiencies: STR, CON. Resistances: [|bludgeoning|piercing] from non-magical weapons.
+
+// ----------------------------------------------------------------
+// Senses by type
+// ----------------------------------------------------------------
+
+Table: senses_Undead
+Darkvision 60 ft, passive Perception {1d4 + 9}
+Blindsight 30 ft, darkvision 60 ft, passive Perception {1d4 + 8}
+Darkvision 120 ft, passive Perception {1d4 + 10}
+
+Table: senses_Beast
+Darkvision 60 ft, passive Perception {1d4 + 12} (keen smell)
+Blindsight 10 ft, passive Perception {1d4 + 10}
+Passive Perception {1d4 + 14} (keen sight), darkvision 60 ft
+
+Table: senses_Humanoid
+Passive Perception {1d4 + 9}
+Darkvision 60 ft, passive Perception {1d4 + 10}
+Passive Perception {1d4 + 12}
+
+Table: senses_Fiend
+Truesight 30 ft, darkvision 120 ft, passive Perception {1d4 + 11}
+Darkvision 120 ft, passive Perception {1d4 + 10}
+Blindsight 30 ft, darkvision 120 ft, passive Perception {1d4 + 12}
+
+Table: senses_Dragon
+Blindsight 60 ft, darkvision 120 ft, passive Perception {1d4 + 15}
+Darkvision 120 ft, keensight 60 ft, passive Perception {1d4 + 18}
+Tremorsense 60 ft, darkvision 120 ft, passive Perception {1d4 + 16}
+
+Table: senses_Construct
+Darkvision 60 ft, passive Perception {1d4 + 7}
+Blindsight 60 ft (blind beyond this radius), passive Perception {1d4 + 7}
+Darkvision 120 ft, passive Perception {1d4 + 8}
+
+Table: senses_Aberration
+Blindsight 30 ft, darkvision 120 ft, passive Perception {1d4 + 15}
+Truesight 120 ft, passive Perception {1d4 + 18}
+Darkvision 60 ft, telepathy 120 ft, passive Perception {1d4 + 14}
+
+Table: senses_Fey
+Darkvision 60 ft, passive Perception {1d4 + 12}
+Truesight 60 ft, passive Perception {1d4 + 14}
+Passive Perception {1d4 + 12}, low-light vision
+
+Table: senses_Giant
+Passive Perception {1d4 + 7}
+Darkvision 60 ft, passive Perception {1d4 + 8}
+Passive Perception {1d4 + 9}, tremorsense 30 ft
+
+Table: senses_Ooze
+Blindsight 60 ft (blind beyond this radius), passive Perception {1d4 + 8}
+Blindsight 60 ft, passive Perception {1d4 + 8}
+Tremorsense 60 ft, passive Perception {1d4 + 9}
+
+Table: senses_Plant
+Blindsight 60 ft, passive Perception {1d4 + 8}
+Passive Perception {1d4 + 10} (tremorsense 30 ft)
+Tremorsense 60 ft, passive Perception {1d4 + 9}
+
+Table: senses_Monstrosity
+Darkvision 60 ft, passive Perception {1d4 + 11}
+Darkvision 60 ft, tremorsense 30 ft, passive Perception {1d4 + 12}
+Darkvision 120 ft, passive Perception {1d4 + 13}
+
+// ----------------------------------------------------------------
+// Languages by type
+// ----------------------------------------------------------------
+
+Table: languages_Undead
+[|understands the languages it knew in life but cannot speak|Common, understands but rarely speaks|telepathy 60 ft — communicates only through visions]
+Table: languages_Beast
+—
+Table: languages_Humanoid
+[|Common|Common and one regional language|Common, one language of a neighbouring people|Common, Thieves' Cant]
+Table: languages_Fiend
+[|Infernal|Abyssal|Infernal, telepathy 120 ft|Abyssal, Common, Infernal]
+Table: languages_Dragon
+[|Draconic|Draconic, Common|Draconic, Primordial, and {1d2 + 1} other languages|all languages, telepathy 120 ft]
+Table: languages_Construct
+[|none|understands the language of its creator but cannot speak|responds to commands in one language only]
+Table: languages_Aberration
+[|Deep Speech, telepathy 120 ft|telepathy 120 ft only|Deep Speech, Undercommon, telepathy 120 ft]
+Table: languages_Fey
+[|Sylvan|Sylvan and Common|Sylvan, Elvish, Common|Sylvan, telepathy 60 ft]
+Table: languages_Giant
+[|Giant|Giant and Common|Giant, Elvish or Dwarvish (regional)]
+Table: languages_Ooze
+—
+Table: languages_Plant
+[|none|understands Druidic|Sylvan (understands, cannot speak)]
+Table: languages_Monstrosity
+[|none|Common (limited)|the language of its territory|Draconic, one other]
 
 // ----------------------------------------------------------------
 // Traits by type
@@ -135,6 +318,11 @@ Sunlight Sensitivity: Disadvantage on attack rolls and Perception checks in sunl
 Incorporeal Movement: Can move through creatures and objects as difficult terrain.
 Necrotic Aura: Creatures within 10 ft take {1d4} necrotic damage at the start of their turn.
 Rejuvenation: If destroyed, re-forms in {1d10} days unless its phylactery is also destroyed.
+Death's Boon: When a creature within 30 ft dies, this creature regains {1d8 + 4} HP.
+Ethereal Sight: Can see into the Ethereal Plane out to 60 ft.
+Haunting Presence: Creatures within 60 ft have disadvantage on death saving throws.
+Spectral Form: On its turn, can become incorporeal until the start of its next turn (AC becomes 13, immune to non-magical weapons).
+Life Leech Aura: At the start of each of its turns, one creature it can see within 30 ft loses {1d6} HP (no save); the creature regains that much HP.
 
 Table: trait_Beast
 Keen Smell: Advantage on Perception checks relying on smell.
@@ -143,6 +331,13 @@ Charge: If it moves 20 ft toward a target and hits, the target must make a STR s
 Spider Climb: Can climb difficult surfaces without ability checks.
 Swarm: Can occupy another creature's space; reduces to 0 HP by fire damage.
 Pounce: After a charge, it can use a bonus action to make a bite attack.
+Blood Frenzy: Advantage on melee attack rolls against any creature that doesn't have all its HP.
+Echolocation: Cannot use blindsight while deafened.
+Relentless (Recharge after Short/Long Rest): If it takes 20 or fewer damage that would reduce it to 0 HP, it is reduced to 1 HP instead.
+Water Breathing: Can breathe only underwater. Speed 0 on land; swim speed 40 ft.
+Keen Hearing and Smell: Advantage on Perception checks that rely on hearing or smell.
+Camouflage: Has advantage on DEX (Stealth) checks when in [|forest|rocky|aquatic|desert|underground] terrain.
+Web Walker: Ignores movement restrictions caused by webbing; can detect vibrations in web up to 60 ft away.
 
 Table: trait_Humanoid
 Martial Advantage: Deals an extra {2d6} damage once per turn if an ally is adjacent to the target.
@@ -151,6 +346,11 @@ Battle Cry: Allies within 30 ft gain advantage on their next attack (1/day).
 Shield Wall: +2 AC when adjacent to another humanoid with a shield.
 Veteran's Instinct: Cannot be surprised.
 Spellcasting: Knows {1d3 + 1} spells of level {1d3}.
+Skirmisher: Can move up to half its speed as a reaction when a creature ends its turn adjacent to it.
+Net Tactics: Once per turn, when it hits with a melee attack, it can attempt to grapple the target as a bonus action.
+Bloodied Fury: When reduced below half HP, gains advantage on all attack rolls until end of its next turn.
+Coordinated Assault: When it hits a creature that another humanoid has also attacked this round, deals an extra {1d8} damage.
+Indomitable (1/day): Can reroll a saving throw it fails, keeping the new result.
 
 Table: trait_Fiend
 Magic Resistance: Advantage on saving throws against spells and magical effects.
@@ -159,6 +359,11 @@ Telepathy: Communicates telepathically with any creature within 120 ft.
 Aura of Fear: Creatures within 20 ft must succeed on a WIS save (DC {1d4 + 12}) or be frightened.
 Devil's Sight: Sees through darkness, magical or otherwise, up to 120 ft.
 Shapeshifter: Can take the form of any humanoid as an action.
+Corrupting Touch: Creatures struck by its melee attacks must make CON saves (DC {1d4 + 13}) or gain 1 level of exhaustion.
+Soul Hunger: When a humanoid within 60 ft dies, the fiend regains {2d10} HP.
+Planar Step (3/day): Teleports itself and up to 2 willing creatures to any location in the same plane.
+Infernal Gaze: Can target one creature within 30 ft; target makes WIS save (DC {1d4 + 14}) or is frightened and stunned until the end of its next turn.
+Aura of Corruption: Non-fiend creatures within 20 ft have disadvantage on saving throws against spells and magical effects.
 
 Table: trait_Dragon
 Legendary Resistance (3/day): Can choose to succeed on a failed saving throw.
@@ -167,6 +372,11 @@ Magic Resistance: Advantage on saving throws against spells.
 Blindsight 60 ft: Perceives its environment without relying on sight.
 Amphibious: Can breathe air and water.
 Multiattack: Makes {1d2 + 1} attacks per action.
+Wing Buffet: Each creature within 15 ft when the dragon takes off must make a DEX save (DC {1d4 + 16}) or be knocked prone.
+Draconic Majesty: While not incapacitated, the dragon projects an aura of dominance — creatures with CR or level less than the dragon's have disadvantage on ability checks against it.
+Tail Reaction: On being missed by a melee attack, the dragon can make a tail attack as a reaction.
+Lair Actions: On initiative count 20 (losing ties), takes one lair action (wall of fire/fog/rockfall — chosen at encounter start).
+Flyby: Doesn't provoke opportunity attacks when it flies out of an enemy's reach.
 
 Table: trait_Construct
 Immutable Form: Immune to any spell or effect that alters its form.
@@ -175,6 +385,11 @@ Magic Weapons: Its attacks count as magical.
 Antimagic Susceptibility: Incapacitated in an antimagic field.
 Self-Repairing: Regains {1d6} HP at the start of its turn if it has at least 1 HP.
 Powerful Build: Counts as one size larger for grappling and carrying.
+Creator's Loyalty: Won't harm a creature it recognises as its creator or designated ally unless magically compelled.
+Berserk Threshold: If reduced below {1d4 * 10} HP, rolls d6 at turn start; on 1–3, attacks the nearest creature regardless of allegiance.
+Siege Engine: When deployed against a fortification, deals {2d10} extra damage per turn to structures.
+Unstoppable: Is not slowed by difficult terrain.
+Reactive Plating: As a reaction, can increase its AC by 5 until the start of its next turn (1/round).
 
 Table: trait_Aberration
 Alien Mind: Immune to the charmed and frightened conditions.
@@ -183,14 +398,24 @@ Amorphous: Can move through spaces as narrow as 1 inch without squeezing.
 Psychic Sight: Senses thoughts within 30 ft.
 Reality Warp: Once per turn, teleports up to 30 ft as a bonus action.
 Mind Blast Recharge (5–6): Emits a psychic wave in a 60 ft cone.
+Gibbering: Each creature that starts its turn within 20 ft must make a WIS save (DC {1d4 + 12}) or be unable to take reactions until the start of its next turn.
+Eldritch Leech: When it damages a creature with a spell or psychic attack, it regains HP equal to half the damage dealt.
+Phase Step: Can enter and exit the Ethereal Plane as a bonus action.
+Spatial Distortion: The area within 30 ft of it is subtly warped — creatures that try to move away must succeed on a WIS save (DC {1d4 + 11}) or waste their movement.
+Composite Biology: Has {1d4 + 1} separate vital organs — must be reduced to 0 HP {1d2 + 1} times before truly dying.
 
 Table: trait_Fey
 Fey Step: Can teleport up to 30 ft to a visible location as a bonus action.
 Magic Resistance: Advantage on saving throws against spells.
-Innate Spellcasting: Casts [|charm person|invisibility|misty step|entangle|sleep] at will.
+Innate Spellcasting: Casts [|charm person|invisibility|misty step|entangle|sleep|faerie fire|plant growth] at will.
 Evasion: Takes no damage on successful DEX saves, half on failed ones.
 Glamour: Can create illusory disguises as an action.
 Nature's Ward: Immune to poison and the poisoned condition.
+Bewildering Dance: Creatures within 30 ft that watch the creature move must make WIS saves (DC {1d4 + 12}) or waste their movement walking toward the fey.
+Thorned Hide: When a creature deals melee damage to this creature, the attacker takes {1d4} piercing damage.
+Lure of the Wild: Beasts and plants within 60 ft are charmed by the fey (no save) as long as it doesn't harm them.
+Mistshroud: If it starts its turn in dim light or darkness, it becomes invisible until it attacks or moves into bright light.
+Vengeful Glamour: When charmed by the fey, creatures believe any attack made against them was made by the creature they trust most.
 
 Table: trait_Giant
 Powerful Build: Counts as Huge for carrying capacity and grappling.
@@ -199,6 +424,11 @@ Siege Monster: Deals double damage to objects and structures.
 Thunderous Stomp: Movement triggers a DC {1d4 + 12} STR save for adjacent creatures or they fall prone.
 Reckless Attack: Has advantage on all attack rolls this turn; attackers also have advantage against it.
 Multiattack: Makes 2 melee attacks per action.
+Regeneration: Regains {1d10 + 5} HP at the start of its turn unless it took fire or acid damage in the previous round.
+Fear Aura: Creatures of Medium size or smaller within 30 ft must make WIS saves (DC {1d4 + 12}) at the start of their turns or be frightened.
+Sweeping Strike: When it hits one creature with a melee attack, it can extend the strike to a second adjacent creature (same attack roll vs both).
+Boulder Lunge: If it begins its turn prone, it can stand up and immediately throw a boulder as part of the same action.
+Ancient Memory: Advantage on History checks. Knows the location of all major settlements within 100 miles of its current position.
 
 Table: trait_Ooze
 Amorphous: Can squeeze through 1-inch gaps without difficulty.
@@ -207,6 +437,34 @@ Engulf: Can engulf a restrained creature on its turn.
 False Appearance: While motionless, indistinguishable from a puddle of liquid.
 Split: When subjected to lightning or slashing, splits into two smaller oozes.
 Transparent: Has disadvantage on Stealth checks only in brightly lit areas.
+Ooze Cube: Fills its entire space; creatures must make DEX saves (DC {1d4 + 12}) or be engulfed on contact.
+Acid Trail: Leaves a trail of acid wherever it moves; the trail is difficult terrain and deals {1d6} acid damage per turn to creatures within it.
+Mindless: Immune to all conditions that affect the mind (charm, fear, psychic damage, etc.).
+Pseudopod Grapple: Each successful pseudopod attack grapples its target (escape DC {1d4 + 12}). It can grapple up to {1d2 + 1} creatures simultaneously.
+Nutrient Absorption: When it fully digests a creature (reduces it to 0 HP while engulfed), it increases maximum HP by {1d8 + 4} permanently.
+
+Table: trait_Plant
+False Appearance: While motionless among vegetation, indistinguishable from a normal plant.
+Regeneration: Regains {1d8 + 3} HP at the start of its turn unless it took fire damage in the previous round.
+Spider Climb: Can move across ceilings and walls without ability checks (vine-based movement).
+Spore Cloud: Creatures within 15 ft at the start of their turns must make CON saves (DC {1d4 + 11}) or be poisoned for 1 minute.
+Root Network: Can communicate with other plants within 120 ft; can sense movement through the root network.
+Photosynthesis: In bright light, regenerates {1d6} HP per turn. In darkness, loses {1d4} HP per turn.
+Thorns: A creature that grapples or is grappled by the plant takes {1d4} piercing damage per turn.
+Vine Trap: The plant's area counts as difficult terrain; creatures must make STR saves (DC {1d4 + 12}) or be restrained on entering.
+Blight Aura: Nonmagical plants within 30 ft wilt and die. Ground within 30 ft is blighted difficult terrain.
+
+Table: trait_Monstrosity
+Multiattack: Makes {1d2 + 1} attacks per action, using different natural weapons.
+Trampling Charge: Knocks targets prone (DC {1d4 + 13} STR save) when it charges 20 ft and hits.
+Petrifying Gaze: Targets that start their turn within 30 ft must make CON saves (DC {1d4 + 13}) or be restrained; on failure, they're petrified after the next failed save.
+Venomous: Bite or sting attacks deliver venom — CON save (DC {1d4 + 12}) or take {2d8} poison damage and be poisoned for 1 minute.
+Two Heads: Advantage on WIS (Perception) checks and on saving throws against being blinded, charmed, deafened, frightened, stunned, or knocked unconscious.
+Regeneration: Regains {2d6 + 3} HP at the start of its turn unless it took acid or fire damage last round.
+Spider Climb: Can climb difficult surfaces without ability checks.
+Darting Attack: Can move up to 20 ft before or after any melee attack without provoking opportunity attacks.
+Composite Physiology: {1d3} of the following attack types are available: claw, bite, gore, sting, constrict — each usable once per turn.
+Threatening Presence: Hostile creatures entering within 30 ft for the first time on their turn must succeed on WIS saves (DC {1d4 + 12}) or be frightened.
 
 // ----------------------------------------------------------------
 // Actions by type
@@ -219,6 +477,10 @@ Paralyzing Touch: Melee attack; target must make CON save (DC {1d4 + 12}) or be 
 Shadow Step: Teleports from one shadow to another within 60 ft as a bonus action.
 Bone Volley: Ranged attack, range 30/60 ft, +{1d4 + 3} to hit. Hit: {2d4 + 2} piercing damage.
 Raise Dead (Recharge 5–6): Raises one corpse within 60 ft as a zombie under its control.
+Wail of the Damned (Recharge 5–6): Banshee-like shriek; creatures within 30 ft make CON save (DC {1d4 + 14}) or drop to 0 HP; on success, take {3d8 + 4} psychic damage.
+Draining Gaze: One creature within 60 ft makes CON save (DC {1d4 + 13}) or loses {1d10 + 2} HP maximum (restored after long rest).
+Necrotic Burst (Recharge 5–6): Explodes in necrotic energy — 15 ft radius, DEX save (DC {1d4 + 12}), {4d8} necrotic damage (half on save).
+Corrupting Touch: Melee attack +{1d4 + 5} to hit. Hit: {1d8 + 2} necrotic damage; target makes CON save or gains a level of exhaustion.
 
 Table: action_Beast
 Bite: Melee attack +{1d4 + 4} to hit, reach 5 ft. Hit: {2d6 + 3} piercing damage.
@@ -227,6 +489,10 @@ Tail Swipe: Melee attack, all creatures in 10 ft arc must make DEX save (DC {1d4
 Venomous Sting: Hit deals {1d6} poison damage; target makes CON save or is poisoned for 1 minute.
 Roar (Recharge 6): All creatures within 30 ft must make WIS save (DC {1d4 + 12}) or be frightened.
 Wing Attack: Each creature within 10 ft must make DEX save (DC {1d4 + 11}) or take {2d6} bludgeoning damage and be knocked prone.
+Pounce: Moves up to its speed, then makes a bite attack; if it hits, the target must succeed on a STR save (DC {1d4 + 12}) or be knocked prone.
+Constrict: Grapples target (escape DC {1d4 + 13}); while grappled, target takes {2d6 + 3} bludgeoning damage at start of each of the beast's turns.
+Web (Recharge 5–6): Range 30/60 ft; target makes DEX save (DC {1d4 + 11}) or is restrained until it breaks free (STR DC {1d4 + 12}).
+Gore: Melee attack +{1d4 + 5} to hit. Hit: {2d8 + 4} piercing damage; target makes STR save (DC {1d4 + 13}) or is pushed 10 ft.
 
 Table: action_Humanoid
 Longsword: Melee attack +{1d4 + 4} to hit. Hit: {1d8 + 3} slashing damage.
@@ -235,6 +501,10 @@ Shield Bash: Melee attack +{1d4 + 3} to hit. Hit: {1d4 + 2} bludgeoning damage; 
 Rally: Grants {1d8} temporary HP to one ally within 30 ft.
 Feint: Uses bonus action to grant advantage on next attack this turn.
 Commander's Strike: A willing ally within 30 ft makes one melee attack as a reaction.
+Poisoned Blade: Melee attack +{1d4 + 4} to hit. Hit: {1d6 + 3} piercing damage plus {2d6} poison damage; CON save (DC {1d4 + 12}) or poisoned for 1 minute.
+Barbed Net (Recharge 5–6): Range 15 ft; target makes DEX save (DC {1d4 + 12}) or is restrained and takes {1d6} piercing damage whenever it tries to escape.
+Dual Strike: Makes two light weapon attacks in a single action (+{1d4 + 3} each, {1d6 + 2} damage each).
+Incite Violence: Uses action to force one ally it can see to make an attack against a target of its choice (WIS save DC {1d4 + 12} to resist).
 
 Table: action_Fiend
 Longsword: Melee attack +{1d4 + 5} to hit. Hit: {1d8 + 4} slashing + {1d6} fire damage.
@@ -243,6 +513,10 @@ Hellfire Ray: Ranged spell, range 120 ft. Hit: {3d8} fire damage.
 Charm: Target makes WIS save (DC {1d4 + 13}) or is charmed for 1 hour.
 Teleport: Magically teleports up to 120 ft to a visible unoccupied space.
 Summon Minion (1/day): Summons {1d4} lesser fiends to serve until dismissed.
+Flame Burst (Recharge 5–6): 20 ft radius centred on the fiend; DEX save (DC {1d4 + 14}); {5d8} fire damage (half on save).
+Soul Rend: Melee attack +{1d4 + 6} to hit. Hit: {2d10 + 5} necrotic damage; if the target is reduced to 0 HP, its soul is trapped and cannot be resurrected without a Wish spell.
+Binding Chains: Range 60 ft; target makes STR save (DC {1d4 + 14}) or is restrained and takes {1d8} necrotic damage per turn until freed.
+Corruption: One creature the fiend can see within 60 ft must make CHA save (DC {1d4 + 13}); on failure, they are compelled to make an attack against their closest ally.
 
 Table: action_Dragon
 Bite: Melee attack +{1d6 + 7} to hit, reach 10 ft. Hit: {2d10 + 5} piercing damage + {1d10} elemental damage.
@@ -251,6 +525,9 @@ Wing Attack: Each creature within 15 ft makes DEX save (DC {1d4 + 14}) or takes 
 Tail: Melee attack +{1d6 + 7} to hit, reach 15 ft. Hit: {2d8 + 5} bludgeoning damage.
 Breath Weapon (Recharge 5–6): 60 ft cone; DEX save (DC {1d4 + 17}); {8d6} elemental damage (half on save).
 Frightful Presence: Each creature of choice within 120 ft makes WIS save (DC {1d4 + 14}) or is frightened for 1 minute.
+Crush: Grapples one Large or smaller creature and slams it into the ground (STR save DC {1d4 + 16}); on failure, target is prone and takes {3d8 + 7} bludgeoning damage.
+Elemental Nova (Recharge 5–6): Emanates elemental energy — 30 ft radius; DEX save (DC {1d4 + 17}); {6d10} elemental damage (half on save).
+Swallow: Melee attack vs grappled target; if hit, the creature is swallowed and takes {2d6 + 5} acid damage per turn. The dragon regurgitates if it takes 30+ damage in one turn from inside.
 
 Table: action_Construct
 Slam: Melee attack +{1d4 + 6} to hit. Hit: {2d8 + 5} bludgeoning damage.
@@ -259,6 +536,9 @@ Siege Strike: Melee attack dealing {3d10 + 6} damage to structures and objects.
 Overclock (Recharge 5–6): Gains an additional action on this turn.
 Force Pulse: All creatures within 15 ft make STR save (DC {1d4 + 13}) or are pushed 10 ft and knocked prone.
 Repair: Regains {2d8 + 4} HP (costs its action).
+Chain Bind: Range 30 ft; launches chains at one target — DEX save (DC {1d4 + 14}) or restrained; STR save to break free (DC {1d4 + 14}).
+Grinding Crush: Grappled target takes {3d6 + 6} bludgeoning damage at the start of each of the construct's turns.
+Self-Destruct Protocol (Recharge 6): The construct explodes; all creatures within 20 ft take {6d8} force damage (DEX save DC {1d4 + 15} for half); the construct is reduced to 0 HP.
 
 Table: action_Aberration
 Tentacle: Melee attack +{1d4 + 5} to hit, reach 10 ft. Hit: {2d6 + 4} bludgeoning damage; target is grappled (escape DC {1d4 + 13}).
@@ -267,6 +547,9 @@ Psychic Crush: Ranged spell, range 60 ft. Target makes INT save (DC {1d4 + 14}) 
 Extract Brain: Melee attack vs grappled target. On hit, target takes {6d6} piercing damage; if reduced to 0, brain is extracted.
 Telekinetic Throw: One creature or object within 60 ft makes STR save (DC {1d4 + 13}) or is hurled 30 ft and takes {2d6} damage.
 Create Thrall: Touches an incapacitated humanoid; target is charmed indefinitely.
+Reality Fracture (Recharge 5–6): 30 ft radius around the aberration; all creatures make INT save (DC {1d4 + 15}) or believe themselves to be in a different location (disadvantage on all attacks until end of next turn).
+Drain Identity: One creature within 30 ft makes CHA save (DC {1d4 + 14}) or loses all memory of the last {1d4} hours and gains a false memory implanted by the aberration.
+Spatial Grasp: Ranged attack; all creatures in a 30 ft cone make STR saves (DC {1d4 + 13}) or are pulled 30 ft toward the aberration.
 
 Table: action_Fey
 Shortsword: Melee attack +{1d4 + 4} to hit. Hit: {1d6 + 3} piercing damage.
@@ -275,6 +558,9 @@ Blinding Dust: 10 ft radius; DEX save (DC {1d4 + 11}) or blinded until end of ne
 Bewildering Glamour: Target makes WIS save (DC {1d4 + 12}) or uses its move to walk toward the fey.
 Thorn Whip: Ranged attack, range 30 ft. Hit: {2d6 + 3} piercing damage; target is pulled 10 ft toward the fey.
 Vanish: Turns invisible until it attacks or casts a spell.
+Hypnotic Spiral: One creature within 60 ft makes WIS save (DC {1d4 + 13}) or is incapacitated and has speed 0 until end of next turn (mesmerised by swirling lights).
+Glamoured Strike: Melee attack +{1d4 + 5} to hit. Hit: {1d8 + 4} damage; the target cannot distinguish whether the damage was lethal or illusory (disadvantage on death saves until a Medicine check DC 15 is made on them).
+Mass Charm (Recharge 5–6): All creatures within 30 ft make WIS saves (DC {1d4 + 14}); those who fail are charmed for 1 minute and regard the fey as their most trusted ally.
 
 Table: action_Giant
 Greatclub: Melee attack +{1d4 + 7} to hit, reach 10 ft. Hit: {3d8 + 6} bludgeoning damage.
@@ -283,6 +569,9 @@ Stomp: Melee attack vs prone target, +{1d4 + 7} to hit. Hit: {4d8 + 6} bludgeoni
 Sweeping Blow: All creatures in a 10 ft arc make DEX save (DC {1d4 + 14}) or take {2d10 + 6} bludgeoning damage and are knocked prone.
 Hurl Boulder (Recharge 5–6): Throws a boulder up to 60 ft; creatures in a 10 ft radius make DEX save (DC {1d4 + 13}) or take {4d10} bludgeoning damage.
 War Cry: Allies within 30 ft gain advantage on attack rolls until end of next turn.
+Thunderclap (Recharge 5–6): Claps hands together, sending shockwave in 30 ft cone; DEX save (DC {1d4 + 14}), {5d8} thunder damage (half on save); those who fail are also deafened.
+Grab and Smash: Grapples one creature (STR contest); next turn, slams the creature into the ground for {4d10 + 8} bludgeoning damage (no attack roll needed).
+Avalanche Charge: Moves in a straight line up to 30 ft; all creatures in its path make DEX saves (DC {1d4 + 14}) or take {2d8 + 6} bludgeoning damage and are knocked prone.
 
 Table: action_Ooze
 Pseudopod: Melee attack +{1d4 + 4} to hit. Hit: {2d6 + 3} acid damage + {1d6} bludgeoning damage.
@@ -291,20 +580,110 @@ Acid Spray (Recharge 5–6): 15 ft cone; DEX save (DC {1d4 + 12}); {4d6} acid da
 Corrode: Non-magical metal items on engulfed creature take a permanent –1 to AC/damage.
 Split: Triggered reaction when takes lightning or slashing damage; two oozes appear.
 Digest: Engulfed creature takes automatic {2d6} acid damage at start of each of the ooze's turns.
+Acid Lash: Range 20 ft; target makes DEX save (DC {1d4 + 12}) or takes {3d8} acid damage and is blinded until end of next turn (acid splashes onto face).
+Absorption: Melee attack; if it hits a creature wearing non-magical armour, the armour's AC bonus is reduced by 1 permanently.
+Splitting Surge (Recharge 6): The ooze splits into {1d3 + 1} smaller oozes simultaneously (each has half the original's HP and damage dice).
+
+Table: action_Plant
+Slam: Melee attack +{1d4 + 5} to hit, reach 10 ft. Hit: {2d8 + 4} bludgeoning damage.
+Vine Lash: Melee attack +{1d4 + 4} to hit, reach 15 ft. Hit: {1d8 + 3} bludgeoning damage; target is grappled (escape DC {1d4 + 13}).
+Spore Burst (Recharge 5–6): 20 ft radius cloud of spores; CON save (DC {1d4 + 12}); on failure, target is poisoned for 1 minute and {1d4} turns later falls unconscious (another CON save to resist).
+Thorn Volley: Ranged attack, range 30/120 ft; +{1d4 + 4} to hit; Hit: {2d6 + 3} piercing damage.
+Root Snare: One creature within 20 ft makes DEX save (DC {1d4 + 13}) or is restrained by roots; STR save (DC {1d4 + 13}) to break free.
+Regrowth: Regains {2d8 + 4} HP and sheds any conditions affecting it (costs its action; can be used once per short rest).
+Blight Aura (Recharge 5–6): All plant life within 30 ft withers; the area becomes difficult terrain for 1 hour. Non-plant creatures in the area take {2d6} necrotic damage.
+
+Table: action_Monstrosity
+Bite: Melee attack +{1d4 + 5} to hit, reach 5 ft. Hit: {2d10 + 4} piercing damage.
+Claw: Melee attack +{1d4 + 5} to hit, reach 10 ft. Hit: {2d6 + 4} slashing damage.
+Sting (Recharge 5–6): Melee attack +{1d4 + 5} to hit. Hit: {2d8 + 4} piercing damage plus {2d8} poison damage; CON save (DC {1d4 + 13}) or paralyzed for 1 minute.
+Gore: Melee attack +{1d4 + 6} to hit, reach 5 ft. Hit: {2d8 + 5} piercing damage; target makes STR save (DC {1d4 + 14}) or is knocked prone.
+Trample: Moves through one creature's space; creature makes DEX save (DC {1d4 + 13}) or takes {4d8 + 5} bludgeoning damage and falls prone.
+Swallow: Melee attack vs grappled creature; on hit, creature is swallowed (blinded, restrained, {2d6} acid damage per turn).
+Petrifying Gaze (Recharge 5–6): One creature in line of sight makes CON save (DC {1d4 + 13}) or is restrained; another failed save at start of its next turn petrifies it.
+Tail Sting: Melee attack +{1d4 + 5} to hit, reach 15 ft. Hit: {2d6 + 4} piercing damage + {2d8} poison damage.
+
+// ----------------------------------------------------------------
+// Bonus actions / reactions by type
+// ----------------------------------------------------------------
+
+Table: bonus_Undead
+Bonus Action — Shadow Meld: Moves through shadow to any location in dim light or darkness within 30 ft (doesn't provoke opportunity attacks).
+Reaction — Deathless Surge: When reduced to 0 HP, immediately uses Undead Fortitude before losing consciousness.
+Bonus Action — Soul Siphon: Drains {1d6} HP from a creature it has grappled.
+
+Table: bonus_Beast
+Bonus Action — Savage Lunge: After reducing a creature to 0 HP, moves up to half its speed and makes one melee attack.
+Reaction — Feral Dodge: When targeted by a melee attack, imposes disadvantage on the roll (instinctive reflexes).
+Bonus Action — Gnaw: Makes a secondary bite attack (+{1d4 + 2}, {1d4 + 1} damage) against a grappled creature.
+
+Table: bonus_Humanoid
+Bonus Action — Off-Hand Attack: Makes one light weapon attack with its bonus action.
+Reaction — Parry: Adds {1d4 + 2} to its AC against one melee attack that would hit it (must see attacker).
+Bonus Action — Shout Orders: One ally within 30 ft can make one melee attack as a reaction.
+
+Table: bonus_Fiend
+Bonus Action — Infernal Dash: Moves up to 60 ft without provoking opportunity attacks (fire trail ignites in its wake for 1 turn).
+Reaction — Hellish Rebuke: When damaged by a melee attack, the attacker takes {2d10} fire damage (no save).
+Bonus Action — Soul Exchange: Trades positions with a creature it has charmed (teleports both).
+
+Table: bonus_Dragon
+Bonus Action — Claw Rake: Makes one claw attack as a bonus action against a creature it has bitten this turn.
+Reaction — Wing Buffet: When a creature enters melee range, the dragon knocks it back 10 ft (STR save DC {1d4 + 15}).
+Legendary Action — Tail Sweep (costs 1): Makes a tail attack as a legendary action.
+
+Table: bonus_Construct
+Bonus Action — Overclock Step: Moves up to its full speed as a bonus action (can only do this once per turn).
+Reaction — Absorb Impact: When hit by a weapon attack, reduces damage taken by {1d6 + 2} (thick plating absorbs force).
+Bonus Action — Locking Grip: Tightens its grapple; grappled creature has disadvantage on its next escape attempt.
+
+Table: bonus_Aberration
+Bonus Action — Phase Blink: Partially phases into the Ethereal Plane until start of next turn; melee attacks against it have disadvantage.
+Reaction — Mind Spike: When a creature within 60 ft casts a spell, the aberration can attempt to interrupt it (target makes INT save DC {1d4 + 13} or the spell fails).
+Bonus Action — Psychic Leech: Drains {1d8} INT from a charmed creature (restored after long rest).
+
+Table: bonus_Fey
+Bonus Action — Fey Step: Teleports up to 30 ft to a visible unoccupied space.
+Reaction — Mirror Image: When targeted by an attack, creates one illusory duplicate (25% chance the attack hits the duplicate instead).
+Bonus Action — Beguiling Glance: One creature within 30 ft makes WIS save (DC {1d4 + 11}) or is distracted (disadvantage on its next attack before end of its next turn).
+
+Table: bonus_Giant
+Bonus Action — Intimidating Roar: All creatures within 30 ft make WIS save (DC {1d4 + 12}) or are frightened until end of their next turn.
+Reaction — Catch: When a thrown weapon or rock misses it, the giant can catch the projectile and immediately hurl it at another target (same attack roll).
+Bonus Action — Kick: Makes a kick attack (+{1d4 + 6} to hit; {1d10 + 5} bludgeoning damage) against one creature within 5 ft.
+
+Table: bonus_Ooze
+Bonus Action — Surge: Flows 20 ft toward the nearest living creature without provoking opportunity attacks.
+Reaction — Engulf Response: When a creature tries to escape the ooze's grapple, the ooze immediately makes a pseudopod attack against it.
+Bonus Action — Slick Trail: Leaves a patch of acid in its space (difficult terrain, {1d4} acid damage to enter) until the start of its next turn.
+
+Table: bonus_Plant
+Bonus Action — Vine Whip: Makes a free vine lash attack against a creature that has just moved adjacent to it.
+Reaction — Thorned Recoil: When hit by a melee attack, attacker takes {1d6} piercing damage from thorns.
+Bonus Action — Rapid Root: Plants roots into the ground; until it moves, its AC increases by 2 and it has advantage on STR saves.
+
+Table: bonus_Monstrosity
+Bonus Action — Rend: Makes one claw attack against a creature it has bitten this turn.
+Reaction — Ferocious Counter: When hit by a melee attack, makes one melee attack of opportunity against the attacker.
+Bonus Action — Repositioning Leap: Leaps up to 20 ft to any unoccupied space without provoking opportunity attacks.
 
 // ----------------------------------------------------------------
 // Lairs
 // ----------------------------------------------------------------
 
 Table: lair
-a network of [|dark|flooded|crumbling|suffocating] caverns beneath the hills
-the ruins of a [|castle|temple|watchtower|keep] long abandoned
-a fetid [|swamp|bog|marsh|mire] on the edge of civilised lands
-a [|dense|enchanted|cursed|haunted] forest no map dares name
-the [|burnt|collapsed|overgrown|desecrated] remains of a village
-a [|sunken|ice-encrusted|poisoned|blighted] valley shunned by all
-deep within the [|mountains|glacier|desert|underground sea]
-the top floor of a [|blackened|cracked|leaning|half-sunk] tower
+a network of [|dark|flooded|crumbling|suffocating|reeking|lightning-scarred] caverns beneath the hills
+the ruins of a [|castle|temple|watchtower|keep|villa|shipwreck] long abandoned
+a fetid [|swamp|bog|marsh|mire|delta|mangrove] on the edge of civilised lands
+a [|dense|enchanted|cursed|haunted|silent|fog-choked] forest no map dares name
+the [|burnt|collapsed|overgrown|desecrated|frozen|half-flooded] remains of a village
+a [|sunken|ice-encrusted|poisoned|blighted|windswept|ash-covered] valley shunned by all
+deep within the [|mountains|glacier|desert|underground sea|volcanic tunnels|tidal caves]
+the top floor of a [|blackened|cracked|leaning|half-sunk|lightning-struck|toppled] tower
+a vast ossuary beneath a forgotten [|battlefield|monastery|noble estate|city]
+a [|half-submerged|tide-locked|reef-tangled] sea cave accessible only at low tide
+the centre of a dead forest where nothing has grown in [|decades|centuries|living memory]
+a nest built from [|bones|shipwreck timber|stolen armour|petrified wood|crushed wagons]
 
 // ----------------------------------------------------------------
 // Behaviour
@@ -316,8 +695,77 @@ Cunning — studies intruders from a distance before striking.
 Pack Leader — never encountered alone; {1d4 + 1} lesser minions follow it.
 Ancient — wise and patient; may parley before resorting to violence.
 Frenzied — attacks the nearest creature indiscriminately; pain enrages it.
-Collector — hoards [|gold|magic items|bones|books|trinkets] and guards them jealously.
+Collector — hoards [|gold|magic items|bones|books|trinkets|weapons|teeth] and guards them jealously.
 Nocturnal — inactive during daylight; terrifying at night.
 Migratory — roams a vast territory; its lair shifts with the seasons.
 Charmer — uses guile and illusion to avoid combat until the moment is right.
-Corrupted — once noble, now twisted by [|dark magic|an ancient curse|a demon's pact|plague].
+Corrupted — once noble, now twisted by [|dark magic|an ancient curse|a demon's pact|plague|exposure to wild magic].
+Sentinel — guards a specific location or object; ignores all else unless threatened.
+Wounded — injured by a prior encounter; more dangerous and less predictable for it.
+Opportunistic — follows other predators to steal kills; retreats if outmatched.
+Ritual-bound — performs the same behaviour at the same time daily; disrupting it causes a berserk rage.
+Intelligent — uses tactics, flanking, and terrain; targets spellcasters and healers first.
+
+// ----------------------------------------------------------------
+// Treasure by type
+// ----------------------------------------------------------------
+
+Table: treasure_Undead
+{1d6 * 50} gp in scattered coins, a [|ring|amulet|brooch] once belonging to its former living self, {1d3} spell scrolls (necromancy or divination).
+A locked chest containing {1d6 * 100} gp, a [|+1 weapon|cloak of protection|ring of resistance (necrotic)], and a journal describing its death.
+{1d4 * 75} gp, a bone amulet that functions as a focus for necromancy spells, {1d3} vials of [|holy water (corrupted)|spell components|rare poison].
+
+Table: treasure_Beast
+None beyond the meat and hide (worth {1d6 * 10} gp to the right buyer).
+{1d4} intact [|fangs|talons|scales|feathers|horns] worth {1d6 * 15} gp each; a swallowed [|gemstone|signet ring|key] from a past victim.
+A nest containing {1d4 * 25} gp in shiny objects, a [|gem|medal|locket|coin hoard] gathered instinctively.
+
+Table: treasure_Humanoid
+{2d6 * 25} gp in a hidden [|belt pouch|false-bottomed chest|buried cache], {1d3} [|potions of healing|smoke bombs|vials of acid], a map leading somewhere dangerous.
+A [|+1 weapon|+1 armour|cloak of elvenkind|boots of striding and springing], {1d6 * 50} gp, orders from a superior (plot hook).
+{1d4 * 30} gp, a [|forged document|stolen goods|incriminating letter|coded message], {1d3} random consumable magic items.
+
+Table: treasure_Fiend
+A [|contract with a powerful soul|infernal writ granting one boon|binding scroll naming a mortal servant], {2d6 * 100} gp, [|hellfire oil|brimstone dust] (magic component worth {1d4 * 50} gp).
+A [|+2 weapon with a sinister history|amulet of proof against detection and location|ring of fire resistance], {1d6 * 150} gp in blood-stained coinage.
+{1d4 * 100} gp, {1d3} spell scrolls (conjuration/evocation), a soul coin containing a trapped mortal.
+
+Table: treasure_Dragon
+A hoard worth {2d6 * 500} gp in mixed coins, gems, and art objects; {1d4} magic items (roll on Treasure Tables B–D); a [|legendary weapon|powerful artefact|ancient spellbook] at the hoard's centre.
+{1d6 * 300} gp, a [|+3 weapon|+2 armour|staff of power|ioun stone], {1d6} spell scrolls, {1d4} potions of superior healing.
+A scattered hoard of {1d4 * 200} gp; {1d6} gems worth {1d6 * 50} gp each; one item of legendary rarity.
+
+Table: treasure_Construct
+None — the construct itself may be valuable ({1d4 * 200} gp to the right artificer or collector).
+Hidden compartment in its chassis: {1d4 * 50} gp and a [|sending stone|spell scroll|small construct blueprint].
+The core powering it is worth {1d6 * 100} gp (a [|bound elemental crystal|lich's phylactery fragment|divine rune tablet]).
+
+Table: treasure_Aberration
+A [|tome of forbidden lore|psychic crystal (casts Detect Thoughts 3/day)|collection of pickled brains in glass jars worth {1d4 * 50} gp to a collector].
+{1d4 * 75} gp in strange currency from another plane, a [|ring of mind shielding|headband of intellect|wand of enemy detection].
+Nothing recognisable as treasure — the creature has dissolved and absorbed all it has collected.
+
+Table: treasure_Fey
+A [|glamoured trinket hiding a powerful enchantment|bag of holding sewn from moonlight|mirror that shows a location in the Feywild].
+{1d4} pixie dust vials (each casts Fly for 1 hour), a [|fey pact tablet|silver acorn with a stored spell|ring of feather falling].
+A chest of {1d6 * 50} gp in elvish or fey coinage, {1d4} flowers that never wilt, a [|cloak of invisibility|staff of the woodlands|dimensional shackles].
+
+Table: treasure_Giant
+A crude sack containing {2d6 * 50} gp, {1d4} art objects worth {1d6 * 25} gp each, a [|giant-sized +1 weapon|belt of giant strength|gauntlets of ogre power].
+{1d6 * 75} gp, a [|trophy from a famous kill|stolen noble's crown|set of rune stones with divinatory value].
+Nothing — giants eat and smash their loot; only the [|skull of a notable enemy|carved rune club|iron belt with ancient writing] remains.
+
+Table: treasure_Ooze
+Whatever hasn't been dissolved: {1d4 * 15} gp in acid-pitted coins, {1d3} [|undigested gems|intact keys|partially corroded weapons].
+A [|+1 dagger (unaffected by acid)|ring of acid resistance|wand of caustic damage (3d8, 5 charges)], {1d4 * 20} gp.
+Nothing recoverable — it has dissolved all organic matter and corroded all metals. Gems only: {1d6} worth {1d4 * 30} gp each.
+
+Table: treasure_Plant
+[|Rare alchemical ingredients|Potion components|Druidic focus material] worth {1d4 * 40} gp to the right herbalist.
+Seeds of a rare magical plant ({1d3} doses; each can be used as a spell component for plant-growth spells).
+The creature's core — a [|heartwood crystal|blight seed|living root coil] — is worth {1d6 * 50} gp and can be used to animate a lesser plant creature.
+
+Table: treasure_Monstrosity
+Trophies: {1d4} valuable body parts (teeth, scales, feathers) worth {1d6 * 20} gp each to collectors or alchemists.
+A [|+1 weapon|ring of protection|cloak of protection], {1d4 * 50} gp scattered around the lair.
+Consumed prey's possessions: {1d6 * 30} gp, a [|healing potion|magic weapon|useful key], a personal item that may identify the last victim.

@@ -903,6 +903,73 @@ if {[info exists pick_index]} {
 
 ---
 
+### Accord en genre dans un fichier `.ipt`
+
+Pattern pour générer un texte accordé selon un sexe tiré aléatoirement. Applicable à tout générateur de personnages en français.
+
+**Principe :** des `Set:` cascadés tirent le sexe puis calculent les suffixes et pronoms qui en dépendent. Les tables de contenu utilisent ces variables comme suffixes ou pronoms inline.
+
+```
+// Dans la table principale :
+Set: sexe    = [@sexe_val]          // "f" ou "m"
+Set: e       = [@v_e_{sexe}]        // "e"  / \z
+Set: ne      = [@v_ne_{sexe}]       // "ne" / \z        ancien{ne}
+Set: euse    = [@v_euse_{sexe}]     // "euse" / "eux"   séri{euse}
+Set: il      = [@v_il_{sexe}]       // "elle" / "il"
+Set: IL      = [@v_IL_{sexe}]       // "Elle" / "Il"    (début de phrase)
+Set: le      = [@v_le_{sexe}]       // "la"   / "le"    (COD)
+Set: luimeme = [@v_luimeme_{sexe}]  // "elle-même" / "lui-même"
+
+// Tables de valeurs (une paire par variable) :
+Table: sexe_val
+f
+m
+
+Table: v_e_f
+e
+Table: v_e_m
+\z              // \z → vide après post-processing → pas de suffixe
+
+Table: v_euse_f
+euse
+Table: v_euse_m
+eux
+```
+
+**Utilisation dans les tables de contenu :**
+
+```
+// Adjectifs réguliers — {e} / \z
+fatigué{e}       → "fatiguée"  / "fatigué"
+ouvert{e}        → "ouverte"   / "ouvert"
+corpulent{e}     → "corpulente"/ "corpulent"
+
+// Adjectifs en -eux/-euse — {euse}
+séri{euse}       → "sérieuse"  / "sérieux"
+silenci{euse}    → "silencieuse"/"silencieux"
+nerv{euse}       → "nerveuse"  / "nerveux"
+
+// Adjectifs en -ien/-ienne ou -n/-nne — {ne}
+ancien{ne}       → "ancienne"  / "ancien"
+
+// Pronoms
+{il} parle       → "elle parle"/ "il parle"
+{IL} a fait      → "Elle a fait"/"Il a fait"
+personne ne {le} connaît → "la" / "le"
+prouver à {luimeme} → "à elle-même" / "à lui-même"
+
+// Irréguliers → petites tables dédiées
+[@v_doux_{sexe}]    → "douce"    / "doux"
+[@v_discret_{sexe}] → "discrète" / "discret"
+[@v_attentif_{sexe}]→ "Attentive"/ "Attentif"
+```
+
+**Emplois genrés :** créer deux tables séparées `emploi_f` et `emploi_m` avec les formes correctes du français (éditrice/éditeur, chercheuse/chercheur, cheffe/chef…).
+
+**Règle pour les tiers :** les adjectifs désignant un autre personnage (dont le genre est indéterminé) restent en forme `(e)`.
+
+---
+
 ## Pièges identifiés (résumé)
 
 | Piège | Solution |
@@ -927,4 +994,7 @@ if {[info exists pick_index]} {
 | `Use:` merge — ordre de priorité | Le fichier principal prime. N'ajouter une table importée que si son nom est absent du principal |
 | Import circulaire via `Use:` | Passer une liste `_loaded` de chemins normalisés en paramètre de `parse_ipt`; retourner `ipt_empty_parsed` si déjà chargé |
 | Chemins Windows dans `Use:` | `nbos\names\Human.ipt` → convertir `\` en `/` et chercher case-insensitive. Fonction `normalize_use_path` |
+| `{e}` vide au masculin | Mettre `\z` dans la table masculine : `fatigué{e}` → `fatigué\z` → `fatigué` après post-processing |
+| Variables de genre cascadées | `Set: sexe` en premier, puis `Set: il = [@v_il_{sexe}]` etc. L'ordre des `Set:` garantit que `{sexe}` est résolu avant les dérivées |
+| Deux tables `emploi_f` / `emploi_m` | Les formes françaises genrées ne suivent pas de règle simple → toujours écrire les deux tables explicitement |
 | `Define:` réévaluation | Chaque usage de `{$NomVar}` évalue la Define à nouveau. Stocker dans `vars(__defines)` et appeler `lookup_define` |

@@ -17,6 +17,7 @@ sparkwyrd/
 ├── manual.md
 ├── CLAUDE.md         → ce fichier
 ├── SKILLS.md
+├── samples/          → 5 générateurs d'exemples (D&D + fiction FR)
 └── src/
     ├── header.sh     → polyglot sh/Tcl (3 lignes, shebang + bootstrap)
     ├── engine.tcl    → moteur pur Tcl (parser + générateur, sans Tk)
@@ -185,6 +186,36 @@ proc cli_main {} { ... }
 if {![info exists ::sparkwyrd_combined]} { cli_main }
 ```
 Permet l'exécution directe (`tclsh src/cli.tcl`) ET l'inclusion dans le build sans double exécution.
+
+## Dossier samples/
+
+Cinq fichiers d'exemples dans `samples/` :
+
+| Fichier | Langue | Contenu |
+|---|---|---|
+| `dnd_character.ipt` | EN | Fiche de personnage D&D — race, classe, apparence, trait racial, langues, compétences, biographie |
+| `dnd_monster.ipt` | EN | Stat block monstre D&D — type, défenses, sens, 3 traits, 2 actions, bonus action, repaire, trésor |
+| `dnd_scenario.ipt` | EN | Scénario D&D — accroche, villain, PNJ allié, salles clés, rencontre voyage, rebondissement, récompenses |
+| `idees_fiction.ipt` | FR | Idée de roman/nouvelle — genre, synopsis, protagoniste, antagoniste, perso secondaire, structure, fin |
+| `personnage_fiction.ipt` | FR | Fiche personnage — accordée selon le sexe via variables de genre (`{e}`, `{il}`, `{euse}`…) |
+
+### Pattern d'accord en genre dans les fichiers .ipt
+
+`personnage_fiction.ipt` utilise une technique réutilisable pour accorder un texte généré selon un sexe tiré aléatoirement :
+
+```
+Set: sexe = [@sexe_val]          // "f" ou "m"
+Set: e    = [@v_e_{sexe}]        // "e" ou \z (vide)
+Set: il   = [@v_il_{sexe}]       // "elle" ou "il"
+Set: euse = [@v_euse_{sexe}]     // "euse" ou "eux"
+Set: luimeme = [@v_luimeme_{sexe}]  // "elle-même" ou "lui-même"
+```
+
+- **`\z` comme suffixe vide** : `Table: v_e_m` contient `\z`, donc `fatigué{e}` devient `fatigué` au masculin.
+- **Suffixes réguliers** : `{e}` couvre -é/-ée, -ant/-ante, etc. ; `{euse}` couvre -eux/-euse et -ieu/-ieuse.
+- **Irréguliers** via petites tables dédiées : `[@v_doux_{sexe}]` → douce/doux, `[@v_discret_{sexe}]` → discrète/discret.
+- **Emplois** : deux tables complètes `emploi_f` et `emploi_m` avec formes correctes (éditrice/éditeur, chercheuse/chercheur…).
+- Les adjectifs désignant une **autre** personne (section relation) restent en forme `(e)` car leur genre est indéterminé.
 
 ## Ce qui reste à implémenter
 

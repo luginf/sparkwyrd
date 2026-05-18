@@ -37,6 +37,7 @@ sparkwyrd/
 ├── demo.ipt          feature showcase: fantasy / steampunk / pirate
 ├── manual.md         complete .ipt syntax reference
 ├── README.md         this file
+├── samples/          ready-to-use example generators (D&D, fiction)
 └── src/
     ├── header.sh     sh/Tcl polyglot bootstrap (3 lines)
     ├── engine.tcl    pure-Tcl generator engine (no Tk dependency)
@@ -144,6 +145,26 @@ Use: /absolute/path/to/tables.ipt
 - The main file's tables always take priority over imported ones.
 - Circular imports are detected and skipped automatically.
 - A warning is printed (not an error) if the file is not found.
+
+---
+
+## Sample files
+
+The `samples/` directory contains ready-to-use example generators:
+
+| File | Language | Description |
+|---|---|---|
+| `dnd_character.ipt` | EN | D&D character sheet — race, class, appearance, racial ability, languages, skills, backstory |
+| `dnd_monster.ipt` | EN | D&D monster stat block — type, defences, senses, traits, actions, bonus action, lair, treasure |
+| `dnd_scenario.ipt` | EN | D&D scenario — hook, villain, NPC ally, location features, travel encounter, twist, rewards |
+| `idees_fiction.ipt` | FR | Fiction idea — genre, synopsis, protagonist, antagonist, secondary character, structure, ending |
+| `personnage_fiction.ipt` | FR | Fiction character — full sheet with gendered French agreement (pronouns, adjectives, job titles) |
+
+```sh
+./sparkwyrd.tcl --cli samples/dnd_character.ipt
+./sparkwyrd.tcl --cli samples/personnage_fiction.ipt
+./sparkwyrd.tcl --gui samples/dnd_scenario.ipt
+```
 
 ---
 

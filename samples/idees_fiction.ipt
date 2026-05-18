@@ -5,6 +5,8 @@ Table: idee
 Set: genre = [@genre]
 Set: protagoniste = [@protagoniste]
 Set: conflit = [@conflit]
+Set: pnom = [@prenom_prot]
+Set: anom = [@prenom_antag]
 <b>IDÉE DE ROMAN / NOUVELLE</b>\n&
 \n&
 <b>GENRE :</b> {genre}\n&
@@ -18,6 +20,9 @@ Set: conflit = [@conflit]
 <b>ANTAGONISTE :</b>\n&
 [@antagoniste]\n&
 \n&
+<b>PERSONNAGE SECONDAIRE :</b>\n&
+[@perso_secondaire]\n&
+\n&
 <b>CONFLIT CENTRAL :</b>\n&
 {conflit}\n&
 \n&
@@ -25,6 +30,15 @@ Set: conflit = [@conflit]
 \n&
 <b>CADRE :</b>\n&
 [@cadre]\n&
+\n&
+<b>OBJET / LIEU SYMBOLIQUE :</b>\n&
+[@objet_symbolique]\n&
+\n&
+<b>STRUCTURE NARRATIVE :</b>\n&
+[@structure]\n&
+\n&
+<b>FIN POSSIBLE :</b>\n&
+[@fin]\n&
 \n&
 <b>INCIPIT POSSIBLE :</b>\n&
 <i>[@incipit]</i>
@@ -44,33 +58,54 @@ Drame contemporain
 Fantasy épique
 Romance noire
 Dystopie
+Récit d'espionnage
+Huis clos
+Littérature de l'intime
+Fable sociale
+Récit initiatique
+Uchronie
 
 // ----------------------------------------------------------------
 // Synopsis
 // ----------------------------------------------------------------
 
 Table: synopsis
-{protagoniste} découvre que [@secret], et cette révélation va mettre en péril [|sa vie|ceux qu'il aime|tout ce en quoi il croyait].
-Après [@evenement_declencheur], {protagoniste} se retrouve à [|fuir|enquêter|survivre|chercher la vérité] dans un monde où plus rien ne peut être tenu pour acquis.
-{protagoniste} n'a que [|sept jours|une nuit|quarante-huit heures|quelques semaines] pour [|trouver la vérité|sauver quelqu'un|accomplir l'impossible|effacer une erreur passée] avant que [@consequence].
-Ce que tout le monde croyait être [@fausse_verite] se révèle être autre chose — et [@protagoniste] est la seule personne à pouvoir en comprendre les conséquences.
+{protagoniste} découvre que [@secret], et cette révélation va mettre en péril [|sa vie|ceux qu'il aime|tout ce en quoi il croyait|sa propre identité].
+Après [@evenement_declencheur], {protagoniste} se retrouve à [|fuir|enquêter|survivre|chercher la vérité|reconstruire ce qui a été détruit] dans un monde où plus rien ne peut être tenu pour acquis.
+{protagoniste} n'a que [|sept jours|une nuit|quarante-huit heures|quelques semaines|le temps d'un voyage en train] pour [|trouver la vérité|sauver quelqu'un|accomplir l'impossible|effacer une erreur passée|empêcher une injustice] avant que [@consequence].
+Ce que tout le monde croyait être [@fausse_verite] se révèle être autre chose — et {protagoniste} est la seule personne à pouvoir en comprendre les conséquences.
 Deux étrangers aux destins opposés se retrouvent liés par [@lien_inattendu], et leur alliance précaire est la seule chose qui peut empêcher [@catastrophe].
+{protagoniste} reçoit une lettre d'une personne morte depuis [|cinq|dix|vingt] ans. Le contenu est impossible — et pourtant, elle contient des informations que personne d'autre ne pouvait connaître.
+Tout le monde dans la ville de [@ville_recit] tient pour acquis que [@fausse_verite]. {protagoniste} est la première personne depuis [|des décennies|des générations|un siècle] à poser la bonne question.
+On confie à {protagoniste} une mission simple. Puis elle devient [|impossible|criminelle|moralement insupportable|la chose pour laquelle on cherchera à l'éliminer].
+Un [|accident|incendie|suicide|meurtre] qui a défini la vie de {protagoniste} est peut-être [|une mise en scène|une erreur réparée trop tard|le début de quelque chose qui n'est pas encore terminé].
+{protagoniste} a construit toute sa vie sur [|un mensonge qu'il/elle croyait être la vérité|une loyauté mal placée|l'absence d'une vérité qu'il/elle n'avait pas le courage de chercher]. Quelque chose force enfin la question.
 
 Table: secret
-[@antagoniste] n'est pas ce qu'il prétend être
+[@antagoniste_prenom] n'est pas ce qu'il/elle prétend être
 la ville entière est bâtie sur un mensonge fondateur
-un événement qu'il a toujours cru accidentel était en réalité prémédité
-il possède un pouvoir qu'il ne comprend pas encore
+un événement qu'il/elle a toujours cru accidentel était en réalité prémédité
+il/elle possède un pouvoir ou une connaissance qu'il/elle ne comprend pas encore
 les morts ne le sont peut-être pas autant qu'on le croit
-l'organisation qui le protège est celle qui le menace
+l'organisation qui le/la protège est celle qui le/la menace
+quelqu'un a pris une décision en son nom il y a longtemps, et toute sa vie en est la conséquence
+la vérité sur sa naissance remet en cause l'identité de tous ceux qu'il/elle croyait connaître
+la personne dont il/elle pleure la mort est toujours en vie — et n'est pas revenue pour de bonnes raisons
+
+Table: antagoniste_prenom
+[@prenom_antag]
 
 Table: evenement_declencheur
 la mort suspecte d'un proche
 un message reçu d'une personne disparue depuis dix ans
-une découverte dans un endroit qu'il n'aurait jamais dû visiter
+une découverte dans un endroit qu'il/elle n'aurait jamais dû visiter
 un accident qui n'en était peut-être pas un
 la disparition inexplicable de sa mémoire des dernières 24 heures
 une lettre scellée que son père lui a demandé de n'ouvrir qu'à sa propre mort
+un licenciement qui n'en est pas un — c'est une façon de l'éloigner
+une rencontre fortuite avec quelqu'un qui ne devrait pas exister
+l'arrivée d'un étranger qui connaît son nom, son adresse, et son passé le plus secret
+la découverte d'un objet chez lui/elle qui ne lui appartient pas — et qui porte des empreintes qu'on ne peut pas expliquer
 
 Table: fausse_verite
 une légende locale
@@ -78,26 +113,35 @@ un fait historique établi
 une vérité familiale transmise de génération en génération
 un accident tragique arrivé il y a vingt ans
 une mort officiellement classée comme suicide
+une guérison miraculeuse dont personne ne questionne l'origine
+un verdict judiciaire définitif
+une disparition classée comme départ volontaire
 
 Table: lien_inattendu
 un secret qu'ils sont les seuls à partager
-une prophétie écrite avant leur naissance
-la même marque sur leur peau
+une prophétie — ou son équivalent rationnel — écrite avant leur naissance
+la même marque, la même date, le même souvenir inexplicable
 le même souvenir d'un endroit qui n'existe plus
 la même nuit dont aucun des deux n'a de souvenir clair
+un ennemi commun qui sait exactement qui ils sont et pourquoi ils se rencontrent
 
 Table: consequence
 il soit trop tard pour eux tous
 la vérité soit effacée à jamais
-le prochain mort soit quelqu'un qu'il aime
-la ville soit détruite
-ce qu'il cherche à protéger lui soit retiré
+le prochain mort soit quelqu'un qu'il/elle aime
+la ville, l'institution ou le système ne puisse plus être sauvé
+ce qu'il/elle cherche à protéger lui soit définitivement retiré
+quelqu'un d'innocent soit condamné à sa place
 
 Table: catastrophe
 la fin de tout ce qu'ils connaissent
 la destruction de la dernière preuve de la vérité
 la mort de l'unique personne en qui ils ont confiance
 la montée au pouvoir de ceux qui veulent le silence
+la répétition d'un désastre que l'un d'eux aurait pu éviter
+
+Table: ville_recit
+[|Bruxelles|Lyon|Bordeaux|Reims|Strasbourg|Nantes|Montpellier|Marseille|une ville de province sans nom|une ville imaginaire dont le nom importe peu]
 
 // ----------------------------------------------------------------
 // Protagonistes
@@ -122,6 +166,16 @@ Marc
 Inès
 Paul
 Amandine
+Romain
+Aurélie
+Baptiste
+Chloé
+Florian
+Gaëlle
+Hugo
+Iris
+Kévin
+Lucie
 
 Table: nom_prot
 Vernet
@@ -139,6 +193,11 @@ Pelletier
 Renaud
 Sébastien
 Tissier
+Fontaine
+Blanc
+Dupuis
+Garnier
+Henry
 
 Table: age_prot
 la trentaine
@@ -148,6 +207,9 @@ la quarantaine
 38 ans
 45 ans
 51 ans
+57 ans
+la vingtaine
+la cinquantaine
 
 Table: metier_prot
 journaliste d'investigation
@@ -160,6 +222,13 @@ historienne spécialisée dans les crimes non résolus
 inspectrice de police mise en congé forcé
 directrice d'un hôpital psychiatrique
 écrivain en panne d'inspiration
+traductrice judiciaire spécialisée dans les aveux
+notaire qui a hérité des dossiers d'un confrère mort dans des circonstances troubles
+fonctionnaire de l'état civil ayant découvert une anomalie dans les registres
+cryptographe travaillant pour une organisation dont il/elle ignore les véritables activités
+professeur de philosophie rattrapé par une thèse de jeunesse
+restaurateur/restauratrice d'art qui découvre autre chose sous la surface
+neurologue spécialisé dans les faux souvenirs
 
 Table: trait_prot
 hanté(e) par une perte dont il/elle ne parle jamais
@@ -169,6 +238,11 @@ brillant(e) mais autodestructeur/autodestructrice
 obsessionnel(le) au point d'y avoir sacrifié ses relations
 pragmatique jusqu'à la froideur — sauf quand les enfants sont en danger
 solitaire par choix, mais désespérément humain(e) dans les moments de crise
+porteur/porteuse d'un secret qui le/la coupe de tout lien authentique
+trop honnête pour ce monde — une qualité qui se retourne régulièrement contre lui/elle
+en rémission d'une dépendance : sobre depuis [|deux ans|cinq ans|dix ans], mais les réveils sont encore difficiles
+quelqu'un qui a recommencé de zéro une fois, et sait que recommencer une deuxième fois sera impossible
+en deuil — pas d'une mort, mais d'une vie qu'il/elle avait planifiée et qui n'a pas eu lieu
 
 // ----------------------------------------------------------------
 // Antagonistes
@@ -188,6 +262,14 @@ Renaud
 Isabelle
 François
 Marion
+Éric
+Delphine
+Bertrand
+Cécile
+Thierry
+Nathalie
+Alain
+Valérie
 
 Table: nom_antag
 Delvaux
@@ -200,6 +282,12 @@ Delacroix
 Fontaine
 Haumont
 Leriche
+Beaumont
+Cauchetier
+Darnault
+Évesque
+Fauvel
+Gremillet
 
 Table: role_antag
 conseiller influent dans l'ombre du pouvoir
@@ -210,6 +298,10 @@ chef d'entreprise dont la fortune repose sur un crime enfoui
 haut fonctionnaire protégé par ses réseaux
 chercheuse en neurosciences aux méthodes non éthiques
 journaliste qui fabrique l'actualité autant qu'il la rapporte
+avocat dont la clientèle inclut des personnes qu'on ne doit pas contrarier
+magistrate dont les verdicts obéissent à une logique que personne ne comprend encore
+directeur d'un laboratoire privé financé par des sources indétectables
+ancien agent de renseignement reconverti dans le secteur privé
 
 Table: but_antag
 effacer une vérité qui pourrait le/la détruire
@@ -218,6 +310,46 @@ accomplir ce que son père ou sa mère n'a pas pu achever
 prouver une théorie au mépris de toute vie humaine
 survivre — et rester libre — quoi qu'il en coûte aux autres
 obtenir une reconnaissance que le monde lui a refusée
+réparer une injustice réelle par des moyens qui en créent d'autres
+maintenir une paix construite sur un secret — et convaincre que la paix justifie tout
+
+// ----------------------------------------------------------------
+// Personnages secondaires
+// ----------------------------------------------------------------
+
+Table: perso_secondaire
+[@prenom_prot2] [@nom_prot], [@role_second] — [@lien_second]
+
+Table: prenom_prot2
+Sébastien
+Diane
+Laurent
+Nadège
+Olivier
+Sandrine
+Michel
+Véronique
+Sylvain
+Carine
+Adrien
+Margaux
+Rémi
+Estelle
+Guillaume
+
+Table: role_second
+[|ami(e) d'enfance|collègue de longue date|voisin(e)] qui sait quelque chose sans savoir qu'il/elle le sait
+[|ancien(ne) amour|ex-conjoint(e)|partenaire d'une vie parallèle] qui réapparaît au pire moment
+[|protégé(e)|stagiaire|étudiant(e)] dont la naïveté est à la fois une vulnérabilité et une ressource
+[|source confidentielle|informateur/informatrice|contact dans le milieu] dont la loyauté est toujours provisoire
+[|supérieur(e) hiérarchique|mentor|figure d'autorité] qui protège quelque chose en croyant protéger quelqu'un
+
+Table: lien_second
+en danger sans le savoir
+porteur/porteuse d'une information cruciale qu'il/elle croit sans importance
+tiraillé(e) entre sa loyauté envers le protagoniste et une autre loyauté plus ancienne
+l'unique personne en qui le protagoniste a confiance — ce qui en fait une cible
+quelqu'un qui a menti une fois pour protéger le protagoniste, et n'a jamais pu dire la vérité depuis
 
 // ----------------------------------------------------------------
 // Conflits centraux
@@ -232,6 +364,10 @@ La liberté contre la sécurité — pour rester en vie, il faut sacrifier ce qu
 L'individu contre le système — une seule personne contre une machine rodée à faire taire.
 Le bien commun contre le bien particulier — sauver tout le monde exige de sacrifier quelqu'un de précieux.
 La mémoire contre l'oubli — certains secrets sont-ils mieux gardés dans le silence ?
+L'identité contre la survie — pour continuer, il faudrait devenir quelqu'un d'autre.
+L'amour contre la lucidité — la personne aimée est au centre du problème.
+La responsabilité contre l'impuissance — savoir sans pouvoir agir, ou agir sans être certain de savoir.
+La culpabilité contre l'innocence — la frontière entre les deux se révèle plus floue qu'attendu.
 
 // ----------------------------------------------------------------
 // Thèmes
@@ -246,31 +382,81 @@ La transmission du mal à travers les générations.
 La frontière ténue entre protéger et contrôler.
 La solitude comme condition nécessaire de la lucidité.
 L'ambiguïté morale : peut-on faire le bien par de mauvais moyens ?
-Le deuil impossibles et les fantômes qui refusent de partir.
+Le deuil impossible et les fantômes qui refusent de partir.
 La résistance comme acte désespéré et nécessaire.
+La mémoire comme arme et comme blessure.
+Le silence complice — ce que l'on sait et qu'on ne dit pas.
+La loyauté à un mensonge que l'on préfère à une vérité qui détruirait tout.
+L'héritage toxique — quand l'amour transmis est aussi le mal transmis.
+Ce qu'on fait quand les institutions censées protéger deviennent la menace.
 
 // ----------------------------------------------------------------
 // Cadres
 // ----------------------------------------------------------------
 
 Table: cadre
-Une [|petite ville|cité industrielle|station balnéaire hors-saison|ville universitaire] où tout le monde se connaît — et surveille.
-[|Paris|Lyon|Bordeaux|Marseille|Lille], dans un [|quartier en gentrification|immeuble haussmannien décati|hôpital reconverti|ancien site industriel].
-Un pays [|scandinave|de l'Est|francophone d'Afrique|des Balkans] dans une période de transition politique.
-Une communauté [|religieuse|artistique|militaire|scientifique] coupée du monde ordinaire.
+Une [|petite ville|cité industrielle|station balnéaire hors-saison|ville universitaire|sous-préfecture] où tout le monde se connaît — et surveille.
+[|Paris|Lyon|Bordeaux|Marseille|Lille|Strasbourg|Nantes], dans un [|quartier en gentrification|immeuble haussmannien décati|hôpital reconverti|ancien site industriel|résidence sécurisée].
+Un pays [|scandinave|de l'Est|francophone d'Afrique|des Balkans|d'Amérique latine] dans une période de transition politique.
+Une communauté [|religieuse|artistique|militaire|scientifique|thérapeutique] coupée du monde ordinaire.
 Un décor contemporain qui se révèle progressivement contaminé par un passé qu'on croyait clos.
 La province française, ses maisons fermées, ses secrets de famille et son hiver interminable.
 Une mégapole de [|2050|2080|2100] où la technologie a résolu certains problèmes — en en créant de pires.
+Un huis clos : [|un train de nuit|un bateau en pleine mer|un immeuble en quarantaine|une station de ski coupée par la neige|un hôpital après une catastrophe].
+Un espace de transition — [|un aéroport|une zone frontalière|un centre de détention administrative|un no man's land entre deux juridictions] — où les règles normales ne s'appliquent pas clairement.
+Deux lignes temporelles alternées : le [|présent de l'enquête|moment du crime|période de l'enfance] et un [|passé révélateur|futur possible|passé que le protagoniste découvre progressivement].
+
+// ----------------------------------------------------------------
+// Objets et lieux symboliques
+// ----------------------------------------------------------------
+
+Table: objet_symbolique
+Une [|lettre non envoyée|photographie modifiée|enregistrement effacé mais pas tout à fait|clé dont personne ne connaît la serrure correspondante] — le fil qui tire tout le reste.
+Un lieu : [|une maison familiale vendue depuis longtemps|un appartement où quelqu'un a vécu sans que personne le sache|une chambre d'hôtel réservée au nom d'un mort|un bureau scellé depuis vingt ans].
+Un objet banal rendu chargé : [|une montre arrêtée à la même heure depuis l'événement|un livre annoté par quelqu'un que le protagoniste n'a jamais rencontré|une valise jamais réclamée en consigne].
+Un [|journal intime|carnet de codes|dossier médical|relevé bancaire|liste de noms] qui révèle qu'une vie entière était construite autour d'un secret.
+Une [|cicatrice|marque|tatouage|empreinte] partagée par deux personnes qui ne se connaissent pas — ou qui se connaissent trop bien.
+
+// ----------------------------------------------------------------
+// Structure narrative
+// ----------------------------------------------------------------
+
+Table: structure
+<b>En trois actes :</b> (1) l'événement déclencheur fracture la vie ordinaire ; (2) l'enquête/fuite/combat fait surgir le vrai problème ; (3) la confrontation finale révèle ce qui était réellement en jeu.
+<b>En cinq temps :</b> exposition, élément perturbateur, péripéties croissantes, crise maximale, résolution (ouverte ou fermée).
+<b>Structure en miroir :</b> le récit s'ouvre et se ferme sur la même scène, vue différemment — ce qui semblait être un début se révèle être une fin, ou l'inverse.
+<b>Alternance passé/présent :</b> les deux lignes convergent vers un même événement pivot que le lecteur comprend avant le protagoniste — ou juste après.
+<b>Narration fragmentée :</b> les chapitres sont des fragments de points de vue, de dates, de voix — l'ordre est délibérément troublé, le sens émerge lentement.
+<b>Compte à rebours :</b> chaque chapitre est numéroté en décompte (J-7, J-6…) ; la tension vient de savoir ce qui arrivera au jour zéro — et si le protagoniste peut l'éviter.
+<b>Un seul point de vue, en temps réel :</b> tout se passe sur [|une nuit|un week-end|une semaine] ; l'unité de temps crée la claustrophobie.
+
+// ----------------------------------------------------------------
+// Fins possibles
+// ----------------------------------------------------------------
+
+Table: fin
+<b>Ouverte :</b> la vérité est découverte, mais ses conséquences restent incertaines — le lecteur referme le livre avec une question, pas une réponse.
+<b>Fermée, mais amère :</b> le protagoniste résout le problème, mais au prix de [|sa liberté|une relation irréparable|l'illusion qui lui permettait de vivre|quelque chose qu'il ne retrouvera jamais].
+<b>Ambiguë :</b> le récit se termine sur une scène qui peut être lue comme une victoire ou une défaite selon l'interprétation du lecteur.
+<b>Tragique :</b> le protagoniste avait raison depuis le début — et c'est exactement pourquoi il/elle ne peut pas gagner.
+<b>Rédemptrice :</b> une perte irréparable crée l'espace d'un recommencement authentique — pas un happy end, mais une ouverture réelle.
+<b>Circulaire :</b> le récit se referme sur lui-même ; le protagoniste se retrouve au même endroit qu'au début, mais transformé — ce qui semblait être une prison est devenu un choix.
+<b>Suspendue :</b> le récit s'arrête au moment où tout va basculer — le lecteur sait ce qui va se passer, mais ne le voit pas.
 
 // ----------------------------------------------------------------
 // Incipits
 // ----------------------------------------------------------------
 
 Table: incipit
-Le jour où [@prenom_prot] a trouvé la lettre, il neigeait depuis quarante-huit heures. Personne ne se souvenait qu'il avait neigé autant depuis la mort de [@prenom_antag].
+Le jour où {pnom} a trouvé la lettre, il neigeait depuis quarante-huit heures. Personne ne se souvenait qu'il avait neigé autant depuis la mort de {anom}.
 Je n'aurais jamais dû ouvrir ce fichier. Mais une fois que l'on a vu une chose, elle ne disparaît plus.
-Il y a des silences qui ressemblent à des aveux. [@prenom_antag] avait ce genre de silence depuis que [@prenom_prot] lui avait posé la question.
-La première règle dans ce métier : ne jamais s'attacher. [@prenom_prot] l'avait enfreinte exactement une fois. C'était suffisant pour tout faire basculer.
-Ce matin-là, [@prenom_prot] n'avait aucune raison de croire que la journée serait différente des autres. C'est souvent comme ça que ça commence.
+Il y a des silences qui ressemblent à des aveux. {anom} avait ce genre de silence depuis que {pnom} lui avait posé la question.
+La première règle dans ce métier : ne jamais s'attacher. {pnom} l'avait enfreinte exactement une fois. C'était suffisant pour tout faire basculer.
+Ce matin-là, {pnom} n'avait aucune raison de croire que la journée serait différente des autres. C'est souvent comme ça que ça commence.
 On m'avait dit que la vérité rendait libre. On ne m'avait pas précisé ce qu'elle coûtait d'abord.
-Trois choses sont certaines : [@prenom_antag] est mort un mercredi, personne ne l'a pleuré, et je suis la seule à savoir pourquoi.
+Trois choses sont certaines : {anom} est mort un mercredi, personne ne l'a pleuré, et je suis la seule à savoir pourquoi.
+La ville avait un secret. Toutes les villes en ont un, mais celui-là était du genre à ne pas rester enterré.
+{pnom} avait tout pour être heureux/heureuse. C'est souvent les plus difficiles à perdre.
+Ce n'est pas la culpabilité qui ronge. C'est de savoir exactement ce qu'on aurait dû faire — et de ne pas l'avoir fait.
+On m'a demandé une fois si j'aurais voulu ne jamais savoir. J'ai dit non. Je mens encore mieux qu'avant.
+Il y a des questions qu'on ne pose pas parce qu'on a peur de ne pas obtenir de réponse. Et il y a des questions qu'on ne pose pas parce qu'on a peur d'en obtenir une.
