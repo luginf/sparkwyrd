@@ -180,3 +180,18 @@ The build concatenates `src/engine.tcl`, `src/cli.tcl`, `src/gui.tcl`, and `src/
 ## Compatibility
 
 Sparkwyrd is compatible with the `.ipt` format used by **Inspiration Pad Pro** by NBOS Software. See `manual.md` for the full syntax reference and feature status.
+
+---
+
+## Disclaimer
+
+Sparkwyrd is an independent open-source project, not affiliated with or endorsed by NBOS Software. "Inspiration Pad Pro" is a product of NBOS Software. Sparkwyrd implements a compatible file format based on publicly available documentation; no original code from Inspiration Pad Pro was used or copied.
+
+---
+
+## Licence
+
+Zero-Clause BSD (0BSD) — see `LICENSE`.
+
+> Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.  
+> The software is provided "as is", without any warranty.
