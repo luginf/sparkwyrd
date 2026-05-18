@@ -14,17 +14,37 @@ proc editor_init {nb} {
     frame $nb.edit
     $nb add $nb.edit -text "Éditer"
 
+    # Toolbar pour l'éditeur
+    frame $nb.edit.toolbar -relief flat -bd 0
+    pack $nb.edit.toolbar -fill x -padx 8 -pady 4
+    button $nb.edit.toolbar.save -text "Save (Ctrl+S)" -command editor_save \
+        -relief flat -padx 10 -pady 3 -cursor hand2
+    button $nb.edit.toolbar.save_as -text "Save As..." -command editor_save_as \
+        -relief flat -padx 10 -pady 3 -cursor hand2
+    frame $nb.edit.toolbar.sep -width 1 -height 20
+    button $nb.edit.toolbar.find -text "Find (Ctrl+F)" -command editor_find \
+        -relief flat -padx 10 -pady 3 -cursor hand2
+    pack $nb.edit.toolbar.save -side left -padx 2
+    pack $nb.edit.toolbar.save_as -side left -padx 2
+    pack $nb.edit.toolbar.sep -side left -padx 4 -fill y
+    pack $nb.edit.toolbar.find -side left -padx 2
+
     # Text widget éditable avec scrollbar
+    frame $nb.edit.content
+    pack $nb.edit.content -fill both -expand 1
     text $nb.edit.ed -wrap word -font {Georgia 12} \
         -padx 8 -pady 8 -width 60 -height 30
     scrollbar $nb.edit.sb -command [list $nb.edit.ed yview]
     $nb.edit.ed configure -yscrollcommand [list $nb.edit.sb set]
 
-    pack $nb.edit.ed -side left -fill both -expand 1
-    pack $nb.edit.sb -side right -fill y
+    pack $nb.edit.ed -side left -fill both -expand 1 -in $nb.edit.content
+    pack $nb.edit.sb -side right -fill y -in $nb.edit.content
 
     # Bind Ctrl+S pour sauvegarder
     bind $nb.edit.ed <Control-s> { editor_save }
+
+    # Bind Ctrl+F pour rechercher
+    bind $nb.edit.ed <Control-f> { editor_find }
 
     # Tags de coloration
     $nb.edit.ed tag configure ed_table -foreground "#0047AB" -font {Georgia 12 bold}
@@ -76,6 +96,9 @@ proc editor_save {} {
         return
     }
 
+    # Mémoriser la position du curseur
+    set saved_pos [$ed index insert]
+
     # Écrire le fichier en UTF-8
     if {[catch {
         set fd [open $::editor_file w]
@@ -87,8 +110,45 @@ proc editor_save {} {
         return
     }
 
-    # Recharger le fichier dans la GUI
+    # Recharger le fichier dans la GUI et restaurer la position
     cmd_load_file $::editor_file
+    after 100 [list editor_restore_position $saved_pos]
+}
+
+proc editor_save_as {} {
+    set ed .right.nb.edit.ed
+    set content [$ed get 1.0 end-1c]
+    set saved_pos [$ed index insert]
+
+    set f [tk_getSaveFile \
+        -title "Save as" \
+        -filetypes {{"Sparkwyrd files" {.ipt}} {"All files" {*}}} \
+        -initialdir [file dirname $::editor_file]]
+
+    if {$f eq ""} { return }
+
+    # Écrire le fichier
+    if {[catch {
+        set fd [open $f w]
+        fconfigure $fd -encoding utf-8
+        puts -nonewline $fd $content
+        close $fd
+    } err]} {
+        puts stderr "Error saving file: $err"
+        return
+    }
+
+    set ::editor_file $f
+    cmd_load_file $::editor_file
+    after 100 [list editor_restore_position $saved_pos]
+}
+
+proc editor_restore_position {pos} {
+    set ed .right.nb.edit.ed
+    catch {
+        $ed mark set insert $pos
+        $ed see $pos
+    }
 }
 
 # ============================================================
@@ -98,22 +158,31 @@ proc editor_save {} {
 proc editor_goto_table {name} {
     set ed .right.nb.edit.ed
 
-    # Search line by line for "Table: name" (case-insensitive)
-    set line_num 1
-    while {[$ed get $line_num.0 $line_num.end] ne ""} {
-        set text [$ed get $line_num.0 $line_num.end]
-        set text_stripped [string trim $text]
+    # Normalize the name we're searching for
+    set search_name [string tolower [string trim $name]]
 
-        # Check if this line matches "Table: name"
-        if {[string tolower $text_stripped] eq "table: [string tolower $name]"} {
-            set pos $line_num.0
-            $ed mark set insert $pos
-            $ed see $pos
-            $ed tag remove sel 1.0 end
-            set end "$pos lineend"
-            $ed tag add sel "$pos linestart" $end
-            .right.nb select .right.nb.edit
-            return
+    # Search entire content for the table
+    set content [$ed get 1.0 end]
+    set lines [split $content "\n"]
+
+    set line_num 1
+    foreach line $lines {
+        set text_stripped [string trim $line]
+        set text_lower [string tolower $text_stripped]
+
+        # Check if this line starts with "Table:" and contains our table name
+        if {[regexp -nocase "^Table:\\s*(.*)$" $text_lower -> found_name]} {
+            set found_name [string trim $found_name]
+            if {$found_name eq $search_name} {
+                set pos $line_num.0
+                $ed mark set insert $pos
+                $ed see $pos
+                $ed tag remove sel 1.0 end
+                set end "$pos lineend"
+                $ed tag add sel "$pos linestart" $end
+                .right.nb select .right.nb.edit
+                return
+            }
         }
         incr line_num
     }
@@ -204,6 +273,73 @@ proc editor_apply_theme {} {
         $ed tag configure ed_directive -foreground "#8B4513"
         $ed tag configure ed_comment -foreground "#808080"
         $ed tag configure ed_weight -foreground "#228B22"
+    }
+}
+
+# ============================================================
+# ÉDITEUR — RECHERCHE
+# ============================================================
+
+set ::editor_search_text ""
+set ::editor_search_index 0
+
+proc editor_find {} {
+    set ed .right.nb.edit.ed
+
+    # Créer une fenêtre de dialogue de recherche
+    set w .find_dialog
+    if {[winfo exists $w]} {
+        raise $w
+        focus .find_entry
+        return
+    }
+
+    toplevel $w
+    wm title $w "Rechercher"
+    wm geometry $w "300x100"
+    wm transient $w .
+
+    frame $w.f
+    pack $w.f -fill both -expand 1 -padx 10 -pady 10
+
+    label $w.f.lbl -text "Chercher:"
+    entry $w.f.entry -textvariable ::editor_search_text
+    frame $w.f.buttons -relief flat
+    button $w.f.buttons.find -text "Chercher" -command editor_find_next
+    button $w.f.buttons.close -text "Fermer" -command "destroy $w"
+
+    pack $w.f.lbl -anchor w
+    pack $w.f.entry -fill x -pady 5
+    pack $w.f.buttons -fill x
+    pack $w.f.buttons.find -side left -padx 2
+    pack $w.f.buttons.close -side left -padx 2
+
+    focus $w.f.entry
+    bind $w.f.entry <Return> editor_find_next
+    bind $w.f.entry <Escape> "destroy $w"
+}
+
+proc editor_find_next {} {
+    set ed .right.nb.edit.ed
+    set search_text $::editor_search_text
+
+    if {$search_text eq ""} { return }
+
+    # Chercher à partir de la position actuelle
+    set current_pos [$ed index insert]
+    set found [$ed search -nocase -count len -- $search_text $current_pos end]
+
+    if {$found eq ""} {
+        # Chercher depuis le début
+        set found [$ed search -nocase -count len -- $search_text 1.0 end]
+    }
+
+    if {$found ne ""} {
+        $ed tag remove search 1.0 end
+        $ed tag add search $found "$found+$len c"
+        $ed mark set insert $found
+        $ed see $found
+        $ed tag configure search -background yellow
     }
 }
 

@@ -118,7 +118,7 @@ proc apply_theme {{theme ""}} {
 
     # Toolbar
     .tb configure -bg [T bg_tb]
-    foreach w {.tb.open .tb.clr .tb.lrep .tb.theme_lbl} {
+    foreach w {.tb.open .tb.lrep .tb.theme_lbl} {
         catch { $w configure -bg [T bg_tb] -fg [T fg] -activebackground [T bg] }
     }
     catch { .tb.theme_mb configure -bg [T bg_tb] -fg [T fg] \
@@ -138,7 +138,8 @@ proc apply_theme {{theme ""}} {
     .left.sep  configure -bg [T sep]
     .left.sep2 configure -bg [T sep]
     .left.tables configure -bg [T bg2] -fg [T fg2] \
-        -selectbackground [T sel_bg] -selectforeground [T sel_fg]
+        -selectbackground [T sel_bg] -selectforeground [T sel_fg] \
+        -activestyle underline -highlightcolor [T sel_bg]
     .left.sb configure -bg [T bg2] -troughcolor [T bg]
 
     # Output area
@@ -205,8 +206,6 @@ proc build_ui {} {
     button .tb.go -text "  Go" -command cmd_generate \
         -relief flat -padx 14 -pady 5 \
         -font {TkDefaultFont 10 bold} -cursor hand2
-    button .tb.clr -text "Clear" -command cmd_clear \
-        -relief flat -padx 10 -pady 5 -cursor hand2
 
     # Theme selector (right side)
     label .tb.theme_lbl -text "Theme:"
@@ -221,10 +220,9 @@ proc build_ui {} {
 
     pack .tb.open  -side left -padx {6 2} -pady 4
     pack .tb.sep1  -side left -padx 4 -pady 4 -fill y
-    pack .tb.lrep  -side left -padx {4 2} -pady 4
+    pack .tb.lrep     -side left -padx {4 2} -pady 4
     pack .tb.reps  -side left -padx 2 -pady 4
     pack .tb.go    -side left -padx 6 -pady 4
-    pack .tb.clr   -side left -padx 2 -pady 4
     pack .tb.theme_mb  -side right -padx 6 -pady 4
     pack .tb.theme_lbl -side right -padx {4 0} -pady 4
 
@@ -253,19 +251,21 @@ proc build_ui {} {
     frame .left.sep2 -height 1
     label .left.t3 -text "Tables" \
         -font {TkDefaultFont 9 bold} -anchor w
-    text .left.tables -width 22 -height 14 \
-        -state disabled -relief flat \
-        -font {TkFixedFont 9}
+    listbox .left.tables -width 22 -height 14 \
+        -relief flat -font {TkFixedFont 9} \
+        -selectmode single -highlightthickness 1
     scrollbar .left.sb -command {.left.tables yview} -width 8
     .left.tables configure -yscrollcommand {.left.sb set}
 
-    # Bind click on table name to jump to it in editor
-    bind .left.tables <ButtonRelease-1> {
-        set idx [.left.tables index @%x,%y]
-        set line [.left.tables get "$idx linestart" "$idx lineend"]
-        set name [string trim $line "• \t"]
-        if {$name ne ""} {
-            editor_goto_table $name
+    # Bind click on table to jump to it in editor
+    bind .left.tables <<ListboxSelect>> {
+        set idx [.left.tables curselection]
+        if {[llength $idx] > 0} {
+            set line [.left.tables get [lindex $idx 0]]
+            set name [string trim $line "• \t"]
+            if {$name ne ""} {
+                editor_goto_table $name
+            }
         }
     }
 
@@ -438,12 +438,10 @@ proc cmd_load_file {path} {
 
     if {$mr > 0 && $::reps_count > $mr} { set ::reps_count $mr }
 
-    .left.tables configure -state normal
-    .left.tables delete 1.0 end
+    .left.tables delete 0 end
     foreach t $order {
-        .left.tables insert end "• $t\n"
+        .left.tables insert end "• $t"
     }
-    .left.tables configure -state disabled
 
     set n [llength $order]
     set suffix [expr {$n > 1 ? "s" : ""}]
@@ -498,6 +496,9 @@ proc cmd_generate {} {
     .right.nb.gen.out see 1.0
     set plural [expr {$n > 1 ? "s" : ""}]
     set ::status_msg "Generated ($n rep${plural}) — [clock format [clock seconds] -format {%H:%M:%S}]"
+
+    # Switch to Générer tab
+    .right.nb select .right.nb.gen
 }
 
 proc cmd_clear {} {

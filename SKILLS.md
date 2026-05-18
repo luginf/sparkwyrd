@@ -307,6 +307,287 @@ while {$pos < [string length $html]} {
 }
 ```
 
+### Notebook (tabbed interface)
+
+```tcl
+package require Tk
+
+# Créer un notebook (ttk::notebook, pas tk::notebook)
+ttk::notebook .nb
+pack .nb -fill both -expand 1
+
+# Ajouter des frames comme onglets
+frame .nb.tab1
+frame .nb.tab2
+.nb add .nb.tab1 -text "Tab 1"
+.nb add .nb.tab2 -text "Tab 2"
+
+# Remplir les onglets avec des widgets
+text .nb.tab1.txt -wrap word
+pack .nb.tab1.txt -fill both -expand 1
+
+# Sélectionner un onglet par programme
+.nb select .nb.tab2
+# ou via index : .nb select 0
+```
+
+**Points clés :**
+- `ttk::notebook` (pas `tk::notebook`) offre une meilleure apparence cross-platform
+- `.nb add frame -text "label"` pour ajouter un onglet
+- `.nb select frame` ou `.nb select index` pour changer d'onglet
+- Les frames ajoutées au notebook peuvent contenir n'importe quel widget
+
+### Listbox (widget sélectionnable avec binding)
+
+```tcl
+# Créer une listbox avec scrollbar
+frame .list_frame
+listbox .list_frame.lb -selectmode single -highlightthickness 1 \
+    -activestyle underline -width 30 -height 15
+scrollbar .list_frame.sb -command [list .list_frame.lb yview]
+.list_frame.lb configure -yscrollcommand [list .list_frame.sb set]
+
+pack .list_frame.lb -side left -fill both -expand 1
+pack .list_frame.sb -side right -fill y
+
+# Remplir la listbox
+foreach item {Item1 Item2 Item3} {
+    .list_frame.lb insert end $item
+}
+
+# Binding : quand on clique sur une ligne
+bind .list_frame.lb <ButtonRelease-1> {
+    set idx [.list_frame.lb index @%x,%y]
+    if {$idx >= 0} {
+        set line [.list_frame.lb get $idx]
+        puts "Clicked on index $idx: $line"
+    }
+}
+
+# Binding : quand la sélection change (plus robuste que ButtonRelease)
+.list_frame.lb bind <<ListboxSelect>> {
+    set selection [.list_frame.lb curselection]
+    if {[llength $selection] > 0} {
+        set line [.list_frame.lb get [lindex $selection 0]]
+        puts "Selected: $line"
+    }
+}
+
+# Récupérer la ligne actuelle
+set current_idx [.list_frame.lb index active]   ;# index de sélection
+set current_text [.list_frame.lb get $current_idx]
+
+# Thème : colorer la sélection
+.list_frame.lb configure -selectbackground #0078d4 -selectforeground white
+```
+
+**Points clés :**
+- `-activestyle underline` souligne la ligne active (meilleur que la couleur par défaut)
+- `-highlightthickness 1` ajoute un border au widget
+- `<ButtonRelease-1>` capture le clic gauche, puis `index @%x,%y` donne l'index de la ligne
+- `<<ListboxSelect>>` est plus robuste pour les changements de sélection au clavier
+- `curselection` retourne une liste des indices sélectionnés
+
+### Dialog toplevel (fenêtre modale ou flottante)
+
+```tcl
+proc open_dialog {} {
+    set w .my_dialog
+    
+    # Éviter les doublons : si la fenêtre existe déjà, la raiser
+    if {[winfo exists $w]} {
+        raise $w
+        focus .find_entry
+        return
+    }
+    
+    # Créer la fenêtre toplevel
+    toplevel $w
+    wm title $w "Titre du dialog"
+    wm geometry $w "400x200"
+    wm transient $w .       ;# lier au parent (important pour le Z-order)
+    wm resizable $w 0 0     ;# interdire le redimensionnement
+    
+    # Contenu : frame principal
+    frame $w.content -padx 10 -pady 10
+    pack $w.content -fill both -expand 1
+    
+    # Label + entry
+    label $w.content.lbl -text "Entrez du texte:"
+    entry $w.content.entry
+    pack $w.content.lbl -anchor w
+    pack $w.content.entry -fill x -pady 5
+    
+    # Boutons
+    frame $w.buttons
+    button $w.buttons.ok -text "OK" -command [list on_dialog_ok $w]
+    button $w.buttons.cancel -text "Annuler" -command "destroy $w"
+    pack $w.buttons.ok $w.buttons.cancel -side left -padx 2
+    pack $w.buttons -fill x
+    
+    # Donner le focus à l'entry
+    focus $w.content.entry
+    
+    # Bind Escape pour fermer
+    bind $w <Escape> "destroy $w"
+    
+    # Bind Return pour valider
+    bind $w.content.entry <Return> [list on_dialog_ok $w]
+}
+
+proc on_dialog_ok {w} {
+    set text [.my_dialog.content.entry get]
+    puts "User entered: $text"
+    destroy $w
+}
+```
+
+**Points clés :**
+- `wm transient $w .` lie la fenêtre au parent (elle disparaît si le parent se ferme)
+- Vérifier `[winfo exists $w]` pour éviter les doublons
+- `focus $w.widget` donne le focus à un widget spécifique
+- Bind `<Escape>` et `<Return>` pour une meilleure UX
+
+### Text widget — recherche et coloration syntaxique
+
+```tcl
+# Créer un text widget
+text .edit -wrap word -font {Georgia 12} -width 60 -height 20
+scrollbar .edit.sb -command [list .edit yview]
+.edit configure -yscrollcommand [list .edit.sb set]
+
+# Définir des tags pour la coloration
+.edit tag configure keyword -foreground #0000ff -font {Georgia 12 bold}
+.edit tag configure comment -foreground #808080 -font {Georgia 12 italic}
+.edit tag configure string -foreground #ff0000
+
+# Chercher une chaîne (case-insensitive)
+proc search_text {w search_term} {
+    set current_pos [.edit index insert]
+    
+    # Chercher à partir de la position actuelle
+    set found [.edit search -nocase -count len -- $search_term $current_pos end]
+    
+    # Si pas trouvé, recommencer du début
+    if {$found eq ""} {
+        set found [.edit search -nocase -count len -- $search_term 1.0 end]
+    }
+    
+    if {$found ne ""} {
+        # Ôter la surbrillance précédente
+        .edit tag remove highlight 1.0 end
+        # Ajouter la nouvelle surbrillance
+        .edit tag add highlight $found "$found+$len c"
+        # Configurer le style du tag
+        .edit tag configure highlight -background yellow
+        # Naviguer vers la position
+        .edit mark set insert $found
+        .edit see $found
+    }
+}
+
+# Coloration syntaxique ligne par ligne
+proc highlight_editor {w} {
+    # Ôter tous les tags
+    $w tag remove keyword 1.0 end
+    $w tag remove comment 1.0 end
+    
+    # Parcourir les lignes
+    set line_num 1
+    while {[$w get $line_num.0 $line_num.end] ne ""} {
+        set text [$w get $line_num.0 $line_num.end]
+        set text_stripped [string trim $text]
+        
+        # Déterminer le type de ligne et appliquer le tag
+        if {[regexp {^#} $text_stripped]} {
+            # Commentaire
+            $w tag add comment "$line_num.0" "$line_num.end"
+        } elseif {[regexp {^(Table|Use|Set|Define):} $text_stripped]} {
+            # Directive
+            $w tag add keyword "$line_num.0" "$line_num.end"
+        }
+        
+        incr line_num
+    }
+}
+
+# Applier la coloration au chargement
+highlight_editor .edit
+```
+
+**Points clés :**
+- `$w search -nocase` pour chercher case-insensitive
+- `$w tag add nom début fin` pour appliquer un tag
+- `$w tag remove nom début fin` pour ôter un tag
+- Parcourir ligne par ligne : `[$w get $line_num.0 $line_num.end]` (indices Tcl text)
+- Ne pas chercher sur le texte entier sur les gros fichiers (lent)
+- `$w see position` pour scroller vers la position
+
+### File I/O UTF-8 et préservation de position
+
+```tcl
+# Charger un fichier dans un text widget
+proc load_file_to_editor {w filename} {
+    # Lire le fichier en UTF-8
+    if {[catch {
+        set fd [open $filename r]
+        fconfigure $fd -encoding utf-8
+        set content [read $fd]
+        close $fd
+    } err]} {
+        puts stderr "Error reading file: $err"
+        return
+    }
+    
+    # Insérer dans le widget
+    $w configure -state normal
+    $w delete 1.0 end
+    $w insert end $content
+    $w configure -state normal
+    $w mark set insert 1.0
+}
+
+# Sauvegarder avec préservation de position
+proc save_file_from_editor {w filename} {
+    # Mémoriser la position du curseur
+    set saved_pos [$w index insert]
+    
+    # Lire le contenu du widget (sans le dernier newline)
+    set content [$w get 1.0 end-1c]
+    
+    # Écrire en UTF-8
+    if {[catch {
+        set fd [open $filename w]
+        fconfigure $fd -encoding utf-8
+        puts -nonewline $fd $content
+        close $fd
+    } err]} {
+        puts stderr "Error writing file: $err"
+        return
+    }
+    
+    # Recharger le fichier pour synchroniser la GUI
+    load_file_to_editor $w $filename
+    
+    # Restaurer la position (avec un délai pour la reconfiguration du widget)
+    after 100 [list restore_cursor_position $w $saved_pos]
+}
+
+proc restore_cursor_position {w pos} {
+    catch {
+        $w mark set insert $pos
+        $w see $pos
+    }
+}
+```
+
+**Points clés :**
+- Toujours utiliser `fconfigure $fd -encoding utf-8` pour les fichiers UTF-8
+- `puts -nonewline` pour écrire sans newline final (ou avec `[string trimright]`)
+- `$w get 1.0 end-1c` pour lire tout sauf le dernier newline implicite du widget
+- Mémoriser la position **avant** de modifier le widget
+- Restaurer dans un `after 100` pour laisser le widget se reconfigurer
+
 ### Deck pick `[!N table]` — pattern d'implémentation
 
 Le tirage sans remise repose sur une variable globale Tcl `::deck_<tname>` qui sert de pool mutable.

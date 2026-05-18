@@ -22,6 +22,7 @@ sparkwyrd/
     ├── engine.tcl    → moteur pur Tcl (parser + générateur, sans Tk)
     ├── cli.tcl       → interface CLI (proc cli_main)
     ├── gui.tcl       → interface Tk (proc gui_main)
+    ├── editor.tcl    → module d'édition intégré dans la GUI (proc editor_*)
     └── main.tcl      → dispatcher --gui / --cli (entry point du build)
 ```
 
@@ -107,12 +108,38 @@ sparkwyrd/
 ## Ce qui est implémenté (gui.tcl)
 
 - `panedwindow` horizontal : panneau info gauche + zone de sortie droite
-- Barre d'outils : Open, Reps (spinbox), Go, Clear, sélecteur Theme
-- Liste des tables du fichier chargé
+- **Notebook (onglets)** : "Générer" (output) et "Éditer" (editor)
+- Barre d'outils : Open, Reps (spinbox), Go, sélecteur Theme
+- **Listbox des tables** : clic pour naviguer → auto-switch à l'onglet Éditer + jump à la table
+- Surbrillance visuelle de la sélection (underline + couleurs)
 - Barre de statut
 - Raccourcis : F5 = Generate, Ctrl+O = Open
+- **Auto-switch** : cliquer Go → onglet Générer s'active automatiquement
 - Rendu HTML dans le widget `text` : `<b>` `<i>` `<u>` `<h1>`–`<h3>` `<code>` `<br>` `<p>` `<hr>` + entités
 - Thèmes : `light`, `dark`, `sepia` — via `apply_theme` + `option add` + reconfiguration de tous les widgets
+
+## Ce qui est implémenté (editor.tcl)
+
+- **Onglet "Éditer"** intégré au notebook pour édition directe des fichiers .ipt
+- **Sauvegarde** :
+  - Bouton "Save" pour sauvegarder le fichier courant
+  - Bouton "Save As..." pour sauvegarder sous un nouveau nom
+  - Raccourci Ctrl+S pour sauvegarder rapidement
+  - **Préservation de position** : le curseur revient à la même position après sauvegarde
+- **Recherche** :
+  - Bouton "Find" et raccourci Ctrl+F pour ouvrir le dialogue
+  - Surbrillance du texte trouvé en jaune
+  - Navigation automatique vers le texte trouvé
+- **Navigation** :
+  - `editor_goto_table {name}` : cherche une table par nom (case-insensitive)
+  - Appelée automatiquement quand on clique sur une table dans la listbox
+- **Coloration syntaxique** :
+  - `Table:` → bleu bold
+  - Directives (`Use:`, `Set:`, `Define:`, `Header:`, etc.) → brun
+  - Commentaires (`#`, `;`, `//`) → gris
+  - Poids (`N:`) → vert
+- **Thème** : `editor_apply_theme` applique les couleurs du thème courant
+- **Reload automatique** : après sauvegarde, recharge le fichier dans la GUI et restaure la position
 
 ## Ce qui est implémenté (cli.tcl)
 
@@ -136,7 +163,7 @@ _w=$(stty -g 2>/dev/null); trap '...' EXIT INT TERM; tclsh "$0" "$@"; exit $?
 
 ### Dispatcher (`src/main.tcl`)
 ```
-(no args)              → aide une ligne + exit 0   (safe pour la complétion bash)
+(no args)              → lance --gui (GUI par défaut)
 --gui [file.ipt]       → gui_main
 --cli [options] file   → cli_main
 -n / -t / --html / … → cli_main (auto-détect par flag CLI)
@@ -168,6 +195,11 @@ Permet l'exécution directe (`tclsh src/cli.tcl`) ET l'inclusion dans le build s
 - Arbre de fichiers par catégories (actuellement un seul fichier à la fois)
 - Onglet débogage / trace d'expansion
 
+## Lancement par défaut (main.tcl)
+
+- **Sans arguments** : lance automatiquement `--gui` (la GUI s'ouvre directement)
+- Ancien comportement : affichait l'aide et quittait. Fix : `set mode gui` quand `argc == 0`
+
 ## Pièges découverts (Tcl/Tk)
 
 1. `[+\-]` dans un character class regex → invalide. Utiliser `[-+]`.
@@ -185,3 +217,9 @@ Permet l'exécution directe (`tclsh src/cli.tcl`) ET l'inclusion dans le build s
 13. Tab-completion bash → exécute le script sans args → lancer `gui_main` bloque sur X display. Fix : sans args, afficher aide + `exit 0`.
 14. Shebang `#!/usr/bin/env wish` → bash tente de sourcer le fichier pour la complétion → blocage. Fix : polyglot `#!/bin/sh` + bootstrap shell.
 15. `Use:` merge : le fichier principal a priorité. Ne jamais écraser une table existante avec une table importée.
+16. **Scrollbar + text widget** : `-command` doit être une liste via `[list $widget yview]`, pas une string, pour éviter l'interpolation prématurée.
+17. **Cursor position après reload** : mémoriser via `[$ed index insert]`, puis restaurer via `editor_restore_position` dans un `after 100` (délai pour la reconfiguration du widget).
+18. **Listbox binding** : `<ButtonRelease-1>` + `[.widget index @%x,%y]` pour obtenir l'index de la ligne cliquée. Utiliser `<<ListboxSelect>>` pour les changements de sélection.
+19. **Dialog toplevel** : toujours ajouter `wm transient $w .` pour lier la fenêtre au parent, et `focus` pour donner le focus à un widget spécifique.
+20. **Text widget tags** : appliquer via `$w tag add nom début fin`. Pour chercher une position : utiliser `[$w search]` avec le flag `-nocase` si insensible à la casse.
+21. **Syntax highlighting ligne par ligne** : lire avec `[$w get $line_num.0 $line_num.end]` (indices Tcl text widget). Ne pas chercher de patterns sur le texte entier → trop lent sur gros fichiers.
