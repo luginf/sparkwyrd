@@ -42,14 +42,23 @@ sparkwyrd/
 - En-têtes : `Header:`, `Footer:`, `MaxReps:`, `Formatting:`, `Title:`, `Prompt:`
 - Directives de table : `Type:`, `Roll:`, `Default:`, `Shuffle:`, `EndTable:`
 - **`Set:` globaux** (avant tout `Table:`) → clé `global_sets` du dict racine
+- **`Define: NomVar = expression`** → constante réévaluée à chaque usage, clé `defines` du dict racine
 - **`Use: chemin.ipt`** → clé `use_files` du dict racine, traités par `parse_ipt`
 
-### `Use:` — import de fichiers externes
+### `Define:` — constantes réévaluées
+- Format : `Define: NomVar = expression` (avant tout `Table:`)
+- Réévaluées à chaque usage (contrairement à `Set:`)
+- Peuvent référencer d'autres variables : `Define: Adj = [|grand|petit]`
+- Utilisées comme `{$NomVar}` : génère une nouvelle valeur à chaque fois
+- Fusion lors des imports : le fichier principal a priorité
+
+### `Use:` — import de fichiers externes (chemins Windows supportés)
 - `parse_ipt` collecte la liste `use_files`, puis pour chaque entrée :
   - résout le chemin : d'abord relatif au répertoire du fichier courant, puis CWD
   - parse récursivement (avec protection anti-circulaire via `_loaded`)
-  - appelle `ipt_merge` pour fusionner les tables importées
-- **Règle de priorité** : le fichier principal a toujours la priorité — une table importée n'est ajoutée que si son nom n'existe pas déjà dans le principal
+  - appelle `ipt_merge` pour fusionner les tables et defines importées
+- **Chemins Windows automatiquement convertis** : `nbos\names\human.ipt` → `nbos/Names/Human.ipt` (case-insensitive)
+- **Règle de priorité** : le fichier principal a toujours la priorité
 - `ipt_empty_parsed` retourne un dict vide (utilisé quand un import circulaire est détecté)
 - Warning non-fatal si le fichier `Use:` est introuvable
 
@@ -155,7 +164,6 @@ Permet l'exécution directe (`tclsh src/cli.tcl`) ET l'inclusion dans le build s
 - `Type: Lookup` (tables à intervalles `1-5:texte` avec `Roll:` et `Default:`)
 - `Type: Dictionary` (clés textuelles, appel via `[#clé table]`)
 - `Prompt:` interactif (widgets dans la GUI)
-- `Define:` (constante réévaluée à chaque usage)
 - Variables `{fullpath}`, `{docpath}`, `{self}`
 - Arbre de fichiers par catégories (actuellement un seul fichier à la fois)
 - Onglet débogage / trace d'expansion

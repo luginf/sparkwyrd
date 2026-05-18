@@ -187,6 +187,14 @@ Sparkwyrd is compatible with the `.ipt` format used by **Inspiration Pad Pro** b
 
 Sparkwyrd is an independent open-source project, not affiliated with or endorsed by NBOS Software. "Inspiration Pad Pro" is a product of NBOS Software. Sparkwyrd implements a compatible file format based on publicly available documentation; no original code from Inspiration Pad Pro was used or copied.
 
+--
+
+## See also
+
+- https://www.nbos.com/products/inspiration-pad-pro
+- https://github.com/Skarginson/ipt-web
+
+
 ---
 
 ## Licence

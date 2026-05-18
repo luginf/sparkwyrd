@@ -11,7 +11,7 @@ set ::current_parsed {}
 set ::current_file   ""
 set ::reps_count     1
 set ::status_msg     "Welcome to Sparkwyrd — open an .ipt file to begin"
-set ::current_theme  "light"
+set ::current_theme  "sepia"
 
 # ============================================================
 # THEME PALETTES

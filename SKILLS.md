@@ -426,7 +426,7 @@ sparkwyrd_dispatch
 - `package require Tk` doit être dans `gui_main {}`, jamais au niveau global — sinon il s'exécute même avec `tclsh`.
 - Le détecteur `[info commands wm]` n'est pas fiable : sur certains systèmes, `package require Tk` réussit même avec `tclsh` si le display est disponible.
 
-### `Use:` — import et merge de fichiers externes
+### `Use:` — import avec support des chemins Windows
 
 ```tcl
 # parse_ipt avec protection circulaire
@@ -440,15 +440,70 @@ proc parse_ipt {filename {_loaded {}}} {
 
     # Résoudre et fusionner chaque Use:
     foreach rel [dict get $parsed use_files] {
-        # Chercher : relatif au fichier courant, puis CWD
-        set abs [file join [file dirname $norm] $rel]
-        if {![file exists $abs]} { set abs $rel }
-        if {![file exists $abs]} { puts stderr "Warning: not found: $rel"; continue }
+        set found [normalize_use_path $rel [file dirname $norm]]
+        if {![file exists $found]} { 
+            puts stderr "Warning: Use: file not found: $rel"; 
+            continue 
+        }
 
-        if {[catch {set used [parse_ipt $abs $_loaded]} err]} { continue }
+        if {[catch {set used [parse_ipt $found $_loaded]} err]} { continue }
         set parsed [ipt_merge $parsed $used]   ;# main a priorité
     }
     return $parsed
+}
+
+# Normalise les chemins Windows et cherche case-insensitive
+proc normalize_use_path {rel basedir} {
+    # Remplacer backslashes par slashes
+    set path [string map {\\ /} $rel]
+
+    # Chercher avec le chemin exact
+    set candidates [list \
+        [file join $basedir $path] \
+        [file normalize $path]]
+
+    foreach c $candidates {
+        if {[file exists $c]} { return $c }
+    }
+
+    # Pour les chemins "nbos/..." chercher dans Common/ (case-insensitive)
+    if {[regexp -nocase {^(nbos|srd|common)/(.*)$} $path -> subdir rest]} {
+        set searchdir $basedir
+        for {set i 0} {$i < 5} {incr i} {
+            set parent [file normalize [file join $searchdir ".."]]
+            if {$parent eq $searchdir} { break }
+            set searchdir $parent
+
+            # Chercher avec case-insensitive
+            set found [find_case_insensitive \
+                [file join $searchdir "Common"] "$subdir/$rest"]
+            if {$found ne ""} { return $found }
+        }
+    }
+
+    return [file join $basedir $path]
+}
+
+# Cherche un fichier en ignorant la casse de tous les composants
+proc find_case_insensitive {basedir path} {
+    set components [split $path "/"]
+    set current $basedir
+
+    foreach comp $components {
+        if {![file isdirectory $current]} { return "" }
+        set found ""
+        foreach f [glob -directory $current -nocomplain * .*] {
+            if {[string tolower [file tail $f]] eq [string tolower $comp]} {
+                set found $f
+                break
+            }
+        }
+        if {$found eq ""} { return "" }
+        set current $found
+    }
+
+    if {[file exists $current]} { return $current }
+    return ""
 }
 
 # ipt_merge : used ne peut qu'AJOUTER des tables (jamais écraser)
@@ -481,6 +536,38 @@ proc ipt_empty_parsed {} {
 - La recherche est d'abord relative au fichier courant (pas au CWD), puis CWD. Cela permet les bibliothèques co-localisées.
 - Un warning non-fatal est émis si le fichier est introuvable (pas d'`exit`).
 - Le merge `types`/`rolls`/`defaults` est nécessaire pour que les Lookup et Dictionary tables importées fonctionnent correctement.
+
+### `Define:` — constantes réévaluées à chaque usage
+
+Les directives `Define:` placées avant le premier `Table:` sont stockées dans la clé `defines` du dict racine (liste de `{varname expression}`). Contrairement à `Set:`, elles sont réévaluées à chaque usage via `lookup_define` :
+
+```tcl
+# Dans le parser : détecter Define: avant toute table
+if {[regexp -nocase {^Define:\s*(\w+)\s*=\s*(.*)$} $line -> var val]} {
+    lappend defines [list $var [string trim $val]]
+}
+
+# Dans eval_brace_expr : chercher dans les defines si variable non définie
+if {[regexp {^\$(.+)$} $e -> var]} {
+    if {[info exists vars($var)]} {
+        return $vars($var)
+    }
+    # Chercher dans les defines
+    if {[info exists vars(__defines)]} {
+        set val [lookup_define $var $vars(__defines) vars]
+        if {$val ne ""} { return $val }
+    }
+    return "\[UNDEF:$var\]"
+}
+
+# Dans ipt_generate : passer les defines dans l'array vars
+set vars(__defines) $defines
+```
+
+**Points clés :**
+- Les defines sont évalués à chaque appel (contrairement à `Set:` qui ne s'exécutent qu'une fois)
+- Peuvent contenir des expressions : `Define: Color = [|rouge|bleu|vert]`
+- Fusion lors des imports : le fichier principal a priorité (comme pour les tables)
 
 ### `global_sets` — Set: avant toute table
 
@@ -558,3 +645,5 @@ if {[info exists pick_index]} {
 | Script sans args → `gui_main` par défaut | bash complétion exécute le script sans args → blocage X. Fix : sans args, aide + `exit 0` |
 | `Use:` merge — ordre de priorité | Le fichier principal prime. N'ajouter une table importée que si son nom est absent du principal |
 | Import circulaire via `Use:` | Passer une liste `_loaded` de chemins normalisés en paramètre de `parse_ipt`; retourner `ipt_empty_parsed` si déjà chargé |
+| Chemins Windows dans `Use:` | `nbos\names\Human.ipt` → convertir `\` en `/` et chercher case-insensitive. Fonction `normalize_use_path` |
+| `Define:` réévaluation | Chaque usage de `{$NomVar}` évalue la Define à nouveau. Stocker dans `vars(__defines)` et appeler `lookup_define` |

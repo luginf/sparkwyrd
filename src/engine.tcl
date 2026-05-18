@@ -12,6 +12,71 @@ proc rand_int {n} {
 }
 
 # ============================================================
+# PATH NORMALIZATION
+# ============================================================
+# Normalise les chemins Windows/Unix et cherche les fichiers en case-insensitive
+proc normalize_use_path {rel basedir} {
+    # Remplacer les backslashes par des slashes
+    set path [string map {\\ /} $rel]
+
+    # Chercher d'abord avec le chemin exact depuis basedir
+    set candidates [list \
+        [file join $basedir $path] \
+        [file normalize $path]]
+
+    foreach c $candidates {
+        if {[file exists $c]} { return $c }
+    }
+
+    # Pour les chemins commençant par "nbos/" "srd/" "common/":
+    # Chercher dans tous les répertoires parents pour trouver Common
+    if {[regexp -nocase {^(nbos|srd|common)/(.*)$} $path -> subdir rest]} {
+        set searchdir $basedir
+        # Remonter jusqu'à 5 niveaux
+        for {set i 0} {$i < 5} {incr i} {
+            set parent [file normalize [file join $searchdir ".."]]
+            if {$parent eq $searchdir} { break }
+            set searchdir $parent
+
+            # Chercher Common/subdir/rest avec tous les chemins components en case-insensitive
+            set commondir [file join $searchdir "Common"]
+            if {[file isdirectory $commondir]} {
+                set found [find_case_insensitive $commondir "$subdir/$rest"]
+                if {$found ne ""} { return $found }
+            }
+        }
+    }
+
+    # Retourner le chemin normalisé même s'il n'existe pas (pour le message d'erreur)
+    return [file join $basedir $path]
+}
+
+# Helper: trouve un fichier en ignorant la casse des composants du chemin
+proc find_case_insensitive {basedir path} {
+    set components [split $path "/"]
+    set current $basedir
+
+    foreach comp $components {
+        if {![file isdirectory $current]} { return "" }
+
+        # Chercher un fichier/répertoire correspondant (case-insensitive)
+        set found ""
+        foreach f [glob -directory $current -nocomplain * .*] {
+            if {[string tolower [file tail $f]] eq [string tolower $comp]} {
+                set found $f
+                break
+            }
+        }
+
+        if {$found eq ""} { return "" }
+        set current $found
+    }
+
+    if {[file exists $current]} { return $current }
+    return ""
+}
+
+# ============================================================
 # PARSER
 # ============================================================
 # Retourne un dict avec :
@@ -42,15 +107,8 @@ proc parse_ipt {filename {_loaded {}}} {
     # Resolve and merge Use: files — used tables are added only if not
     # already defined in the main file (main file always takes priority).
     foreach rel [dict get $parsed use_files] {
-        # Search: relative to the current file's directory first, then CWD
-        set candidates [list \
-            [file join $basedir $rel] \
-            [file normalize $rel]]
-        set found ""
-        foreach c $candidates {
-            if {[file exists $c]} { set found $c; break }
-        }
-        if {$found eq ""} {
+        set found [normalize_use_path $rel $basedir]
+        if {![file exists $found]} {
             puts stderr "Warning: Use: file not found: $rel"
             continue
         }
@@ -69,7 +127,7 @@ proc ipt_empty_parsed {} {
     return [dict create \
         header      {Header {} Footer {} MaxReps 0 Formatting html Title {}} \
         tables      {}  order   {}  types   {}  rolls {} \
-        defaults    {}  prompts {}  global_sets {}  use_files {}]
+        defaults    {}  prompts {}  global_sets {}  use_files {}  defines {}]
 }
 
 # Merges `used` into `main`: tables/types/rolls/defaults from `used`
@@ -79,11 +137,13 @@ proc ipt_merge {main used} {
     set m_types    [dict get $main types]
     set m_rolls    [dict get $main rolls]
     set m_defaults [dict get $main defaults]
+    set m_defines  [expr {[dict exists $main defines] ? [dict get $main defines] : {}}]
 
     set u_tables   [dict get $used tables]
     set u_types    [dict get $used types]
     set u_rolls    [dict get $used rolls]
     set u_defaults [dict get $used defaults]
+    set u_defines  [expr {[dict exists $used defines] ? [dict get $used defines] : {}}]
 
     foreach tname [dict get $used order] {
         if {[dict exists $m_tables $tname]} continue
@@ -93,10 +153,26 @@ proc ipt_merge {main used} {
         if {[dict exists $u_defaults $tname]} { dict set m_defaults $tname [dict get $u_defaults $tname] }
     }
 
+    # Merger les defines du fichier inclus (main a priorité)
+    foreach def $u_defines {
+        set dname [lindex $def 0]
+        set already_exists 0
+        foreach mdef $m_defines {
+            if {[lindex $mdef 0] eq $dname} {
+                set already_exists 1
+                break
+            }
+        }
+        if {!$already_exists} {
+            lappend m_defines $def
+        }
+    }
+
     dict set main tables   $m_tables
     dict set main types    $m_types
     dict set main rolls    $m_rolls
     dict set main defaults $m_defaults
+    dict set main defines  $m_defines
     return $main
 }
 
@@ -110,6 +186,7 @@ proc parse_ipt_lines {lines} {
     set prompts     {}
     set global_sets {}    ;# liste de {varname expression} globaux
     set use_files   {}    ;# liste de chemins Use:
+    set defines     {}    ;# liste de {varname expression} pour Define:
 
     set current_name  ""
     set current_items {}
@@ -189,7 +266,10 @@ proc parse_ipt_lines {lines} {
                 lappend global_sets [list $var [string trim $val]]
                 continue
             }
-            if {[regexp -nocase {^Define:\s*}          $line]}      { continue }
+            if {[regexp -nocase {^Define:\s*(\w+)\s*=\s*(.*)$} $line -> var val]} {
+                lappend defines [list $var [string trim $val]]
+                continue
+            }
             continue
         }
 
@@ -229,7 +309,8 @@ proc parse_ipt_lines {lines} {
         defaults    $defaults \
         prompts     $prompts \
         global_sets $global_sets \
-        use_files   $use_files]
+        use_files   $use_files \
+        defines     $defines]
 }
 
 proc ipt_flush_buffer {buf items} {
@@ -305,13 +386,33 @@ proc expand_braces {s vars_var} {
     return $result
 }
 
+# Cherche et évalue un define. Retourne vide si not trouvé.
+proc lookup_define {var defines vars_var} {
+    upvar $vars_var vars
+    foreach def $defines {
+        if {[lindex $def 0] eq $var} {
+            set expr [lindex $def 1]
+            return [eval_brace_expr $expr vars]
+        }
+    }
+    return ""
+}
+
 proc eval_brace_expr {e vars_var} {
     upvar $vars_var vars
     set e [string trim $e]
 
     # {$var}
     if {[regexp {^\$(.+)$} $e -> var]} {
-        return [expr {[info exists vars($var)] ? $vars($var) : "\[UNDEF:$var\]"}]
+        if {[info exists vars($var)]} {
+            return $vars($var)
+        }
+        # Chercher dans les defines
+        if {[info exists vars(__defines)]} {
+            set val [lookup_define $var $vars(__defines) vars]
+            if {$val ne ""} { return $val }
+        }
+        return "\[UNDEF:$var\]"
     }
 
     # {var==expr} affectation silencieuse
@@ -337,8 +438,16 @@ proc eval_brace_expr {e vars_var} {
     }
 
     # Variable simple (mot connu)
-    if {[regexp {^\w+$} $e] && [info exists vars($e)]} {
-        return $vars($e)
+    if {[regexp {^\w+$} $e]} {
+        if {[info exists vars($e)]} {
+            return $vars($e)
+        }
+        # Chercher dans les defines
+        if {[info exists vars(__defines)]} {
+            set val [lookup_define $e $vars(__defines) vars]
+            if {$val ne ""} { return $val }
+        }
+        return "\[UNDEF:$e\]"
     }
 
     # Expression mathématique — substituer dés et variables
@@ -867,6 +976,7 @@ proc ipt_generate {parsed {rep 1}} {
     set tables [dict get $parsed tables]
     set order  [dict get $parsed order]
     set header [dict get $parsed header]
+    set defines [expr {[dict exists $parsed defines] ? [dict get $parsed defines] : {}}]
 
     if {[llength $order] == 0} { return "Aucune table trouvée." }
 
@@ -879,6 +989,7 @@ proc ipt_generate {parsed {rep 1}} {
     set vars(rep)        $rep
     set vars(formatting) [dict get $header Formatting]
     set vars(cli)        ""
+    set vars(__defines)  $defines    ;# Stocker les defines pour accès ultérieur
 
     # Exécuter les Set: globaux (définis avant toute Table:)
     foreach gs [dict get $parsed global_sets] {
