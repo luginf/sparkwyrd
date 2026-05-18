@@ -1,0 +1,268 @@
+Header: <b>Générateur de personnages de fiction</b>
+Footer: <hr><i>Ce personnage attend que vous lui donniez vie.</i>
+
+Table: personnage
+Set: prenom = [@prenom]
+Set: nom = [@nom]
+Set: age = [@age]
+Set: genre = [@genre_gram]
+<b>FICHE PERSONNAGE</b>\n&
+\n&
+Prénom :         <b>{prenom}</b>\n&
+Nom :            <b>{nom}</b>\n&
+Âge :            {age}\n&
+\n&
+Description :    [@description]\n&
+\n&
+Signes particuliers : [@signes_particuliers]\n&
+\n&
+Emploi :         [@emploi]\n&
+\n&
+Cheveux :        [@cheveux]\n&
+Yeux :           [@yeux]\n&
+Taille :         [@taille] cm\n&
+Poids :          [@poids] kg\n&
+\n&
+Adresse :        [@adresse]\n&
+\n&
+Buts :           [@but]\n&
+                 [@but]
+
+// ----------------------------------------------------------------
+// Identité
+// ----------------------------------------------------------------
+
+Table: prenom
+// Prénoms mixtes, fréquents en France
+Camille
+Alex
+Charlie
+Morgan
+Sacha
+Dominique
+Maxime
+Alexis
+Émile
+Stéphane
+// Prénoms féminins
+Léa
+Nora
+Élise
+Clara
+Yasmine
+Manon
+Inès
+Amandine
+Lucie
+Chloé
+Marine
+Aurélie
+// Prénoms masculins
+Mathis
+Julien
+Simon
+Antoine
+Thomas
+Marc
+Paul
+Hugo
+Baptiste
+Nicolas
+Théo
+Florian
+
+Table: nom
+Vernet
+Moreau
+Castellan
+Lefèvre
+Deschamps
+Arnal
+Colbert
+Faure
+Girard
+Lemoyne
+Navarre
+Pelletier
+Renaud
+Tissier
+Dupont
+Martin
+Bernard
+Laurent
+Simon
+Michel
+Dubois
+Thomas
+Robert
+Petit
+Richard
+
+// ----------------------------------------------------------------
+// Âge
+// ----------------------------------------------------------------
+
+Table: age
+{1d6 + 18} ans
+{1d6 + 24} ans
+{1d6 + 30} ans
+{1d6 + 36} ans
+{1d6 + 45} ans
+{1d6 + 55} ans
+
+// ----------------------------------------------------------------
+// Genre grammatical (pour les accords)
+// ----------------------------------------------------------------
+
+Table: genre_gram
+féminin
+masculin
+
+// ----------------------------------------------------------------
+// Description physique générale
+// ----------------------------------------------------------------
+
+Table: description
+[@morphologie_generale] ; [@allure_generale]
+
+Table: morphologie_generale
+De taille [|petite|moyenne|grande], [|mince|svelte|athlétique|enrobé(e)|robuste|corpulent(e)]
+Corpulence [|fine|moyenne|athlétique|forte], traits [|fins|marqués|anguleux|ronds|réguliers|irréguliers]
+Silhouette [|élancée|trapue|large d'épaules|gracieuse|massive|ordinaire], peau [|claire|mate|foncée|hâlée|pâle|olivâtre]
+
+Table: allure_generale
+l'air [|fatigué(e)|méfiant(e)|jovial(e)|distant(e)|sérieux/sérieuse|doux/douce|dur(e)|intrigant(e)] au premier abord
+une présence [|discrète qu'on finit par remarquer|immédiate qui impose le respect|effacée, presque transparente|chaleureuse qui met à l'aise]
+quelque chose dans la façon dont [|il/elle se tient|il/elle regarde|il/elle parle|il/elle écoute] qui ne s'explique pas facilement
+
+// ----------------------------------------------------------------
+// Signes particuliers
+// ----------------------------------------------------------------
+
+Table: signes_particuliers
+une cicatrice [|sur la joue gauche|au menton|sur le front|au-dessus du sourcil droit|sur la nuque|le long de l'avant-bras]
+[|une légère claudication|un tremblement imperceptible des mains|une façon particulière de pencher la tête en écoutant]
+un [|tatouage|piercing discret|grain de beauté proéminent] [|sur le cou|sous l'oreille gauche|à la base du poignet|sur l'épaule]
+des mains [|abîmées|toujours propres avec soin|trop soigneusement manucurées|couvertes d'encre]
+une [|voix particulièrement grave|voix douce en décalage avec la stature|façon de rire en silence|habitude de relire chaque phrase une fois écrite]
+[|aucun signe distinctif apparent — ce qui est en soi remarquable|une discrétion absolue, comme une absence volontaire de toute marque]
+[|une légère dyslexie visible à l'écrit|un tic discret : touche son oreille quand il/elle ment|ne cligne presque jamais des yeux]
+une [|prothèse de main gauche|déficience auditive appareillée|photosensibilité qui lui impose des lunettes teintées en intérieur]
+
+// ----------------------------------------------------------------
+// Emploi
+// ----------------------------------------------------------------
+
+Table: emploi
+[|journaliste|rédactrice en chef] pour [|un grand quotidien|un magazine indépendant|un média en ligne|une agence de presse]
+[|médecin généraliste|urgentiste|médecin légiste|psychiatre] [|en cabinet libéral|dans un hôpital public|dans une clinique privée]
+[|enseignant(e)|maître(sse) de conférences|professeur(e) agrégé(e)] en [|histoire|philosophie|sciences économiques|lettres|droit]
+[|architecte|urbaniste] indépendant(e), spécialisé(e) dans [|la réhabilitation|les bâtiments publics|le logement social|le patrimoine]
+[|ingénieur(e)|chef(fe) de projet] dans [|l'informatique|l'industrie pharmaceutique|l'énergie|le conseil en stratégie]
+[|avocat(e)|notaire|huissier(ère)] [|au barreau de Paris|dans un cabinet régional|spécialisé(e) en droit des affaires|en droit pénal]
+[|libraire|éditeur/éditrice|traducteur/traductrice] — [|passionné(e) mais précaire|reconnu(e) dans son domaine|en reconversion forcée]
+[|cuisinier(ère)|chef de cuisine] dans [|un restaurant gastronomique|une cantine scolaire|un food-truck|un hôtel de luxe]
+[|infirmier(ère)|aide-soignant(e)|kinésithérapeute] [|en hôpital|en EHPAD|à domicile]
+[|gendarme|policier(ère)|inspecteur/inspectrice] [|en brigade criminelle|en zone rurale|dans un service spécialisé|proche de la retraite]
+[|entrepreneur(e)|fondateur/fondatrice] d'une [|start-up technologique|association culturelle|entreprise artisanale|coopérative agricole]
+[|sans emploi déclaré|travailleur/travailleuse indépendant(e) aux revenus irréguliers|à la retraite anticipée pour raisons de santé]
+
+// ----------------------------------------------------------------
+// Cheveux
+// ----------------------------------------------------------------
+
+Table: cheveux
+[|Noirs|Châtains|Bruns|Blonds|Roux|Gris|Blancs|Poivre et sel] et [|courts|mi-longs|longs|rasés|tressés|en chignon|bouclés|raides|ondulés|frisés|épais|fins|clairsemés]
+
+// ----------------------------------------------------------------
+// Yeux
+// ----------------------------------------------------------------
+
+Table: yeux
+[|Marron foncé|Marron clair|Noisette|Verts|Bleu-gris|Bleus|Gris|Noirs|Ambrés|Gris-verts] ; [|regard vif et perçant|regard fatigué|regard doux|regard méfiant|regard lointain|regard attentif qui ne laisse rien passer]
+
+// ----------------------------------------------------------------
+// Taille (en cm)
+// ----------------------------------------------------------------
+
+Table: taille
+{1d14 + 154}
+{1d14 + 162}
+{1d14 + 170}
+
+// ----------------------------------------------------------------
+// Poids (en kg)
+// ----------------------------------------------------------------
+
+Table: poids
+{1d16 + 48}
+{1d16 + 58}
+{1d16 + 68}
+{1d16 + 78}
+
+// ----------------------------------------------------------------
+// Adresse
+// ----------------------------------------------------------------
+
+Table: adresse
+[@numero] [@type_voie] [@nom_voie], [@ville_code] — [@type_logement]
+
+Table: numero
+{1d6 + 1}
+{1d6 + 8}
+{1d6 + 14}
+{1d6 + 21}
+{1d10 + 30}
+{1d10 + 50}
+{1d10 + 75}
+
+Table: type_voie
+rue
+avenue
+boulevard
+impasse
+allée
+place
+chemin
+passage
+square
+
+Table: nom_voie
+[|des Acacias|de la République|du Général-de-Gaulle|des Lilas|Victor-Hugo|Gambetta|Jean-Jaurès|des Martyrs|de la Paix|du Moulin|des Cerisiers|Saint-Exupéry|Pasteur|Voltaire|Émile-Zola|du Vieux-Port|de la Fontaine|des Roses|du Château|de la Liberté]
+
+Table: ville_code
+75013 Paris
+69007 Lyon
+13006 Marseille
+33000 Bordeaux
+59000 Lille
+67000 Strasbourg
+31000 Toulouse
+44000 Nantes
+06000 Nice
+34000 Montpellier
+76000 Rouen
+38000 Grenoble
+51100 Reims
+21000 Dijon
+72000 Le Mans
+
+Table: type_logement
+[|appartement T2|appartement T3|studio en rez-de-chaussée|appartement sous les toits|appartement en rez-de-jardin] [|en location|en propriété|partagé|sous-loué]
+[|pavillon de banlieue|maison mitoyenne|maison individuelle] avec [|jardin|garage|terrasse|cave]
+
+// ----------------------------------------------------------------
+// Buts
+// ----------------------------------------------------------------
+
+Table: but
+Reconstruire une relation [|familiale|amoureuse|amicale] brisée par une erreur passée.
+Trouver enfin [|un endroit où être pleinement soi-même|la stabilité qui lui a toujours manqué|un sens à tout ce qui est arrivé].
+Percer à jour [|un mensonge qu'il/elle pressent depuis longtemps|un secret que les autres lui cachent|la vérité sur un événement fondateur de sa vie].
+[|Achever|Reprendre|Abandonner officiellement] un projet qui l'obsède depuis [|des années|l'adolescence|la mort d'un proche].
+Accumuler [|assez d'argent pour partir|les preuves nécessaires|la confiance des bonnes personnes] avant qu'il soit trop tard.
+Réparer une injustice [|ancienne|récente|que personne d'autre ne semble prêt à affronter].
+[|Fuir|Construire|Accepter] quelque chose que [|la société|sa famille|son passé|ses propres choix] lui impose.
+Préserver [|ce qui lui reste|l'unique personne en qui il/elle a encore confiance|une vérité que personne ne voudrait entendre].
+Prouver à [|lui-même/elle-même|son entourage|un rival|un parent disparu] qu'il/elle est capable de [|réussir|changer|survivre|partir].
+Comprendre pourquoi [|ça s'est terminé ainsi|il/elle est comme ça|les choses ont déraillé] — et décider quoi faire de cette compréhension.

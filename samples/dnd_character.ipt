@@ -1,0 +1,285 @@
+Header: <b>D&D Character Generator</b>
+Footer: <hr><i>May the dice be ever in your favour.</i>
+
+Table: character
+Set: race = [@race]
+Set: class = [@class]
+Set: name = [@firstname_[@race]] [@surname]
+<b>CHARACTER SHEET</b>\n&
+Name:       <b>{name}</b>\n&
+Race:       {race}\n&
+Class:      {class}\n&
+Level:      {1d6 + 1}\n&
+Background: [@background]\n&
+\n&
+<b>ABILITY SCORES</b>\n&
+STR [{3d6} >> +-]  DEX [{3d6} >> +-]  CON [{3d6} >> +-]\n&
+INT [{3d6} >> +-]  WIS [{3d6} >> +-]  CHA [{3d6} >> +-]\n&
+\n&
+<b>TRAITS</b>\n&
+Personality: [@personality]\n&
+Ideal:       [@ideal]\n&
+Bond:        [@bond]\n&
+Flaw:        [@flaw]\n&
+\n&
+<b>EQUIPMENT</b>\n&
+[@equipment_[@class]]
+
+// ----------------------------------------------------------------
+// Races
+// ----------------------------------------------------------------
+
+Table: race
+3:Human
+2:Elf
+2:Dwarf
+2:Half-Orc
+Halfling
+Gnome
+Tiefling
+Dragonborn
+
+// ----------------------------------------------------------------
+// Classes
+// ----------------------------------------------------------------
+
+Table: class
+3:Fighter
+2:Rogue
+2:Wizard
+2:Cleric
+Ranger
+Paladin
+Druid
+Bard
+Monk
+Sorcerer
+Warlock
+Barbarian
+
+// ----------------------------------------------------------------
+// Names by race
+// ----------------------------------------------------------------
+
+Table: firstname_Human
+3:Aldric
+Brynn
+Caelum
+Dorothea
+Edmund
+Fenwick
+Greta
+Harlan
+Isolde
+Jasper
+
+Table: firstname_Elf
+3:Sylvara
+Aelindra
+Caladwen
+Eryndor
+Faelindë
+Galanor
+Ithilwen
+Lúthmir
+Silvael
+Taurendir
+
+Table: firstname_Dwarf
+3:Torinn
+Baela
+Dolgrin
+Ebba
+Fundin
+Gunnhild
+Korbus
+Magna
+Sindri
+Thorvi
+
+Table: firstname_Half-Orc
+3:Drath
+Bruthar
+Grosha
+Karash
+Melkra
+Nargul
+Sharog
+Ulkrak
+Vorga
+Zasha
+
+Table: firstname_Halfling
+3:Mira
+Beau
+Calla
+Finn
+Gilly
+Odo
+Perla
+Rosco
+Tobias
+Wren
+
+Table: firstname_Gnome
+3:Fizzwick
+Alston
+Bimpnottin
+Dabbledob
+Ellyjobell
+Gerbo
+Namfoodle
+Orryn
+Quibble
+Sindri
+
+Table: firstname_Tiefling
+3:Seraphine
+Akmenos
+Beltran
+Crux
+Damaia
+Ekemon
+Leucis
+Morthos
+Pelaios
+Skamos
+
+Table: firstname_Dragonborn
+3:Arjhan
+Balasar
+Bharash
+Donaar
+Ghesh
+Heskan
+Kriv
+Medrash
+Nadarr
+Patrin
+
+Table: surname
+Stonehammer
+Dawnwhisper
+Blackthorn
+Ironfist
+Moonshadow
+Brightblade
+Ashveil
+Coldwater
+Embervale
+Grimshaw
+Holloway
+Ironside
+Kettlesworth
+Larkmoor
+Nighthollow
+Oakhearst
+Riverstone
+Swiftarrow
+Thornwood
+Winterbourne
+
+// ----------------------------------------------------------------
+// Backgrounds
+// ----------------------------------------------------------------
+
+Table: background
+Acolyte
+Charlatan
+Criminal
+Entertainer
+Folk Hero
+Guild Artisan
+Hermit
+Noble
+Outlander
+Sage
+Sailor
+Soldier
+Urchin
+
+// ----------------------------------------------------------------
+// Personality traits
+// ----------------------------------------------------------------
+
+Table: personality
+I always have a plan for what to do when things go wrong.
+I am incredibly slow to trust, but those who earn it receive unwavering loyalty.
+I ask too many questions and never know when to stop.
+I have a crude sense of humour and laugh at the most inappropriate times.
+I fall in and out of love easily and am currently enamoured with someone nearby.
+I always prefer the direct approach — diplomacy is for those who lack conviction.
+I like to collect odd trinkets wherever I travel.
+I judge people by their actions, not their words.
+I tell stories of my exploits at every opportunity — some of them are even true.
+I'm haunted by memories of war and can be startled by sudden sounds.
+
+Table: ideal
+Greater Good: our purpose is to serve the people around us.
+Logic: emotions must not cloud our sense of right and wrong.
+Freedom: chains, whether literal or figurative, must be broken.
+Power: one day I will rule these lands — by merit, not birthright.
+Sincerity: there is no good in pretending to be something you are not.
+Change: we must upend the old ways in favour of something better.
+Aspiration: I seek to prove myself worthy of a great destiny.
+Live and Let Live: meddling in others' affairs only leads to trouble.
+
+Table: bond
+I would die to recover a family heirloom stolen years ago.
+I protect those who cannot protect themselves.
+Someone I loved died because of a mistake I made — I will never repeat it.
+My honour is my life; nothing will compromise it.
+I owe everything to a mentor who believed in me when no one else did.
+I'm trying to pay off an old debt — one coin at a time.
+I want to find the person who destroyed my home and make them pay.
+A secret society once helped me; now I repay the favour whenever I can.
+
+Table: flaw
+I have trouble keeping my true feelings hidden.
+I am convinced that no one can ever truly understand me.
+I am overly proud of my accomplishments and dismiss those of others.
+I have a weakness for shiny objects — or any treasure, really.
+Once I set my mind to something, I am dangerously stubborn.
+I have difficulty trusting anyone, even my closest allies.
+I often make promises I am not entirely sure I can keep.
+I am quick to assume the worst of people.
+
+// ----------------------------------------------------------------
+// Starting equipment by class
+// ----------------------------------------------------------------
+
+Table: equipment_Fighter
+[|longsword|battleaxe|warhammer] + shield, chain mail, [|crossbow|javelin x3|handaxe x2], [|Explorer's Pack|Dungeoneer's Pack]
+
+Table: equipment_Rogue
+[|shortsword|rapier] + dagger x2, leather armour, thieves' tools, [|Burglar's Pack|Dungeoneer's Pack]
+
+Table: equipment_Wizard
+[|quarterstaff|dagger], [|spellbook|grimoire], arcane focus, [|Scholar's Pack|Explorer's Pack], component pouch
+
+Table: equipment_Cleric
+[|mace|warhammer], scale mail, holy symbol, [|Priest's Pack|Explorer's Pack], shield
+
+Table: equipment_Ranger
+[|longbow|shortbow] + quiver (20 arrows), [|shortsword|longsword], leather armour, [|Explorer's Pack|Dungeoneer's Pack]
+
+Table: equipment_Paladin
+[|longsword|warhammer] + shield, chain mail, holy symbol, [|Priest's Pack|Explorer's Pack], javelin x5
+
+Table: equipment_Druid
+[|quarterstaff|scimitar], leather armour, wooden shield, druidic focus, [|Explorer's Pack|Wilderness Kit]
+
+Table: equipment_Bard
+[|rapier|longsword], lute, leather armour, dagger, [|Entertainer's Pack|Diplomat's Pack]
+
+Table: equipment_Monk
+[|shortsword|simple weapon x2], [|Dungeoneer's Pack|Explorer's Pack], 10 darts
+
+Table: equipment_Sorcerer
+[|light crossbow|dagger x2], component pouch, arcane focus, [|Explorer's Pack|Dungeoneer's Pack]
+
+Table: equipment_Warlock
+[|light crossbow|simple weapon], [|component pouch|arcane focus], leather armour, [|Scholar's Pack|Dungeoneer's Pack]
+
+Table: equipment_Barbarian
+[|greataxe|martial weapon], [|handaxe x2|simple weapon x2], [|Explorer's Pack|Dungeoneer's Pack], 4 javelins

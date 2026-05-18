@@ -1,0 +1,276 @@
+Header: <b>Générateur d'idées de fiction</b>
+Footer: <hr><i>Bonne écriture !</i>
+
+Table: idee
+Set: genre = [@genre]
+Set: protagoniste = [@protagoniste]
+Set: conflit = [@conflit]
+<b>IDÉE DE ROMAN / NOUVELLE</b>\n&
+\n&
+<b>GENRE :</b> {genre}\n&
+\n&
+<b>RÉSUMÉ :</b>\n&
+[@synopsis]\n&
+\n&
+<b>PROTAGONISTE :</b>\n&
+{protagoniste}\n&
+\n&
+<b>ANTAGONISTE :</b>\n&
+[@antagoniste]\n&
+\n&
+<b>CONFLIT CENTRAL :</b>\n&
+{conflit}\n&
+\n&
+<b>THÈME :</b> [@theme]\n&
+\n&
+<b>CADRE :</b>\n&
+[@cadre]\n&
+\n&
+<b>INCIPIT POSSIBLE :</b>\n&
+<i>[@incipit]</i>
+
+// ----------------------------------------------------------------
+// Genres
+// ----------------------------------------------------------------
+
+Table: genre
+3:Thriller psychologique
+3:Fantastique sombre
+2:Science-fiction
+2:Roman policier
+Roman historique
+Horreur
+Drame contemporain
+Fantasy épique
+Romance noire
+Dystopie
+
+// ----------------------------------------------------------------
+// Synopsis
+// ----------------------------------------------------------------
+
+Table: synopsis
+{protagoniste} découvre que [@secret], et cette révélation va mettre en péril [|sa vie|ceux qu'il aime|tout ce en quoi il croyait].
+Après [@evenement_declencheur], {protagoniste} se retrouve à [|fuir|enquêter|survivre|chercher la vérité] dans un monde où plus rien ne peut être tenu pour acquis.
+{protagoniste} n'a que [|sept jours|une nuit|quarante-huit heures|quelques semaines] pour [|trouver la vérité|sauver quelqu'un|accomplir l'impossible|effacer une erreur passée] avant que [@consequence].
+Ce que tout le monde croyait être [@fausse_verite] se révèle être autre chose — et [@protagoniste] est la seule personne à pouvoir en comprendre les conséquences.
+Deux étrangers aux destins opposés se retrouvent liés par [@lien_inattendu], et leur alliance précaire est la seule chose qui peut empêcher [@catastrophe].
+
+Table: secret
+[@antagoniste] n'est pas ce qu'il prétend être
+la ville entière est bâtie sur un mensonge fondateur
+un événement qu'il a toujours cru accidentel était en réalité prémédité
+il possède un pouvoir qu'il ne comprend pas encore
+les morts ne le sont peut-être pas autant qu'on le croit
+l'organisation qui le protège est celle qui le menace
+
+Table: evenement_declencheur
+la mort suspecte d'un proche
+un message reçu d'une personne disparue depuis dix ans
+une découverte dans un endroit qu'il n'aurait jamais dû visiter
+un accident qui n'en était peut-être pas un
+la disparition inexplicable de sa mémoire des dernières 24 heures
+une lettre scellée que son père lui a demandé de n'ouvrir qu'à sa propre mort
+
+Table: fausse_verite
+une légende locale
+un fait historique établi
+une vérité familiale transmise de génération en génération
+un accident tragique arrivé il y a vingt ans
+une mort officiellement classée comme suicide
+
+Table: lien_inattendu
+un secret qu'ils sont les seuls à partager
+une prophétie écrite avant leur naissance
+la même marque sur leur peau
+le même souvenir d'un endroit qui n'existe plus
+la même nuit dont aucun des deux n'a de souvenir clair
+
+Table: consequence
+il soit trop tard pour eux tous
+la vérité soit effacée à jamais
+le prochain mort soit quelqu'un qu'il aime
+la ville soit détruite
+ce qu'il cherche à protéger lui soit retiré
+
+Table: catastrophe
+la fin de tout ce qu'ils connaissent
+la destruction de la dernière preuve de la vérité
+la mort de l'unique personne en qui ils ont confiance
+la montée au pouvoir de ceux qui veulent le silence
+
+// ----------------------------------------------------------------
+// Protagonistes
+// ----------------------------------------------------------------
+
+Table: protagoniste
+[@prenom_prot] [@nom_prot], [@age_prot], [@metier_prot] — [@trait_prot]
+
+Table: prenom_prot
+Camille
+Mathis
+Léa
+Julien
+Nora
+Simon
+Élise
+Antoine
+Clara
+Thomas
+Yasmine
+Marc
+Inès
+Paul
+Amandine
+
+Table: nom_prot
+Vernet
+Moreau
+Castellan
+Lefèvre
+Deschamps
+Arnal
+Colbert
+Faure
+Girard
+Lemoyne
+Navarre
+Pelletier
+Renaud
+Sébastien
+Tissier
+
+Table: age_prot
+la trentaine
+la quarantaine
+26 ans
+32 ans
+38 ans
+45 ans
+51 ans
+
+Table: metier_prot
+journaliste d'investigation
+médecin légiste
+linguiste spécialisé en langues mortes
+détective privé en fin de carrière
+archiviste dans une bibliothèque nationale
+ingénieure en systèmes de sécurité
+historienne spécialisée dans les crimes non résolus
+inspectrice de police mise en congé forcé
+directrice d'un hôpital psychiatrique
+écrivain en panne d'inspiration
+
+Table: trait_prot
+hanté(e) par une perte dont il/elle ne parle jamais
+doté(e) d'une mémoire photographique qui devient une malédiction
+incapable de faire confiance, et pourtant toujours trahi(e)
+brillant(e) mais autodestructeur/autodestructrice
+obsessionnel(le) au point d'y avoir sacrifié ses relations
+pragmatique jusqu'à la froideur — sauf quand les enfants sont en danger
+solitaire par choix, mais désespérément humain(e) dans les moments de crise
+
+// ----------------------------------------------------------------
+// Antagonistes
+// ----------------------------------------------------------------
+
+Table: antagoniste
+[@prenom_antag] [@nom_antag], [@role_antag], dont le vrai but est [@but_antag]
+
+Table: prenom_antag
+Victor
+Hélène
+Arnaud
+Sofia
+Pierre-Henri
+Laure
+Renaud
+Isabelle
+François
+Marion
+
+Table: nom_antag
+Delvaux
+Marchand
+Saint-Clair
+Vaubourg
+Hennebert
+Auclerc
+Delacroix
+Fontaine
+Haumont
+Leriche
+
+Table: role_antag
+conseiller influent dans l'ombre du pouvoir
+directeur d'une fondation caritative de façade
+psychiatre respecté dont les patients disparaissent
+historien obsédé par la réécriture du passé
+chef d'entreprise dont la fortune repose sur un crime enfoui
+haut fonctionnaire protégé par ses réseaux
+chercheuse en neurosciences aux méthodes non éthiques
+journaliste qui fabrique l'actualité autant qu'il la rapporte
+
+Table: but_antag
+effacer une vérité qui pourrait le/la détruire
+protéger un système dont il/elle profite, à n'importe quel prix
+accomplir ce que son père ou sa mère n'a pas pu achever
+prouver une théorie au mépris de toute vie humaine
+survivre — et rester libre — quoi qu'il en coûte aux autres
+obtenir une reconnaissance que le monde lui a refusée
+
+// ----------------------------------------------------------------
+// Conflits centraux
+// ----------------------------------------------------------------
+
+Table: conflit
+La vérité contre la survie — découvrir ce qui s'est passé pourrait signer son propre arrêt de mort.
+La justice contre la loyauté — l'ennemi à abattre est quelqu'un qu'il/elle aime.
+Le passé contre le présent — un crime ancien resurface et menace tout ce qui a été construit depuis.
+La raison contre la foi — les preuves pointent vers quelque chose que la logique refuse.
+La liberté contre la sécurité — pour rester en vie, il faut sacrifier ce qui donne un sens à la vie.
+L'individu contre le système — une seule personne contre une machine rodée à faire taire.
+Le bien commun contre le bien particulier — sauver tout le monde exige de sacrifier quelqu'un de précieux.
+La mémoire contre l'oubli — certains secrets sont-ils mieux gardés dans le silence ?
+
+// ----------------------------------------------------------------
+// Thèmes
+// ----------------------------------------------------------------
+
+Table: theme
+Le prix de la vérité dans un monde qui préfère le mensonge confortable.
+La culpabilité comme prison plus solide que n'importe quel mur.
+Ce que l'on devient quand on cesse de croire en la justice.
+L'identité — et ce qui reste quand on découvre que sa vie était fondée sur une illusion.
+La transmission du mal à travers les générations.
+La frontière ténue entre protéger et contrôler.
+La solitude comme condition nécessaire de la lucidité.
+L'ambiguïté morale : peut-on faire le bien par de mauvais moyens ?
+Le deuil impossibles et les fantômes qui refusent de partir.
+La résistance comme acte désespéré et nécessaire.
+
+// ----------------------------------------------------------------
+// Cadres
+// ----------------------------------------------------------------
+
+Table: cadre
+Une [|petite ville|cité industrielle|station balnéaire hors-saison|ville universitaire] où tout le monde se connaît — et surveille.
+[|Paris|Lyon|Bordeaux|Marseille|Lille], dans un [|quartier en gentrification|immeuble haussmannien décati|hôpital reconverti|ancien site industriel].
+Un pays [|scandinave|de l'Est|francophone d'Afrique|des Balkans] dans une période de transition politique.
+Une communauté [|religieuse|artistique|militaire|scientifique] coupée du monde ordinaire.
+Un décor contemporain qui se révèle progressivement contaminé par un passé qu'on croyait clos.
+La province française, ses maisons fermées, ses secrets de famille et son hiver interminable.
+Une mégapole de [|2050|2080|2100] où la technologie a résolu certains problèmes — en en créant de pires.
+
+// ----------------------------------------------------------------
+// Incipits
+// ----------------------------------------------------------------
+
+Table: incipit
+Le jour où [@prenom_prot] a trouvé la lettre, il neigeait depuis quarante-huit heures. Personne ne se souvenait qu'il avait neigé autant depuis la mort de [@prenom_antag].
+Je n'aurais jamais dû ouvrir ce fichier. Mais une fois que l'on a vu une chose, elle ne disparaît plus.
+Il y a des silences qui ressemblent à des aveux. [@prenom_antag] avait ce genre de silence depuis que [@prenom_prot] lui avait posé la question.
+La première règle dans ce métier : ne jamais s'attacher. [@prenom_prot] l'avait enfreinte exactement une fois. C'était suffisant pour tout faire basculer.
+Ce matin-là, [@prenom_prot] n'avait aucune raison de croire que la journée serait différente des autres. C'est souvent comme ça que ça commence.
+On m'avait dit que la vérité rendait libre. On ne m'avait pas précisé ce qu'elle coûtait d'abord.
+Trois choses sont certaines : [@prenom_antag] est mort un mercredi, personne ne l'a pleuré, et je suis la seule à savoir pourquoi.

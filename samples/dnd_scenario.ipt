@@ -1,0 +1,291 @@
+Header: <b>D&D Fantasy Scenario Generator</b>
+Footer: <hr><i>The adventure awaits.</i>
+
+Table: scenario
+Set: hook = [@adventure_hook]
+Set: villain = [@villain]
+Set: location = [@location]
+Set: twist = [@twist]
+<b>SCENARIO</b>\n&
+\n&
+<b>THE HOOK</b>\n&
+{hook}\n&
+\n&
+<b>SETTING</b>\n&
+Region:   [@region]\n&
+Location: {location}\n&
+Mood:     [@mood]\n&
+\n&
+<b>THE VILLAIN</b>\n&
+{villain}\n&
+\n&
+<b>COMPLICATIONS</b>\n&
+1. [@complication]\n&
+2. [@complication]\n&
+\n&
+<b>THE TWIST</b>\n&
+{twist}\n&
+\n&
+<b>REWARDS</b>\n&
+[@reward]\n&
+[@reward]\n&
+\n&
+<b>SIDE QUESTS</b>\n&
+- [@side_quest]\n&
+- [@side_quest]
+
+// ----------------------------------------------------------------
+// Adventure hooks
+// ----------------------------------------------------------------
+
+Table: adventure_hook
+A merchant offers {2d6 * 50} gold to escort a mysterious locked chest across the [@region] — he refuses to say what is inside.
+A child in the village of [@village_name] claims to have seen the dead walking in the old graveyard at midnight.
+The local lord has vanished; his last known location was the [@location].
+Three adventurers set out for the [@location] a week ago — only their weapons have returned, dragged by a frightened mule.
+A bounty of {1d4 * 100} gold is posted for the capture — alive — of a fugitive wizard last seen near [@location].
+An ancient map surfaces at auction, apparently showing a vault beneath the [@location] filled with pre-empire treasure.
+The river that supplies [@village_name] has run black for three days; something upstream is wrong.
+A dying courier delivers a sealed letter intended for someone who died years ago — and the contents reference something that cannot yet have happened.
+Strange lights have been seen above the [@location] every night for a month; farmers refuse to work their fields.
+A beloved temple healer has gone missing; her notes mention a secret ritual she planned to perform alone at the [@location].
+
+// ----------------------------------------------------------------
+// Locations
+// ----------------------------------------------------------------
+
+Table: location
+the [@adj] [@loc_type] of [@place_name]
+the ruins of the ancient stronghold at [@place_name]
+a flooded dungeon carved beneath the [@loc_type]
+the remote [@adj] keep overlooking the [@region]
+a labyrinthine network of caves in the [@adj] hills
+the abandoned wizard's tower at the edge of the [@adj] forest
+a sunken temple half-buried in the marshes
+the fortified mountain pass known as [@place_name]
+
+Table: loc_type
+dungeon
+fortress
+cave system
+catacombs
+temple
+watchtower
+monastery
+mine
+sewers
+manor house
+
+Table: adj
+ancient
+cursed
+forgotten
+crumbling
+haunted
+remote
+blighted
+fog-shrouded
+half-sunken
+petrified
+
+Table: place_name
+Grimspire
+Ashenveil
+Duskhollow
+Ironsong
+Thorngate
+Coldmere
+Ravenscroft
+Stonehaven
+Embervast
+Dreadmoor
+Ironwatch
+Shadowfen
+Wraithkeep
+Mourncroft
+Dustfall
+
+Table: village_name
+Millhaven
+Oakhearst
+Cinder Cross
+Briarwick
+Greymere
+Willowford
+Mudgate
+Ashbridge
+Coldstone
+Fernhollow
+
+// ----------------------------------------------------------------
+// Regions
+// ----------------------------------------------------------------
+
+Table: region
+the northern tundra beyond the Wall of Frost
+the dense Thornwood forest
+the Ashen Plains, scarred by a forgotten war
+the flooded lowlands of the Murk
+the volcanic Ironspine Mountains
+the Shattered Coast, littered with shipwrecks
+the rolling Heatherdowns
+the cursed Bloodmarsh
+the ancient Wyrmwood, older than any kingdom
+the Duskveil Wastes, where the sun barely rises
+
+// ----------------------------------------------------------------
+// Mood
+// ----------------------------------------------------------------
+
+Table: mood
+bleak and oppressive — hope feels like a luxury
+tense and paranoid — trust no one
+eerie and unsettling — something watches from the shadows
+grim but determined — survival demands sacrifice
+mysterious and dreamlike — reality feels thin here
+desperate and urgent — every hour counts
+melancholy and haunted — the past refuses to die
+dangerous and chaotic — alliances shift without warning
+
+// ----------------------------------------------------------------
+// Villains
+// ----------------------------------------------------------------
+
+Table: villain
+Set: vname = [@villain_name]
+Set: vrole = [@villain_role]
+Set: vmotive = [@villain_motive]
+<b>{vname}</b>, {vrole}. Motive: {vmotive}.\n&
+Strength: [@villain_strength]\n&
+Weakness: [@villain_weakness]
+
+Table: villain_name
+Lord [@villain_title] [@villain_surname]
+[@villain_firstname] the [@villain_epithet]
+[@villain_firstname] [@villain_surname]
+
+Table: villain_title
+Aldric
+Morvaine
+Seldric
+Cethran
+Baldros
+
+Table: villain_firstname
+Seraphine
+Drath
+Malachar
+Vex
+Osric
+Lirien
+Vorka
+Thane
+
+Table: villain_surname
+Blackthorn
+Ashveil
+Ironcrown
+Grimshaw
+Coldwater
+Embervast
+Soulharvest
+Dawnkiller
+
+Table: villain_epithet
+Undying
+Faceless
+Accursed
+Bloodless
+Voidborn
+Merciless
+Unseen
+Fleshless
+
+Table: villain_role
+a disgraced [|noble|general|high priest|archmage|guild master] seeking revenge
+a [|mad|grieving|corrupted|ambitious] [|wizard|warlord|cleric|rogue|noble]
+the puppet master behind a [|thieves' guild|death cult|mercenary company|secret society]
+an ancient [|vampire|lich|revenant|dragon] posing as a [|merchant|advisor|scholar|noble]
+a demonically [|possessed|bound|created|summoned] [|knight|inquisitor|herald|oracle]
+
+Table: villain_motive
+to [|raise the dead|open a portal to the Abyss|destroy the old gods|break the wards on the prison plane]
+to avenge the [|destruction of their homeland|murder of their family|betrayal by a former ally]
+to achieve [|immortality|godhood|absolute power|the annihilation of a hated people]
+to fulfil an ancient [|pact|prophecy|oath|curse] at any cost
+to reclaim [|a stolen throne|lost magical knowledge|an artefact of immense power]
+to bring about a [|new world order|golden age — for their kind only|purge of the weak]
+
+Table: villain_strength
+Commands the loyalty of {1d4 + 2} powerful lieutenants.
+Possesses an artefact that renders them [|immune to fire|impossible to scry|immune to mind magic|resistant to all weapons].
+Has infiltrated the highest levels of [|the city guard|the temple|the merchant council|the king's court].
+Knows the true name of a [|demon|dragon|elemental|angel] and can summon it once.
+Has already won the first battle — the party starts on the back foot.
+Controls the only [|bridge|port|pass|water supply] into the region.
+
+Table: villain_weakness
+Bound by an ancient oath that prevents [|lying|harming children|entering sacred ground|acting on the new moon].
+Obsessively loyal to one ally who could be turned against them.
+Their power source can be disrupted by [|the light of dawn|a specific rune|running water|the sound of bells].
+Haunted by genuine guilt; an appeal to conscience may give them pause.
+Their lieutenants fear them but do not respect them — a show of weakness could shatter their army.
+Relies entirely on a single powerful magical item; destroy it and they are mortal.
+
+// ----------------------------------------------------------------
+// Complications
+// ----------------------------------------------------------------
+
+Table: complication
+The party is being [|followed|framed|watched|manipulated] by a [|rival adventuring group|shadowy organisation|vengeful NPC|unknown third party].
+An NPC the party trusts is [|working for the villain|keeping a dangerous secret|slowly being corrupted|not who they claim to be].
+The villain has [|already struck once|taken a hostage the party cares about|sabotaged their supplies|bribed a key ally].
+The location is [|structurally unstable|warded against magic|partially flooded|under enemy surveillance].
+Time pressure: the ritual / attack / collapse / deadline happens in {1d6} days.
+A moral dilemma: the most effective solution would cause serious [|harm to innocents|destruction of something irreplaceable|violation of the law].
+Political interference: a [|lord|guild|church|kingdom] with its own agenda is trying to control the outcome.
+Environmental hazard: [|plague|famine|wildfire|blizzard|flood] complicates travel and resources.
+
+// ----------------------------------------------------------------
+// The twist
+// ----------------------------------------------------------------
+
+Table: twist
+The villain is not the true threat — they are trying to stop something far worse.
+The quest giver has been lying: their real motive is [|personal greed|a family secret|revenge|fear of exposure].
+One of the party's trusted allies is revealed to be [|a spy|the villain's relative|under a compulsion|not human].
+The "artefact" / "prisoner" / "treasure" the party seeks does not exist — it was bait.
+The location itself is [|sentient|cursed to repeat a tragedy|a prison for something that must not be released|slowly dying].
+Success will cost the party something precious and irreplaceable.
+The villain had a point: the people they were fighting for are [|corrupt|guilty|responsible for the villain's suffering].
+The final confrontation reveals a connection between the villain and one party member's past.
+There is a second villain who has been manipulating both sides from the start.
+Destroying the threat would trigger a catastrophe; the solution requires sacrifice, not violence.
+
+// ----------------------------------------------------------------
+// Rewards
+// ----------------------------------------------------------------
+
+Table: reward
+{1d6 * 100} gold pieces found among the villain's possessions.
+\a [|+1|+2|+3] [|sword|axe|bow|shield|staff|dagger|warhammer|rapier] of [|striking|protection|speed|returning|fire|frost|lightning].
+A [|spell scroll|ritual book|map|coded letter] that opens a new adventure thread.
+The gratitude of [@village_name]: they offer free [|lodging|equipment repairs|healing|horses] for life.
+\a rare [|potion of healing|potion of greater healing|potion of flying|potion of invisibility|elixir of health].
+A deed to [|a small plot of land|a disused mine|an abandoned building|a share in a merchant vessel].
+A favour owed by [|a noble|a guild master|a wizard|a temple elder] — to be called in at a future date.
+Knowledge: the villain's documents reveal the location of something [|dangerous|valuable|long-lost].
+
+// ----------------------------------------------------------------
+// Side quests
+// ----------------------------------------------------------------
+
+Table: side_quest
+Locate a missing person — [@village_name] farmer's child, last seen near the [@location].
+Recover a [|stolen|cursed|lost|hidden] [|family heirloom|holy relic|magical component|piece of armour] for a grateful NPC.
+Investigate rumours of [|disappearances|undead activity|strange lights|unexplained fires] in [@village_name].
+Deliver a sealed message to a contact in [@village_name] before a [|rival|pursuer|deadline] can intercept it.
+Escort a [|wounded soldier|frightened scholar|disillusioned cultist|refugee family] to safety.
+Clear a [|cave system|ruined building|stretch of road|river crossing] of [|bandits|monsters|undead|traps] blocking passage.
+Obtain a specific [|rare herb|spell component|piece of information|tool] needed to overcome a challenge in the main quest.
+Defuse a conflict between two factions in [@village_name] before it erupts into open violence.
