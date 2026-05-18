@@ -17,7 +17,9 @@ sparkwyrd/
 ├── manual.md
 ├── CLAUDE.md         → ce fichier
 ├── SKILLS.md
-├── samples/          → 5 générateurs d'exemples (D&D + fiction FR)
+├── samples/
+│   ├── EN/           → dnd_character.ipt, dnd_monster.ipt, dnd_scenario.ipt
+│   └── FR/           → conte.ipt, idees_fiction.ipt, personnage_fiction.ipt, ville.ipt
 └── src/
     ├── header.sh     → polyglot sh/Tcl (3 lignes, shebang + bootstrap)
     ├── engine.tcl    → moteur pur Tcl (parser + générateur, sans Tk)
@@ -189,15 +191,24 @@ Permet l'exécution directe (`tclsh src/cli.tcl`) ET l'inclusion dans le build s
 
 ## Dossier samples/
 
-Cinq fichiers d'exemples dans `samples/` :
+Sept fichiers d'exemples organisés par langue :
 
-| Fichier | Langue | Contenu |
-|---|---|---|
-| `dnd_character.ipt` | EN | Fiche de personnage D&D — race, classe, apparence, trait racial, langues, compétences, biographie |
-| `dnd_monster.ipt` | EN | Stat block monstre D&D — type, défenses, sens, 3 traits, 2 actions, bonus action, repaire, trésor |
-| `dnd_scenario.ipt` | EN | Scénario D&D — accroche, villain, PNJ allié, salles clés, rencontre voyage, rebondissement, récompenses |
-| `idees_fiction.ipt` | FR | Idée de roman/nouvelle — genre, synopsis, protagoniste, antagoniste, perso secondaire, structure, fin |
-| `personnage_fiction.ipt` | FR | Fiche personnage — accordée selon le sexe via variables de genre (`{e}`, `{il}`, `{euse}`…) |
+**`samples/EN/`**
+
+| Fichier | Contenu |
+|---|---|
+| `dnd_character.ipt` | Fiche de personnage D&D — race, classe, apparence, trait racial, langues, compétences, biographie |
+| `dnd_monster.ipt` | Stat block monstre D&D — type, défenses, sens, 3 traits, 2 actions, bonus action, repaire, trésor |
+| `dnd_scenario.ipt` | Scénario D&D — accroche, villain, PNJ allié, salles clés, rencontre voyage, rebondissement, récompenses |
+
+**`samples/FR/`**
+
+| Fichier | Contenu |
+|---|---|
+| `conte.ipt` | Structure de conte/fable — héros, 3 épreuves (deck picks), résolution via `[when]` en sous-table |
+| `idees_fiction.ipt` | Idée de roman/nouvelle — genre, synopsis, protagoniste, antagoniste, perso secondaire, structure, fin |
+| `personnage_fiction.ipt` | Fiche personnage — accordée selon le sexe via variables de genre (`{e}`, `{il}`, `{euse}`…) |
+| `ville.ipt` | Ville ou village — nom généré, taille, lieux, PNJs (rôles + traits sans doublon), secret, rumeurs |
 
 ### Pattern d'accord en genre dans les fichiers .ipt
 

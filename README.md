@@ -150,20 +150,29 @@ Use: /absolute/path/to/tables.ipt
 
 ## Sample files
 
-The `samples/` directory contains ready-to-use example generators:
+The `samples/` directory contains ready-to-use example generators, organised by language:
 
-| File | Language | Description |
-|---|---|---|
-| `dnd_character.ipt` | EN | D&D character sheet — race, class, appearance, racial ability, languages, skills, backstory |
-| `dnd_monster.ipt` | EN | D&D monster stat block — type, defences, senses, traits, actions, bonus action, lair, treasure |
-| `dnd_scenario.ipt` | EN | D&D scenario — hook, villain, NPC ally, location features, travel encounter, twist, rewards |
-| `idees_fiction.ipt` | FR | Fiction idea — genre, synopsis, protagonist, antagonist, secondary character, structure, ending |
-| `personnage_fiction.ipt` | FR | Fiction character — full sheet with gendered French agreement (pronouns, adjectives, job titles) |
+**`samples/EN/`**
+
+| File | Description |
+|---|---|
+| `dnd_character.ipt` | D&D character sheet — race, class, appearance, racial ability, languages, skills, backstory |
+| `dnd_monster.ipt` | D&D monster stat block — type, defences, senses, traits, actions, bonus action, lair, treasure |
+| `dnd_scenario.ipt` | D&D scenario — hook, villain, NPC ally, location features, travel encounter, twist, rewards |
+
+**`samples/FR/`**
+
+| File | Description |
+|---|---|
+| `conte.ipt` | Structure de conte/fable — héros, adjuvant, opposant, objet magique, 3 épreuves (deck picks), résolution conditionnelle |
+| `idees_fiction.ipt` | Idée de roman/nouvelle — genre, synopsis, protagoniste, antagoniste, personnage secondaire, structure, fin |
+| `personnage_fiction.ipt` | Fiche personnage — accordée selon le sexe (pronoms, adjectifs, titres de postes) |
+| `ville.ipt` | Ville ou village — nom généré, taille, lieux notables, PNJs, économie, problème, secret, rumeurs |
 
 ```sh
-./sparkwyrd.tcl --cli samples/dnd_character.ipt
-./sparkwyrd.tcl --cli samples/personnage_fiction.ipt
-./sparkwyrd.tcl --gui samples/dnd_scenario.ipt
+./sparkwyrd.tcl --cli samples/EN/dnd_character.ipt
+./sparkwyrd.tcl --cli samples/FR/personnage_fiction.ipt
+./sparkwyrd.tcl --gui samples/FR/ville.ipt
 ```
 
 ---
