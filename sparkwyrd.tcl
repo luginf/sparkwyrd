@@ -1331,35 +1331,38 @@ proc apply_theme {{theme ""}} {
 
     # Output area
     .right configure -bg [T out_bg]
-    .right.out configure -bg [T out_bg] -fg [T out_fg] \
+    .right.nb.gen.out configure -bg [T out_bg] -fg [T out_fg] \
         -insertbackground [T out_fg] \
         -selectbackground [T sel_bg] -selectforeground [T sel_fg]
-    .right.sb configure -bg [T bg] -troughcolor [T bg2]
+    .right.nb.gen.sb configure -bg [T bg] -troughcolor [T bg2]
 
     # Text widget tags
-    .right.out tag configure ttitle \
+    .right.nb.gen.out tag configure ttitle \
         -font {Georgia 15 bold} -foreground [T out_title] -spacing3 4
-    .right.out tag configure tsep \
+    .right.nb.gen.out tag configure tsep \
         -foreground [T out_sep]
-    .right.out tag configure tbody \
+    .right.nb.gen.out tag configure tbody \
         -font {Georgia 12} -foreground [T out_fg] -spacing1 2 -spacing3 2
-    .right.out tag configure tbold \
+    .right.nb.gen.out tag configure tbold \
         -font {Georgia 12 bold} -foreground [T out_fg]
-    .right.out tag configure titalic \
+    .right.nb.gen.out tag configure titalic \
         -font {Georgia 12 italic} -foreground [T out_fg]
-    .right.out tag configure tunderline \
+    .right.nb.gen.out tag configure tunderline \
         -font {Georgia 12} -underline 1 -foreground [T out_fg]
-    .right.out tag configure tbold_italic \
+    .right.nb.gen.out tag configure tbold_italic \
         -font {Georgia 12 bold italic} -foreground [T out_fg]
-    .right.out tag configure th1 \
+    .right.nb.gen.out tag configure th1 \
         -font {Georgia 16 bold} -foreground [T out_h1] -spacing3 6
-    .right.out tag configure th2 \
+    .right.nb.gen.out tag configure th2 \
         -font {Georgia 14 bold} -foreground [T out_h2] -spacing3 4
-    .right.out tag configure th3 \
+    .right.nb.gen.out tag configure th3 \
         -font {Georgia 13 bold} -foreground [T out_h3] -spacing3 2
-    .right.out tag configure tcode \
+    .right.nb.gen.out tag configure tcode \
         -font {TkFixedFont 11} -foreground [T out_fg] \
         -background [T out_code_bg]
+
+    # Editor theme
+    editor_apply_theme
 
     # Status bar
     .st configure -bg [T bg_tb]
@@ -1444,6 +1447,16 @@ proc build_ui {} {
     scrollbar .left.sb -command {.left.tables yview} -width 8
     .left.tables configure -yscrollcommand {.left.sb set}
 
+    # Bind click on table name to jump to it in editor
+    bind .left.tables <ButtonRelease-1> {
+        set idx [.left.tables index @%x,%y]
+        set line [.left.tables get "$idx linestart" "$idx lineend"]
+        set name [string trim $line "• \t"]
+        if {$name ne ""} {
+            editor_goto_table $name
+        }
+    }
+
     grid .left.t1    -row 0 -column 0 -columnspan 2 -sticky ew -padx 8 -pady {8 0}
     grid .left.fname -row 1 -column 0 -columnspan 2 -sticky ew -padx 8 -pady {0 4}
     grid .left.sep   -row 2 -column 0 -columnspan 2 -sticky ew
@@ -1457,19 +1470,28 @@ proc build_ui {} {
     grid columnconfigure .left 0 -weight 1
     grid rowconfigure    .left 8 -weight 1
 
-    # Right panel — output
+    # Right panel — notebook with Générer and Éditer tabs
     frame .right
-    text .right.out \
+
+    ttk::notebook .right.nb
+    frame .right.nb.gen
+    .right.nb add .right.nb.gen -text "Générer"
+    pack .right.nb -fill both -expand 1
+
+    text .right.nb.gen.out \
         -wrap word \
         -font {Georgia 12} \
         -state disabled \
         -relief flat \
         -bd 0 \
-        -yscrollcommand {.right.sb set} \
+        -yscrollcommand {.right.nb.gen.sb set} \
         -padx 16 -pady 12
-    scrollbar .right.sb -command {.right.out yview}
-    pack .right.sb  -side right -fill y
-    pack .right.out -fill both  -expand 1
+    scrollbar .right.nb.gen.sb -command {.right.nb.gen.out yview}
+    pack .right.nb.gen.sb  -side right -fill y
+    pack .right.nb.gen.out -fill both  -expand 1
+
+    # Editor tab created by editor_init
+    editor_init .right.nb
 
     .pw add .left  -minsize 180
     .pw add .right -minsize 300
@@ -1615,6 +1637,9 @@ proc cmd_load_file {path} {
     set suffix [expr {$n > 1 ? "s" : ""}]
     set ::status_msg "Loaded: [file tail $path] — $n table${suffix}"
 
+    # Load file into editor
+    if {$::current_file ne ""} { editor_load $::current_file }
+
     cmd_generate
 }
 
@@ -1629,44 +1654,44 @@ proc cmd_generate {} {
     set n  $::reps_count
     if {$mr > 0 && $n > $mr} { set n $mr }
 
-    .right.out configure -state normal
-    .right.out delete 1.0 end
+    .right.nb.gen.out configure -state normal
+    .right.nb.gen.out delete 1.0 end
 
     set hd_raw [dict get $h Header]
     if {$hd_raw ne ""} {
-        html_insert .right.out $hd_raw ttitle
-        .right.out insert end "\n─────────────────────────────────\n" tsep
+        html_insert .right.nb.gen.out $hd_raw ttitle
+        .right.nb.gen.out insert end "\n─────────────────────────────────\n" tsep
     }
 
     for {set i 1} {$i <= $n} {incr i} {
         if {[catch {set res [ipt_generate $::current_parsed $i]} err]} {
             set res "  Error: $err"
         }
-        html_insert .right.out $res tbody
-        .right.out insert end "\n" tbody
+        html_insert .right.nb.gen.out $res tbody
+        .right.nb.gen.out insert end "\n" tbody
 
         if {$i < $n} {
-            .right.out insert end "─────────────────────────────────\n" tsep
+            .right.nb.gen.out insert end "─────────────────────────────────\n" tsep
         }
     }
 
     set ft [dict get $h Footer]
     if {$ft ne ""} {
-        .right.out insert end "─────────────────────────────────\n" tsep
-        html_insert .right.out $ft tsep
-        .right.out insert end "\n" tsep
+        .right.nb.gen.out insert end "─────────────────────────────────\n" tsep
+        html_insert .right.nb.gen.out $ft tsep
+        .right.nb.gen.out insert end "\n" tsep
     }
 
-    .right.out configure -state disabled
-    .right.out see 1.0
+    .right.nb.gen.out configure -state disabled
+    .right.nb.gen.out see 1.0
     set plural [expr {$n > 1 ? "s" : ""}]
     set ::status_msg "Generated ($n rep${plural}) — [clock format [clock seconds] -format {%H:%M:%S}]"
 }
 
 proc cmd_clear {} {
-    .right.out configure -state normal
-    .right.out delete 1.0 end
-    .right.out configure -state disabled
+    .right.nb.gen.out configure -state normal
+    .right.nb.gen.out delete 1.0 end
+    .right.nb.gen.out configure -state disabled
     set ::status_msg "Output cleared."
 }
 
@@ -1682,6 +1707,224 @@ proc gui_main {} {
 }
 
 if {![info exists ::sparkwyrd_combined]} { gui_main }
+
+# === editor ===
+# Éditeur de fichiers .ipt intégré à Sparkwyrd
+
+# ============================================================
+# VARIABLES
+# ============================================================
+
+set ::editor_file ""
+
+# ============================================================
+# ÉDITEUR — INITIALISATION
+# ============================================================
+
+proc editor_init {nb} {
+    frame $nb.edit
+    $nb add $nb.edit -text "Éditer"
+
+    # Text widget éditable avec scrollbar
+    text $nb.edit.ed -wrap word -font {Georgia 12} \
+        -padx 8 -pady 8 -width 60 -height 30
+    scrollbar $nb.edit.sb -command [list $nb.edit.ed yview]
+    $nb.edit.ed configure -yscrollcommand [list $nb.edit.sb set]
+
+    pack $nb.edit.ed -side left -fill both -expand 1
+    pack $nb.edit.sb -side right -fill y
+
+    # Bind Ctrl+S pour sauvegarder
+    bind $nb.edit.ed <Control-s> { editor_save }
+
+    # Tags de coloration
+    $nb.edit.ed tag configure ed_table -foreground "#0047AB" -font {Georgia 12 bold}
+    $nb.edit.ed tag configure ed_directive -foreground "#8B4513"
+    $nb.edit.ed tag configure ed_comment -foreground "#808080"
+    $nb.edit.ed tag configure ed_weight -foreground "#228B22"
+}
+
+# ============================================================
+# ÉDITEUR — CHARGER FICHIER
+# ============================================================
+
+proc editor_load {path} {
+    set ::editor_file $path
+
+    # Lire le fichier en UTF-8
+    if {[catch {
+        set fd [open $path r]
+        fconfigure $fd -encoding utf-8
+        set content [read $fd]
+        close $fd
+    } err]} {
+        puts stderr "Error loading file: $err"
+        return
+    }
+
+    # Insérer dans l'éditeur
+    set ed .right.nb.edit.ed
+    $ed configure -state normal
+    $ed delete 1.0 end
+    $ed insert end $content
+    $ed configure -state normal
+    $ed mark set insert 1.0
+
+    # Appliquer la coloration
+    highlight_editor
+}
+
+# ============================================================
+# ÉDITEUR — SAUVEGARDER
+# ============================================================
+
+proc editor_save {} {
+    set ed .right.nb.edit.ed
+    set content [$ed get 1.0 end-1c]
+
+    if {$::editor_file eq ""} {
+        puts stderr "No file loaded to save"
+        return
+    }
+
+    # Écrire le fichier en UTF-8
+    if {[catch {
+        set fd [open $::editor_file w]
+        fconfigure $fd -encoding utf-8
+        puts -nonewline $fd $content
+        close $fd
+    } err]} {
+        puts stderr "Error saving file: $err"
+        return
+    }
+
+    # Recharger le fichier dans la GUI
+    cmd_load_file $::editor_file
+}
+
+# ============================================================
+# ÉDITEUR — ALLER À UNE TABLE
+# ============================================================
+
+proc editor_goto_table {name} {
+    set ed .right.nb.edit.ed
+
+    # Search line by line for "Table: name" (case-insensitive)
+    set line_num 1
+    while {[$ed get $line_num.0 $line_num.end] ne ""} {
+        set text [$ed get $line_num.0 $line_num.end]
+        set text_stripped [string trim $text]
+
+        # Check if this line matches "Table: name"
+        if {[string tolower $text_stripped] eq "table: [string tolower $name]"} {
+            set pos $line_num.0
+            $ed mark set insert $pos
+            $ed see $pos
+            $ed tag remove sel 1.0 end
+            set end "$pos lineend"
+            $ed tag add sel "$pos linestart" $end
+            .right.nb select .right.nb.edit
+            return
+        }
+        incr line_num
+    }
+}
+
+# ============================================================
+# ÉDITEUR — COLORATION SYNTAXIQUE
+# ============================================================
+
+proc highlight_editor {} {
+    set ed .right.nb.edit.ed
+
+    # Effacer tous les tags existants
+    $ed tag remove ed_table 1.0 end
+    $ed tag remove ed_directive 1.0 end
+    $ed tag remove ed_comment 1.0 end
+    $ed tag remove ed_weight 1.0 end
+
+    # Parcourir les lignes
+    set line_num 1
+    while {[$ed get $line_num.0 $line_num.end] ne ""} {
+        set text [$ed get $line_num.0 $line_num.end]
+        set text_stripped [string trim $text]
+
+        # Table: NomTable
+        if {[regexp {^Table:\s*(\w+)} $text_stripped -> tname]} {
+            set idx [$ed search -nocase "Table:" "$line_num.0" "$line_num.end"]
+            if {$idx ne ""} {
+                $ed tag add ed_table "$idx" "$idx lineend"
+            }
+        }
+
+        # Directives (Use:, Set:, Define:, Header:, etc.)
+        if {[regexp {^(Use|Set|Define|Header|Footer|Type|Roll|Default|Shuffle|Prompt|MaxReps|Formatting|Title|Deck):\s*} $text_stripped]} {
+            set regex {^(Use|Set|Define|Header|Footer|Type|Roll|Default|Shuffle|Prompt|MaxReps|Formatting|Title|Deck):}
+            set idx [$ed search -regexp $regex "$line_num.0" "$line_num.end"]
+            if {$idx ne ""} {
+                set end [$ed search -regexp {:} $idx "$line_num.end"]
+                if {$end ne ""} {
+                    set end [$ed index "$end+1c"]
+                    $ed tag add ed_directive $idx $end
+                }
+            }
+        }
+
+        # Commentaires (#, ;, //)
+        if {[regexp {^\s*(#|;|//)} $text_stripped]} {
+            $ed tag add ed_comment "$line_num.0" "$line_num.end"
+        }
+
+        # Poids (N:) au début d'une ligne
+        if {[regexp {^\d+:\s*} $text_stripped]} {
+            regexp -indices {\d+} $text_stripped match
+            if {[info exists match]} {
+                set start [lindex $match 0]
+                set end [lindex $match 1]
+                $ed tag add ed_weight "$line_num.$start" "$line_num.[expr {$end+1}]"
+            }
+        }
+
+        incr line_num
+    }
+}
+
+# ============================================================
+# ÉDITEUR — THÈME
+# ============================================================
+
+proc editor_apply_theme {} {
+    set ed .right.nb.edit.ed
+
+    if {[catch {
+        # Recharger les couleurs depuis les thèmes
+        set bg [T bg]
+        set fg [T fg]
+
+        $ed configure -bg $bg -fg $fg
+
+        # Recolorer les tags
+        $ed tag configure ed_table -foreground [T ed_table_fg]
+        $ed tag configure ed_directive -foreground [T ed_directive_fg]
+        $ed tag configure ed_comment -foreground [T ed_comment_fg]
+        $ed tag configure ed_weight -foreground [T ed_weight_fg]
+    }]} {
+        # Si les clés de thème n'existent pas, utiliser des défauts
+        $ed configure -bg [T bg] -fg [T fg]
+        $ed tag configure ed_table -foreground "#0047AB" -font {Georgia 12 bold}
+        $ed tag configure ed_directive -foreground "#8B4513"
+        $ed tag configure ed_comment -foreground "#808080"
+        $ed tag configure ed_weight -foreground "#228B22"
+    }
+}
+
+# ============================================================
+# GUARD BUILD
+# ============================================================
+
+if {![info exists ::sparkwyrd_combined]} {
+    # Code de test / développement
+}
 
 # === main ===
 # Sparkwyrd — entry-point dispatcher (included last by the Makefile build)
@@ -1709,13 +1952,9 @@ proc sparkwyrd_dispatch {} {
     }
     set argv $rest
 
-    # No arguments at all: print a one-line hint and exit immediately.
-    # This prevents bash/zsh completion from hanging while trying to
-    # execute the script during tab-completion probing.
+    # No arguments at all: default to GUI mode
     if {$mode eq "" && [llength $rest] == 0} {
-        set name [file tail [info script]]
-        puts "Usage: $name --gui \[file.ipt\]   or   $name --cli \[options\] file.ipt"
-        exit 0
+        set mode gui
     }
 
     # Auto-detect from remaining args when no explicit --gui/--cli

@@ -143,35 +143,38 @@ proc apply_theme {{theme ""}} {
 
     # Output area
     .right configure -bg [T out_bg]
-    .right.out configure -bg [T out_bg] -fg [T out_fg] \
+    .right.nb.gen.out configure -bg [T out_bg] -fg [T out_fg] \
         -insertbackground [T out_fg] \
         -selectbackground [T sel_bg] -selectforeground [T sel_fg]
-    .right.sb configure -bg [T bg] -troughcolor [T bg2]
+    .right.nb.gen.sb configure -bg [T bg] -troughcolor [T bg2]
 
     # Text widget tags
-    .right.out tag configure ttitle \
+    .right.nb.gen.out tag configure ttitle \
         -font {Georgia 15 bold} -foreground [T out_title] -spacing3 4
-    .right.out tag configure tsep \
+    .right.nb.gen.out tag configure tsep \
         -foreground [T out_sep]
-    .right.out tag configure tbody \
+    .right.nb.gen.out tag configure tbody \
         -font {Georgia 12} -foreground [T out_fg] -spacing1 2 -spacing3 2
-    .right.out tag configure tbold \
+    .right.nb.gen.out tag configure tbold \
         -font {Georgia 12 bold} -foreground [T out_fg]
-    .right.out tag configure titalic \
+    .right.nb.gen.out tag configure titalic \
         -font {Georgia 12 italic} -foreground [T out_fg]
-    .right.out tag configure tunderline \
+    .right.nb.gen.out tag configure tunderline \
         -font {Georgia 12} -underline 1 -foreground [T out_fg]
-    .right.out tag configure tbold_italic \
+    .right.nb.gen.out tag configure tbold_italic \
         -font {Georgia 12 bold italic} -foreground [T out_fg]
-    .right.out tag configure th1 \
+    .right.nb.gen.out tag configure th1 \
         -font {Georgia 16 bold} -foreground [T out_h1] -spacing3 6
-    .right.out tag configure th2 \
+    .right.nb.gen.out tag configure th2 \
         -font {Georgia 14 bold} -foreground [T out_h2] -spacing3 4
-    .right.out tag configure th3 \
+    .right.nb.gen.out tag configure th3 \
         -font {Georgia 13 bold} -foreground [T out_h3] -spacing3 2
-    .right.out tag configure tcode \
+    .right.nb.gen.out tag configure tcode \
         -font {TkFixedFont 11} -foreground [T out_fg] \
         -background [T out_code_bg]
+
+    # Editor theme
+    editor_apply_theme
 
     # Status bar
     .st configure -bg [T bg_tb]
@@ -256,6 +259,16 @@ proc build_ui {} {
     scrollbar .left.sb -command {.left.tables yview} -width 8
     .left.tables configure -yscrollcommand {.left.sb set}
 
+    # Bind click on table name to jump to it in editor
+    bind .left.tables <ButtonRelease-1> {
+        set idx [.left.tables index @%x,%y]
+        set line [.left.tables get "$idx linestart" "$idx lineend"]
+        set name [string trim $line "• \t"]
+        if {$name ne ""} {
+            editor_goto_table $name
+        }
+    }
+
     grid .left.t1    -row 0 -column 0 -columnspan 2 -sticky ew -padx 8 -pady {8 0}
     grid .left.fname -row 1 -column 0 -columnspan 2 -sticky ew -padx 8 -pady {0 4}
     grid .left.sep   -row 2 -column 0 -columnspan 2 -sticky ew
@@ -269,19 +282,28 @@ proc build_ui {} {
     grid columnconfigure .left 0 -weight 1
     grid rowconfigure    .left 8 -weight 1
 
-    # Right panel — output
+    # Right panel — notebook with Générer and Éditer tabs
     frame .right
-    text .right.out \
+
+    ttk::notebook .right.nb
+    frame .right.nb.gen
+    .right.nb add .right.nb.gen -text "Générer"
+    pack .right.nb -fill both -expand 1
+
+    text .right.nb.gen.out \
         -wrap word \
         -font {Georgia 12} \
         -state disabled \
         -relief flat \
         -bd 0 \
-        -yscrollcommand {.right.sb set} \
+        -yscrollcommand {.right.nb.gen.sb set} \
         -padx 16 -pady 12
-    scrollbar .right.sb -command {.right.out yview}
-    pack .right.sb  -side right -fill y
-    pack .right.out -fill both  -expand 1
+    scrollbar .right.nb.gen.sb -command {.right.nb.gen.out yview}
+    pack .right.nb.gen.sb  -side right -fill y
+    pack .right.nb.gen.out -fill both  -expand 1
+
+    # Editor tab created by editor_init
+    editor_init .right.nb
 
     .pw add .left  -minsize 180
     .pw add .right -minsize 300
@@ -427,6 +449,9 @@ proc cmd_load_file {path} {
     set suffix [expr {$n > 1 ? "s" : ""}]
     set ::status_msg "Loaded: [file tail $path] — $n table${suffix}"
 
+    # Load file into editor
+    if {$::current_file ne ""} { editor_load $::current_file }
+
     cmd_generate
 }
 
@@ -441,44 +466,44 @@ proc cmd_generate {} {
     set n  $::reps_count
     if {$mr > 0 && $n > $mr} { set n $mr }
 
-    .right.out configure -state normal
-    .right.out delete 1.0 end
+    .right.nb.gen.out configure -state normal
+    .right.nb.gen.out delete 1.0 end
 
     set hd_raw [dict get $h Header]
     if {$hd_raw ne ""} {
-        html_insert .right.out $hd_raw ttitle
-        .right.out insert end "\n─────────────────────────────────\n" tsep
+        html_insert .right.nb.gen.out $hd_raw ttitle
+        .right.nb.gen.out insert end "\n─────────────────────────────────\n" tsep
     }
 
     for {set i 1} {$i <= $n} {incr i} {
         if {[catch {set res [ipt_generate $::current_parsed $i]} err]} {
             set res "  Error: $err"
         }
-        html_insert .right.out $res tbody
-        .right.out insert end "\n" tbody
+        html_insert .right.nb.gen.out $res tbody
+        .right.nb.gen.out insert end "\n" tbody
 
         if {$i < $n} {
-            .right.out insert end "─────────────────────────────────\n" tsep
+            .right.nb.gen.out insert end "─────────────────────────────────\n" tsep
         }
     }
 
     set ft [dict get $h Footer]
     if {$ft ne ""} {
-        .right.out insert end "─────────────────────────────────\n" tsep
-        html_insert .right.out $ft tsep
-        .right.out insert end "\n" tsep
+        .right.nb.gen.out insert end "─────────────────────────────────\n" tsep
+        html_insert .right.nb.gen.out $ft tsep
+        .right.nb.gen.out insert end "\n" tsep
     }
 
-    .right.out configure -state disabled
-    .right.out see 1.0
+    .right.nb.gen.out configure -state disabled
+    .right.nb.gen.out see 1.0
     set plural [expr {$n > 1 ? "s" : ""}]
     set ::status_msg "Generated ($n rep${plural}) — [clock format [clock seconds] -format {%H:%M:%S}]"
 }
 
 proc cmd_clear {} {
-    .right.out configure -state normal
-    .right.out delete 1.0 end
-    .right.out configure -state disabled
+    .right.nb.gen.out configure -state normal
+    .right.nb.gen.out delete 1.0 end
+    .right.nb.gen.out configure -state disabled
     set ::status_msg "Output cleared."
 }
 

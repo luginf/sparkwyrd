@@ -23,13 +23,9 @@ proc sparkwyrd_dispatch {} {
     }
     set argv $rest
 
-    # No arguments at all: print a one-line hint and exit immediately.
-    # This prevents bash/zsh completion from hanging while trying to
-    # execute the script during tab-completion probing.
+    # No arguments at all: default to GUI mode
     if {$mode eq "" && [llength $rest] == 0} {
-        set name [file tail [info script]]
-        puts "Usage: $name --gui \[file.ipt\]   or   $name --cli \[options\] file.ipt"
-        exit 0
+        set mode gui
     }
 
     # Auto-detect from remaining args when no explicit --gui/--cli
